@@ -38,7 +38,7 @@ export default function Home() {
       </p>
 
       <a 
-        href="https://wa.me/SEUNUMEROAQUI" 
+        href="https://wa.me/5511984309480" 
         target="_blank"
         style={{
           display: "inline-block",
