@@ -1,69 +1,128 @@
+export const metadata = {
+  title: "Encarte Pro Aves - Equipamentos para Encarte de Canto",
+  description: "Caixas acústicas e aparelhos profissionais para encarte de canto de pássaros. Enviamos para todo Brasil.",
+};
 
 export default function Home() {
   return (
-    <div style={{ fontFamily: "Arial, sans-serif", margin: 0, padding: 0 }}>
+    <div style={{ fontFamily: "Arial, sans-serif", background: "#f4f6f8" }}>
 
       {/* TOPO */}
-      <div style={{ backgroundColor: "#1a4d2e", color: "white", padding: "30px", textAlign: "center" }}>
+      <header style={{
+        background: "#0d3b26",
+        color: "white",
+        padding: "20px",
+        textAlign: "center"
+      }}>
         <h1>Encarte Pro Aves</h1>
-        <p>Especialistas em aparelhos e caixas acústicas para encarte de canto</p>
-      </div>
+        <p>Equipamentos profissionais para encarte de canto</p>
+      </header>
 
       {/* PRODUTOS */}
-      <div style={{ padding: "40px", maxWidth: "1000px", margin: "0 auto" }}>
+      <main style={{ padding: "40px", maxWidth: "1000px", margin: "auto" }}>
 
-        <div style={{ marginBottom: "50px" }}>
-          <h2>🔊 Caixa Acústica Profissional</h2>
-          <ul>
-            <li>Medidas: 65x65x35 cm</li>
-            <li>MDF 15mm</li>
-            <li>Vidro temperado 8mm (40x40 cm)</li>
-            <li>Alto falante de alto rendimento</li>
-            <li>Entradas de áudio laterais</li>
-          </ul>
-          <h3 style={{ color: "#1a4d2e" }}>💰 R$ 1.290,00</h3>
+        {/* CAIXA */}
+        <div style={{
+          background: "white",
+          padding: "20px",
+          marginBottom: "30px",
+          borderRadius: "10px",
+          boxShadow: "0 0 10px rgba(0,0,0,0.1)"
+        }}>
+          <img
+            src="/caixa.jpg"
+            style={{ width: "100%", borderRadius: "10px" }}
+          />
+          <h2>Caixa Acústica Profissional</h2>
+          <p>MDF 15mm, vidro temperado 8mm, alto falante profissional, ideal para encarte de canto.</p>
+          <h3 style={{ color: "#0d3b26" }}>R$ 1.290,00</h3>
+          <a
+            href="https://wa.me/5511984309480"
+            style={{
+              background: "#25D366",
+              color: "white",
+              padding: "12px",
+              display: "inline-block",
+              borderRadius: "5px",
+              textDecoration: "none"
+            }}
+          >
+            Comprar no WhatsApp
+          </a>
         </div>
 
-        <div>
-          <h2>🎛️ Aparelho Programador Digital</h2>
-          <ul>
-            <li>8 programações de liga</li>
-            <li>8 programações de desliga</li>
-            <li>Rádio AM/FM</li>
-            <li>Pen drive e cartão MP3</li>
-            <li>1h toca / 30min descanso automático</li>
-          </ul>
-          <h3 style={{ color: "#1a4d2e" }}>💰 R$ 790,00</h3>
+        {/* APARELHO */}
+        <div style={{
+          background: "white",
+          padding: "20px",
+          borderRadius: "10px",
+          boxShadow: "0 0 10px rgba(0,0,0,0.1)"
+        }}>
+          <img
+            src="/aparelho.jpg.jpg"
+            style={{ width: "100%", borderRadius: "10px" }}
+          />
+          <h2>Aparelho Programador Digital</h2>
+          <p>Programação automática, rádio AM/FM, USB, cartão de memória e timer inteligente.</p>
+          <h3 style={{ color: "#0d3b26" }}>R$ 790,00</h3>
+          <a
+            href="https://wa.me/5511984309480"
+            style={{
+              background: "#25D366",
+              color: "white",
+              padding: "12px",
+              display: "inline-block",
+              borderRadius: "5px",
+              textDecoration: "none"
+            }}
+          >
+            Comprar no WhatsApp
+          </a>
         </div>
 
-      </div>
+      </main>
 
-      {/* RODAPÉ */}
-      <div style={{ backgroundColor: "#f2f2f2", padding: "20px", textAlign: "center" }}>
-        <p>© 2026 Encarte Pro Aves - Todos os direitos reservados</p>
-      </div>
+      {/* PIX */}
+      <section style={{
+        background: "white",
+        padding: "30px",
+        textAlign: "center",
+        margin: "40px"
+      }}>
+        <h2>Pagamento via PIX</h2>
+        <p>Chave PIX:</p>
+        <h3>13179423889</h3>
+      </section>
 
-      {/* BOTÃO WHATSAPP FIXO */}
+      {/* WHATSAPP FIXO */}
       <a
         href="https://wa.me/5511984309480"
-        target="_blank"
         style={{
           position: "fixed",
           bottom: "20px",
           right: "20px",
-          backgroundColor: "#25D366",
+          background: "#25D366",
           color: "white",
-          padding: "15px 20px",
+          padding: "15px",
           borderRadius: "50px",
-          textDecoration: "none",
-          fontWeight: "bold",
-          boxShadow: "0 4px 10px rgba(0,0,0,0.3)"
+          textDecoration: "none"
         }}
       >
-        💬 WhatsApp
+        WhatsApp
       </a>
 
+      {/* RODAPÉ */}
+      <footer style={{
+        background: "#0d3b26",
+        color: "white",
+        padding: "20px",
+        textAlign: "center"
+      }}>
+        © 2026 Encarte Pro Aves
+      </footer>
+
     </div>
-  )
+  );
 }
+
 
