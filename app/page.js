@@ -13,7 +13,6 @@ export default function Home() {
         <p>Especialistas em aparelhos e caixas acústicas para encarte de canto</p>
       </header>
 
-      {/* PRODUTOS */}
       <main style={{ padding: "40px", maxWidth: "1000px", margin: "auto" }}>
 
         {/* CAIXA ACÚSTICA */}
@@ -44,7 +43,7 @@ export default function Home() {
           }}>Comprar no WhatsApp</a>
         </div>
 
-        {/* APARELHO PROGRAMADOR */}
+        {/* APARELHO */}
         <div style={{
           background: "white",
           padding: "20px",
@@ -96,7 +95,6 @@ export default function Home() {
         textDecoration: "none"
       }}>WhatsApp</a>
 
-      {/* RODAPÉ */}
       <footer style={{
         background: "#0d3b26",
         color: "white",
