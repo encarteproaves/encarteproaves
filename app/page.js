@@ -1,56 +1,66 @@
+
 export default function Home() {
   return (
-    <div style={{ fontFamily: "Arial", padding: "20px", maxWidth: "900px", margin: "0 auto" }}>
-      
-      <h1 style={{ textAlign: "center", color: "#1a4d2e" }}>
-        🎵 Encarte Pro Aves
-      </h1>
+    <div style={{ fontFamily: "Arial, sans-serif", margin: 0, padding: 0 }}>
 
-      <p style={{ textAlign: "center", fontSize: "18px" }}>
-        Especialistas em aparelhos e caixas acústicas para encarte de canto
-      </p>
+      {/* TOPO */}
+      <div style={{ backgroundColor: "#1a4d2e", color: "white", padding: "30px", textAlign: "center" }}>
+        <h1>Encarte Pro Aves</h1>
+        <p>Especialistas em aparelhos e caixas acústicas para encarte de canto</p>
+      </div>
 
-      <hr />
+      {/* PRODUTOS */}
+      <div style={{ padding: "40px", maxWidth: "1000px", margin: "0 auto" }}>
 
-      <h2>🔊 Caixa Acústica Profissional</h2>
-      <ul>
-        <li>📏 Medidas: 65x65x35 cm</li>
-        <li>🪵 MDF 15mm de alta resistência</li>
-        <li>🪟 Porta com vidro temperado 8mm (40x40 cm)</li>
-        <li>🔈 Alto falante interno de alto rendimento</li>
-        <li>🎧 Entradas de áudio laterais</li>
-      </ul>
+        <div style={{ marginBottom: "50px" }}>
+          <h2>🔊 Caixa Acústica Profissional</h2>
+          <ul>
+            <li>Medidas: 65x65x35 cm</li>
+            <li>MDF 15mm</li>
+            <li>Vidro temperado 8mm (40x40 cm)</li>
+            <li>Alto falante de alto rendimento</li>
+            <li>Entradas de áudio laterais</li>
+          </ul>
+          <h3 style={{ color: "#1a4d2e" }}>💰 R$ 1.290,00</h3>
+        </div>
 
-      <h2>🎛️ Aparelho Programador Digital</h2>
-      <ul>
-        <li>⏱️ Até 8 programações de liga</li>
-        <li>⏱️ Até 8 programações de desliga</li>
-        <li>📻 Rádio AM/FM</li>
-        <li>💾 Pen drive e cartão de memória (MP3)</li>
-        <li>🔄 Programação automática: 1h toca / 30min descanso</li>
-      </ul>
+        <div>
+          <h2>🎛️ Aparelho Programador Digital</h2>
+          <ul>
+            <li>8 programações de liga</li>
+            <li>8 programações de desliga</li>
+            <li>Rádio AM/FM</li>
+            <li>Pen drive e cartão MP3</li>
+            <li>1h toca / 30min descanso automático</li>
+          </ul>
+          <h3 style={{ color: "#1a4d2e" }}>💰 R$ 790,00</h3>
+        </div>
 
-      <hr />
+      </div>
 
-      <h2 style={{ color: "#1a4d2e" }}>📲 Fale Conosco</h2>
-      <p>
-        Entre em contato pelo WhatsApp para pedidos e informações.
-      </p>
+      {/* RODAPÉ */}
+      <div style={{ backgroundColor: "#f2f2f2", padding: "20px", textAlign: "center" }}>
+        <p>© 2026 Encarte Pro Aves - Todos os direitos reservados</p>
+      </div>
 
-      <a 
-        href="https://wa.me/5511984309480" 
+      {/* BOTÃO WHATSAPP FIXO */}
+      <a
+        href="https://wa.me/SEUNUMEROAQUI"
         target="_blank"
         style={{
-          display: "inline-block",
-          padding: "12px 20px",
+          position: "fixed",
+          bottom: "20px",
+          right: "20px",
           backgroundColor: "#25D366",
           color: "white",
+          padding: "15px 20px",
+          borderRadius: "50px",
           textDecoration: "none",
-          borderRadius: "5px",
-          fontWeight: "bold"
+          fontWeight: "bold",
+          boxShadow: "0 4px 10px rgba(0,0,0,0.3)"
         }}
       >
-        💬 Chamar no WhatsApp
+        💬 WhatsApp
       </a>
 
     </div>
