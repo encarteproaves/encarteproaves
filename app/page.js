@@ -45,7 +45,7 @@ export default function Home() {
 
       {/* BOTÃO WHATSAPP FIXO */}
       <a
-        href="https://wa.me/SEUNUMEROAQUI"
+        href="https://wa.me/5511984309480"
         target="_blank"
         style={{
           position: "fixed",
