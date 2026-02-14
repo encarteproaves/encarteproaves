@@ -32,7 +32,7 @@ export default function Home() {
             Entradas de áudio nas laterais<br />
             MDF 15mm
           </p>
-          <h3 style={{ color: "#0d3b26" }}>💰 R$ 1.290,00</h3>
+          <h3 style={{ color: "#0d3b26" }}>💰 R$ 1.500,00</h3>
           <a href="https://wa.me/5511984309480" style={{
               background: "#25D366",
               color: "white",
@@ -58,7 +58,7 @@ export default function Home() {
             Rádio AM/FM<br />
             Programação pré-definida: toca 1h e descansa 30min
           </p>
-          <h3 style={{ color: "#0d3b26" }}>💰 R$ 790,00</h3>
+          <h3 style={{ color: "#0d3b26" }}>💰 R$ 330,00</h3>
           <a href="https://wa.me/5511984309480" style={{
               background: "#25D366",
               color: "white",
