@@ -13,6 +13,7 @@ export default function Home() {
         <p>Especialistas em aparelhos e caixas acústicas para encarte de canto</p>
       </header>
 
+      {/* PRODUTOS */}
       <main style={{ padding: "40px", maxWidth: "1000px", margin: "auto" }}>
 
         {/* CAIXA ACÚSTICA */}
@@ -43,7 +44,7 @@ export default function Home() {
           }}>Comprar no WhatsApp</a>
         </div>
 
-        {/* APARELHO */}
+        {/* APARELHO PROGRAMADOR */}
         <div style={{
           background: "white",
           padding: "20px",
@@ -72,7 +73,12 @@ export default function Home() {
       </main>
 
       {/* PIX */}
-      <section style={{ background: "white", padding: "30px", textAlign: "center", margin: "40px" }}>
+      <section style={{
+        background: "white",
+        padding: "30px",
+        textAlign: "center",
+        margin: "40px"
+      }}>
         <h2>Pagamento via PIX</h2>
         <p>Chave PIX:</p>
         <h3>13179423889</h3>
@@ -90,9 +96,16 @@ export default function Home() {
         textDecoration: "none"
       }}>WhatsApp</a>
 
-      <footer style={{ background: "#0d3b26", color: "white", padding: "20px", textAlign: "center" }}>
+      {/* RODAPÉ */}
+      <footer style={{
+        background: "#0d3b26",
+        color: "white",
+        padding: "20px",
+        textAlign: "center"
+      }}>
         © 2026 Encarte Pro Aves
       </footer>
+
     </div>
   );
 }
