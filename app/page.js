@@ -1,8 +1,3 @@
-export const metadata = {
-  title: "Encarte Pro Aves - Equipamentos para Encarte de Canto",
-  description: "Caixas acústicas e aparelhos profissionais para encarte de canto de pássaros. Enviamos para todo Brasil.",
-};
-
 export default function Home() {
   return (
     <div style={{ fontFamily: "Arial, sans-serif", background: "#f4f6f8" }}>
@@ -15,13 +10,13 @@ export default function Home() {
         textAlign: "center"
       }}>
         <h1>Encarte Pro Aves</h1>
-        <p>Equipamentos profissionais para encarte de canto</p>
+        <p>Especialistas em aparelhos e caixas acústicas para encarte de canto</p>
       </header>
 
       {/* PRODUTOS */}
       <main style={{ padding: "40px", maxWidth: "1000px", margin: "auto" }}>
 
-        {/* CAIXA */}
+        {/* CAIXA ACÚSTICA */}
         <div style={{
           background: "white",
           padding: "20px",
@@ -33,9 +28,15 @@ export default function Home() {
             src="/caixa.jpg"
             style={{ width: "100%", borderRadius: "10px" }}
           />
-          <h2>Caixa Acústica Profissional</h2>
-          <p>MDF 15mm, vidro temperado 8mm, alto falante profissional, ideal para encarte de canto.</p>
-          <h3 style={{ color: "#0d3b26" }}>R$ 1.290,00</h3>
+          <h2>🔊 Caixa Acústica Profissional</h2>
+          <p>
+            Medidas: 65x65x35 cm<br />
+            MDF 15mm<br />
+            Vidro temperado 8mm (40x40 cm)<br />
+            Alto falante interno de alto rendimento<br />
+            Entradas de áudio nas laterais da caixa
+          </p>
+          <h3 style={{ color: "#0d3b26" }}>💰 R$ 1.290,00</h3>
           <a
             href="https://wa.me/5511984309480"
             style={{
@@ -59,12 +60,18 @@ export default function Home() {
           boxShadow: "0 0 10px rgba(0,0,0,0.1)"
         }}>
           <img
-            src="/aparelho.jpg.jpg"
+            src="/aparelho.jpg.jpg" // use exatamente este nome
             style={{ width: "100%", borderRadius: "10px" }}
           />
-          <h2>Aparelho Programador Digital</h2>
-          <p>Programação automática, rádio AM/FM, USB, cartão de memória e timer inteligente.</p>
-          <h3 style={{ color: "#0d3b26" }}>R$ 790,00</h3>
+          <h2>🎛️ Aparelho Programador Digital</h2>
+          <p>
+            Até 8 programações de liga<br />
+            Até 8 programações de desliga<br />
+            Toca pen drive e cartão de memória (MP3)<br />
+            Rádio AM/FM<br />
+            Programação pré-definida: 1h toca / 30min descansa
+          </p>
+          <h3 style={{ color: "#0d3b26" }}>💰 R$ 790,00</h3>
           <a
             href="https://wa.me/5511984309480"
             style={{
@@ -124,5 +131,3 @@ export default function Home() {
     </div>
   );
 }
-
-
