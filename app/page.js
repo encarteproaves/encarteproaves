@@ -2,101 +2,117 @@ export default function Home() {
   return (
     <main style={{
       fontFamily: "Arial, sans-serif",
-      backgroundColor: "#f4f6f8",
-      padding: "40px"
+      backgroundColor: "#f5f5f5",
+      padding: "0",
+      margin: "0"
     }}>
 
-      <h1 style={{
-        textAlign: "center",
-        fontSize: "32px",
-        marginBottom: "40px"
+      {/* BANNER */}
+      <section style={{
+        backgroundColor: "#000",
+        color: "#fff",
+        padding: "60px 20px",
+        textAlign: "center"
       }}>
-        Encarte Pro Aves
-      </h1>
-
-      {/* PRODUTO 1 */}
-      <div style={cardStyle}>
-        <img src="/caixa.jpg" style={imgStyle} />
-
-        <h2>Caixa Acústica Profissional</h2>
-
-        <p>
-          Caixa acústica para encarte de canto.
-          Fabricada em MDF 15mm,
-          vidro temperado 8mm (40x40cm),
-          alto-falante interno de alto rendimento
-          e entradas de áudio laterais.
+        <h1 style={{fontSize: "40px", marginBottom: "10px"}}>
+          Encarte Pro Aves
+        </h1>
+        <p style={{fontSize: "18px", opacity: 0.8}}>
+          Equipamentos Profissionais para Encarte de Canto
         </p>
+      </section>
 
-        <h3 style={priceStyle}>R$ 1.500,00</h3>
+      {/* PRODUTOS */}
+      <section style={{
+        display: "flex",
+        justifyContent: "center",
+        gap: "40px",
+        padding: "60px 20px",
+        flexWrap: "wrap"
+      }}>
 
-        <a
-          href="https://wa.me/55SEUNUMEROAQUI"
-          target="_blank"
-          style={buttonStyle}
-        >
-          Comprar pelo WhatsApp
-        </a>
-      </div>
+        {/* CAIXA */}
+        <div style={{
+          backgroundColor: "#fff",
+          width: "320px",
+          borderRadius: "12px",
+          boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+          overflow: "hidden",
+          textAlign: "center"
+        }}>
+          <img src="/caixa.jpg" alt="Caixa Acústica" style={{width: "100%"}} />
+          <div style={{padding: "20px"}}>
+            <h2>Caixa Acústica Profissional</h2>
+            <p>MDF 15mm • Vidro 8mm Temperado • Alto rendimento</p>
+            <h3 style={{color: "#00a859", fontSize: "24px"}}>
+              R$ 1.500,00
+            </h3>
+            <a
+              href="https://wa.me/55SEUNUMERO"
+              target="_blank"
+              style={{
+                display: "inline-block",
+                marginTop: "15px",
+                padding: "12px 25px",
+                backgroundColor: "#00a859",
+                color: "#fff",
+                textDecoration: "none",
+                borderRadius: "8px",
+                fontWeight: "bold"
+              }}
+            >
+              Comprar pelo WhatsApp
+            </a>
+          </div>
+        </div>
 
-      {/* PRODUTO 2 */}
-      <div style={cardStyle}>
-        <img src="/aparelho.jpg" style={imgStyle} />
+        {/* APARELHO */}
+        <div style={{
+          backgroundColor: "#fff",
+          width: "320px",
+          borderRadius: "12px",
+          boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+          overflow: "hidden",
+          textAlign: "center"
+        }}>
+          <img src="/aparelho.jpg" alt="Aparelho Digital" style={{width: "100%"}} />
+          <div style={{padding: "20px"}}>
+            <h2>Aparelho Digital Programável</h2>
+            <p>8 programações • USB • Cartão SD • Rádio AM/FM</p>
+            <h3 style={{color: "#00a859", fontSize: "24px"}}>
+              R$ 330,00
+            </h3>
+            <a
+              href="https://wa.me/5511984309480"
+              target="_blank"
+              style={{
+                display: "inline-block",
+                marginTop: "15px",
+                padding: "12px 25px",
+                backgroundColor: "#00a859",
+                color: "#fff",
+                textDecoration: "none",
+                borderRadius: "8px",
+                fontWeight: "bold"
+              }}
+            >
+              Comprar pelo WhatsApp
+            </a>
+          </div>
+        </div>
 
-        <h2>Aparelho Digital para Encarte</h2>
+      </section>
 
-        <p>
-          Programador digital com até 8 programações
-          de liga e 8 de desliga.
-          Toca MP3 via pendrive e cartão de memória.
-          Rádio AM/FM.
-          Programação automática 1h toca / 30min descanso.
-        </p>
-
-        <h3 style={priceStyle}>R$ 330,00</h3>
-
-        <a
-          href="https://wa.me/5511984309480"
-          target="_blank"
-          style={buttonStyle}
-        >
-          Comprar pelo WhatsApp
-        </a>
-      </div>
+      {/* RODAPÉ */}
+      <footer style={{
+        backgroundColor: "#000",
+        color: "#fff",
+        textAlign: "center",
+        padding: "20px"
+      }}>
+        © 2026 Encarte Pro Aves - Todos os direitos reservados
+      </footer>
 
     </main>
-  )
-}
-
-const cardStyle = {
-  backgroundColor: "white",
-  padding: "25px",
-  borderRadius: "12px",
-  boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-  marginBottom: "40px",
-  maxWidth: "500px",
-  margin: "0 auto 40px auto",
-  textAlign: "center"
-}
-
-const imgStyle = {
-  width: "100%",
-  borderRadius: "10px",
-  marginBottom: "15px"
-}
-
-const priceStyle = {
-  color: "#008000",
-  fontSize: "24px",
-  margin: "15px 0"
-}
-
-const buttonStyle = {
-  display: "inline-block",
-  backgroundColor: "#25D366",
-  color: "white",
-  padding: "12px 25px",
-  borderRadius: "8px",
-  textDecoration: "none",
-  fontWeight: "bold"
+  );
 }
