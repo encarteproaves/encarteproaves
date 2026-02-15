@@ -22,14 +22,16 @@ export default function Home() {
     <main style={{ fontFamily: "Arial, sans-serif" }}>
 
       {/* HEADER */}
-      <header style={{
-        backgroundColor: "#111",
-        padding: "15px 40px",
-        color: "#fff",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center"
-      }}>
+      <header
+        style={{
+          backgroundColor: "#111",
+          padding: "15px 40px",
+          color: "#fff",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center"
+        }}
+      >
         <h2>Encarte Pro Aves</h2>
 
         <div
@@ -41,24 +43,28 @@ export default function Home() {
       </header>
 
       {/* PRODUTOS */}
-      <section style={{
-        padding: "60px 20px",
-        display: "flex",
-        justifyContent: "center",
-        gap: "50px",
-        flexWrap: "wrap"
-      }}>
+      <section
+        style={{
+          padding: "60px 20px",
+          display: "flex",
+          justifyContent: "center",
+          gap: "50px",
+          flexWrap: "wrap"
+        }}
+      >
 
         {/* CAIXA */}
-        <div style={{
-          backgroundColor: "#fff",
-          width: "320px",
-          borderRadius: "15px",
-          boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
-          overflow: "hidden",
-          textAlign: "center",
-          paddingBottom: "20px"
-        }}>
+        <div
+          style={{
+            backgroundColor: "#fff",
+            width: "320px",
+            borderRadius: "15px",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+            overflow: "hidden",
+            textAlign: "center",
+            paddingBottom: "20px"
+          }}
+        >
           <img src="/caixa.jpg" style={{ width: "100%" }} />
           <h2>Caixa Acústica</h2>
           <h3>R$ 1.500,00</h3>
@@ -86,15 +92,17 @@ export default function Home() {
         </div>
 
         {/* APARELHO */}
-        <div style={{
-          backgroundColor: "#fff",
-          width: "320px",
-          borderRadius: "15px",
-          boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
-          overflow: "hidden",
-          textAlign: "center",
-          paddingBottom: "20px"
-        }}>
+        <div
+          style={{
+            backgroundColor: "#fff",
+            width: "320px",
+            borderRadius: "15px",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+            overflow: "hidden",
+            textAlign: "center",
+            paddingBottom: "20px"
+          }}
+        >
           <img src="/aparelho.jpg" style={{ width: "100%" }} />
           <h2>Aparelho Digital</h2>
           <h3>R$ 330,00</h3>
@@ -138,26 +146,31 @@ export default function Home() {
       )}
 
       {/* CARRINHO MODAL */}
-      <div style={{
-        position: "fixed",
-        top: 0,
-        right: openCart ? 0 : "-400px",
-        width: "350px",
-        height: "100%",
-        backgroundColor: "#fff",
-        boxShadow: "-5px 0 15px rgba(0,0,0,0.2)",
-        padding: "20px",
-        transition: "0.3s"
-      }}>
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          right: openCart ? 0 : "-400px",
+          width: "350px",
+          height: "100%",
+          backgroundColor: "#fff",
+          boxShadow: "-5px 0 15px rgba(0,0,0,0.2)",
+          padding: "20px",
+          transition: "0.3s"
+        }}
+      >
         <h2>Seu Carrinho</h2>
 
         {cart.length === 0 && <p>Seu carrinho está vazio</p>}
 
         {cart.map((item, index) => (
-          <div key={index} style={{
-            borderBottom: "1px solid #ddd",
-            padding: "10px 0"
-          }}>
+          <div
+            key={index}
+            style={{
+              borderBottom: "1px solid #ddd",
+              padding: "10px 0"
+            }}
+          >
             <p>{item.name}</p>
             <p>R$ {item.price.toFixed(2)}</p>
             <button
@@ -202,32 +215,36 @@ export default function Home() {
           </>
         )}
       </div>
-{/* BOTÃO WHATSAPP OFICIAL */}
-<a
-  href="https://wa.me/5511984309480"
-  target="_blank"
-  style={{
-    position: "fixed",
-    bottom: "20px",
-    right: "20px",
-    width: "60px",
-    height: "60px",
-    borderRadius: "50%",
-    backgroundColor: "#25D366",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
-    zIndex: 1000
-  }}
->
-  <img
-    src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
-    alt="WhatsApp"
-    style={{
-      width: "30px",
-      height: "30px"
-    }}
-  />
-</a>
 
+      {/* BOTÃO WHATSAPP OFICIAL */}
+      <a
+        href="https://wa.me/5511984309480"
+        target="_blank"
+        style={{
+          position: "fixed",
+          bottom: "20px",
+          right: "20px",
+          width: "60px",
+          height: "60px",
+          borderRadius: "50%",
+          backgroundColor: "#25D366",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
+          zIndex: 1000
+        }}
+      >
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+          alt="WhatsApp"
+          style={{
+            width: "30px",
+            height: "30px"
+          }}
+        />
+      </a>
+
+    </main>
+  );
+}
