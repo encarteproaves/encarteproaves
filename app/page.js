@@ -2,7 +2,7 @@ export default function Home() {
   return (
     <main style={{ fontFamily: "Arial, sans-serif", margin: 0 }}>
 
-      {/* MENU SUPERIOR */}
+      {/* MENU */}
       <header style={{
         backgroundColor: "#111",
         padding: "15px 40px",
@@ -31,25 +31,39 @@ export default function Home() {
         </a>
       </header>
 
-      {/* BANNER */}
+      {/* HERO */}
       <section style={{
-        background: "linear-gradient(135deg, #000, #222)",
+        background: "linear-gradient(135deg, #000, #333)",
         color: "#fff",
         textAlign: "center",
         padding: "100px 20px"
       }}>
         <h1 style={{ fontSize: "42px", marginBottom: "20px" }}>
-          Equipamentos Profissionais para Encarte
+          Loja Oficial Encarte Pro Aves
         </h1>
         <p style={{ fontSize: "20px", opacity: 0.8 }}>
-          Qualidade, potência e desempenho para seus pássaros
+          Equipamentos profissionais para alto desempenho
         </p>
+      </section>
+
+      {/* BENEFÍCIOS */}
+      <section style={{
+        display: "flex",
+        justifyContent: "center",
+        gap: "50px",
+        padding: "40px 20px",
+        backgroundColor: "#f4f4f4",
+        flexWrap: "wrap"
+      }}>
+        <div>🚚 Enviamos para todo Brasil</div>
+        <div>🔒 Compra segura</div>
+        <div>⭐ Produto testado e aprovado</div>
       </section>
 
       {/* PRODUTOS */}
       <section style={{
         padding: "80px 20px",
-        backgroundColor: "#f4f4f4",
+        backgroundColor: "#f9f9f9",
         display: "flex",
         justifyContent: "center",
         gap: "50px",
@@ -59,21 +73,43 @@ export default function Home() {
         {/* CAIXA */}
         <div style={{
           backgroundColor: "#fff",
-          width: "340px",
+          width: "350px",
           borderRadius: "15px",
           boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
           overflow: "hidden",
           transition: "0.3s"
         }}>
+          <div style={{
+            position: "absolute",
+            backgroundColor: "red",
+            color: "#fff",
+            padding: "5px 10px",
+            fontSize: "12px",
+            borderRadius: "0 0 8px 0"
+          }}>
+            MAIS VENDIDO
+          </div>
+
           <img src="/caixa.jpg" alt="Caixa Acústica" style={{ width: "100%" }} />
+
           <div style={{ padding: "25px" }}>
             <h2>Caixa Acústica Profissional</h2>
             <p style={{ color: "#555" }}>
-              MDF 15mm • Vidro 8mm temperado • Alto rendimento • Entradas laterais
+              MDF 15mm • Vidro 8mm • Alto rendimento • Entradas laterais
             </p>
-            <h3 style={{ color: "#000", fontSize: "26px" }}>
+
+            <p style={{ textDecoration: "line-through", color: "#999" }}>
+              R$ 1.799,00
+            </p>
+
+            <h3 style={{ fontSize: "28px", color: "#000", margin: "5px 0" }}>
               R$ 1.500,00
             </h3>
+
+            <p style={{ color: "green", fontWeight: "bold" }}>
+              ou 12x de R$ 125,00
+            </p>
+
             <a
               href="https://wa.me/55SEUNUMERO"
               target="_blank"
@@ -81,7 +117,7 @@ export default function Home() {
                 display: "block",
                 marginTop: "20px",
                 textAlign: "center",
-                padding: "12px",
+                padding: "14px",
                 backgroundColor: "#000",
                 color: "#fff",
                 borderRadius: "8px",
@@ -97,28 +133,39 @@ export default function Home() {
         {/* APARELHO */}
         <div style={{
           backgroundColor: "#fff",
-          width: "340px",
+          width: "350px",
           borderRadius: "15px",
           boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
           overflow: "hidden"
         }}>
           <img src="/aparelho.jpg" alt="Aparelho Digital" style={{ width: "100%" }} />
+
           <div style={{ padding: "25px" }}>
             <h2>Aparelho Digital Programável</h2>
             <p style={{ color: "#555" }}>
-              8 programações • USB • Cartão SD • Rádio AM/FM • Programação automática
+              8 programações • USB • Cartão SD • Rádio AM/FM
             </p>
-            <h3 style={{ color: "#000", fontSize: "26px" }}>
+
+            <p style={{ textDecoration: "line-through", color: "#999" }}>
+              R$ 399,00
+            </p>
+
+            <h3 style={{ fontSize: "28px", color: "#000", margin: "5px 0" }}>
               R$ 330,00
             </h3>
+
+            <p style={{ color: "green", fontWeight: "bold" }}>
+              ou 6x de R$ 55,00
+            </p>
+
             <a
-              href="https://wa.me/5511984309480"
+              href="https://wa.me/55SEUNUMERO"
               target="_blank"
               style={{
                 display: "block",
                 marginTop: "20px",
                 textAlign: "center",
-                padding: "12px",
+                padding: "14px",
                 backgroundColor: "#000",
                 color: "#fff",
                 borderRadius: "8px",
