@@ -204,25 +204,7 @@ export default function Home() {
       </div>
 {/* BOTÃO WHATSAPP FLUTUANTE */}
 <a
-  href="https://wa.me/5511984309480"
-  target="_blank"
-  style={{
-    position: "fixed",
-    bottom: "20px",
-    right: "20px",
-    backgroundColor: "#25D366",
-    color: "#fff",
-    padding: "15px",
-    borderRadius: "50%",
-    fontSize: "22px",
-    textDecoration: "none",
-    boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
-    zIndex: 1000
-  }}
->
-  💬
-</a>
-{/* BOTÃO WHATSAPP FLUTUANTE */}
+  {/* BOTÃO WHATSAPP OFICIAL */}
 <a
   href="https://wa.me/5511984309480"
   target="_blank"
@@ -230,39 +212,23 @@ export default function Home() {
     position: "fixed",
     bottom: "20px",
     right: "20px",
-    backgroundColor: "#25D366",
-    color: "#fff",
-    padding: "15px",
+    width: "60px",
+    height: "60px",
     borderRadius: "50%",
-    fontSize: "22px",
-    textDecoration: "none",
+    backgroundColor: "#25D366",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
     boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
     zIndex: 1000
   }}
 >
-  💬
+  <img
+    src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+    alt="WhatsApp"
+    style={{
+      width: "30px",
+      height: "30px"
+    }}
+  />
 </a>
-{/* BOTÃO WHATSAPP FLUTUANTE */}
-<a
-  href="https://wa.me/5511984309480"
-  target="_blank"
-  style={{
-    position: "fixed",
-    bottom: "20px",
-    right: "20px",
-    backgroundColor: "#25D366",
-    color: "#fff",
-    padding: "15px",
-    borderRadius: "50%",
-    fontSize: "22px",
-    textDecoration: "none",
-    boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
-    zIndex: 1000
-  }}
->
-  💬
-</a>
-
-    </main>
-  );
-}
