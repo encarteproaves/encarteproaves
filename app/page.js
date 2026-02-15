@@ -1,4 +1,15 @@
+"use client";
+import { useState } from "react";
+
 export default function Home() {
+  const [cart, setCart] = useState([]);
+
+  const addToCart = (product) => {
+    setCart([...cart, product]);
+  };
+
+  const total = cart.reduce((sum, item) => sum + item.price, 0);
+
   return (
     <main style={{ fontFamily: "Arial, sans-serif", margin: 0 }}>
 
@@ -9,61 +20,17 @@ export default function Home() {
         color: "#fff",
         display: "flex",
         justifyContent: "space-between",
-        alignItems: "center",
-        position: "sticky",
-        top: 0,
-        zIndex: 1000
+        alignItems: "center"
       }}>
-        <h2 style={{ margin: 0 }}>Encarte Pro Aves</h2>
-        <a 
-          href="https://wa.me/55SEUNUMERO"
-          target="_blank"
-          style={{
-            backgroundColor: "#25D366",
-            padding: "10px 18px",
-            borderRadius: "6px",
-            color: "#fff",
-            textDecoration: "none",
-            fontWeight: "bold"
-          }}
-        >
-          WhatsApp
-        </a>
+        <h2>Encarte Pro Aves</h2>
+        <div>
+          🛒 {cart.length} itens | R$ {total.toFixed(2)}
+        </div>
       </header>
-
-      {/* HERO */}
-      <section style={{
-        background: "linear-gradient(135deg, #000, #333)",
-        color: "#fff",
-        textAlign: "center",
-        padding: "100px 20px"
-      }}>
-        <h1 style={{ fontSize: "42px", marginBottom: "20px" }}>
-          Loja Oficial Encarte Pro Aves
-        </h1>
-        <p style={{ fontSize: "20px", opacity: 0.8 }}>
-          Equipamentos profissionais para alto desempenho
-        </p>
-      </section>
-
-      {/* BENEFÍCIOS */}
-      <section style={{
-        display: "flex",
-        justifyContent: "center",
-        gap: "50px",
-        padding: "40px 20px",
-        backgroundColor: "#f4f4f4",
-        flexWrap: "wrap"
-      }}>
-        <div>🚚 Enviamos para todo Brasil</div>
-        <div>🔒 Compra segura</div>
-        <div>⭐ Produto testado e aprovado</div>
-      </section>
 
       {/* PRODUTOS */}
       <section style={{
-        padding: "80px 20px",
-        backgroundColor: "#f9f9f9",
+        padding: "60px 20px",
         display: "flex",
         justifyContent: "center",
         gap: "50px",
@@ -73,122 +40,109 @@ export default function Home() {
         {/* CAIXA */}
         <div style={{
           backgroundColor: "#fff",
-          width: "350px",
+          width: "340px",
           borderRadius: "15px",
           boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
           overflow: "hidden",
-          transition: "0.3s"
+          textAlign: "center",
+          paddingBottom: "20px"
         }}>
-          <div style={{
-            position: "absolute",
-            backgroundColor: "red",
-            color: "#fff",
-            padding: "5px 10px",
-            fontSize: "12px",
-            borderRadius: "0 0 8px 0"
-          }}>
-            MAIS VENDIDO
-          </div>
+          <img src="/caixa.jpg" style={{ width: "100%" }} />
+          <h2>Caixa Acústica</h2>
+          <h3>R$ 1.500,00</h3>
 
-          <img src="/caixa.jpg" alt="Caixa Acústica" style={{ width: "100%" }} />
+          <button
+            onClick={() =>
+              addToCart({
+                name: "Caixa",
+                price: 1500,
+                link: "https://mpago.la/2foFNjY"
+              })
+            }
+            style={{
+              padding: "12px 20px",
+              margin: "10px",
+              backgroundColor: "#000",
+              color: "#fff",
+              border: "none",
+              borderRadius: "8px",
+              cursor: "pointer"
+            }}
+          >
+            Adicionar ao Carrinho
+          </button>
 
-          <div style={{ padding: "25px" }}>
-            <h2>Caixa Acústica Profissional</h2>
-            <p style={{ color: "#555" }}>
-              MDF 15mm • Vidro 8mm • Alto rendimento • Entradas laterais
-            </p>
-
-            <p style={{ textDecoration: "line-through", color: "#999" }}>
-              R$ 1.799,00
-            </p>
-
-            <h3 style={{ fontSize: "28px", color: "#000", margin: "5px 0" }}>
-              R$ 1.500,00
-            </h3>
-
-            <p style={{ color: "green", fontWeight: "bold" }}>
-              ou 12x de R$ 125,00
-            </p>
-
-            <a
-              href="https://wa.me/55SEUNUMERO"
-              target="_blank"
-              style={{
-                display: "block",
-                marginTop: "20px",
-                textAlign: "center",
-                padding: "14px",
-                backgroundColor: "#000",
-                color: "#fff",
-                borderRadius: "8px",
-                textDecoration: "none",
-                fontWeight: "bold"
-              }}
-            >
-              Comprar Agora
-            </a>
-          </div>
+          <a
+            href="https://mpago.la/2foFNjY"
+            target="_blank"
+            style={{
+              display: "block",
+              marginTop: "10px",
+              color: "green",
+              fontWeight: "bold"
+            }}
+          >
+            Comprar Agora
+          </a>
         </div>
 
         {/* APARELHO */}
         <div style={{
           backgroundColor: "#fff",
-          width: "350px",
+          width: "340px",
           borderRadius: "15px",
           boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
-          overflow: "hidden"
+          overflow: "hidden",
+          textAlign: "center",
+          paddingBottom: "20px"
         }}>
-          <img src="/aparelho.jpg" alt="Aparelho Digital" style={{ width: "100%" }} />
+          <img src="/aparelho.jpg" style={{ width: "100%" }} />
+          <h2>Aparelho Digital</h2>
+          <h3>R$ 330,00</h3>
 
-          <div style={{ padding: "25px" }}>
-            <h2>Aparelho Digital Programável</h2>
-            <p style={{ color: "#555" }}>
-              8 programações • USB • Cartão SD • Rádio AM/FM
-            </p>
+          <button
+            onClick={() =>
+              addToCart({
+                name: "Aparelho",
+                price: 330,
+                link: "https://mpago.la/1Po2ehy"
+              })
+            }
+            style={{
+              padding: "12px 20px",
+              margin: "10px",
+              backgroundColor: "#000",
+              color: "#fff",
+              border: "none",
+              borderRadius: "8px",
+              cursor: "pointer"
+            }}
+          >
+            Adicionar ao Carrinho
+          </button>
 
-            <p style={{ textDecoration: "line-through", color: "#999" }}>
-              R$ 399,00
-            </p>
-
-            <h3 style={{ fontSize: "28px", color: "#000", margin: "5px 0" }}>
-              R$ 330,00
-            </h3>
-
-            <p style={{ color: "green", fontWeight: "bold" }}>
-              ou 6x de R$ 55,00
-            </p>
-
-            <a
-              href="https://wa.me/55SEUNUMERO"
-              target="_blank"
-              style={{
-                display: "block",
-                marginTop: "20px",
-                textAlign: "center",
-                padding: "14px",
-                backgroundColor: "#000",
-                color: "#fff",
-                borderRadius: "8px",
-                textDecoration: "none",
-                fontWeight: "bold"
-              }}
-            >
-              Comprar Agora
-            </a>
-          </div>
+          <a
+            href="https://mpago.la/1Po2ehy"
+            target="_blank"
+            style={{
+              display: "block",
+              marginTop: "10px",
+              color: "green",
+              fontWeight: "bold"
+            }}
+          >
+            Comprar Agora
+          </a>
         </div>
-
       </section>
 
-      {/* RODAPÉ */}
-      <footer style={{
-        backgroundColor: "#111",
-        color: "#fff",
-        textAlign: "center",
-        padding: "30px"
-      }}>
-        © 2026 Encarte Pro Aves - Loja Oficial
-      </footer>
+      {/* FINALIZAR */}
+      {cart.length > 0 && (
+        <section style={{ textAlign: "center", padding: "40px" }}>
+          <h2>Total: R$ {total.toFixed(2)}</h2>
+          <p>Para finalizar, escolha o produto no carrinho acima e clique em Comprar Agora.</p>
+        </section>
+      )}
 
     </main>
   );
