@@ -9,7 +9,7 @@
   <h2 style={{ color: "#f0c14b" }}>Encarte Pro Aves</h2>
 
   <a
-    href="https://wa.me/55SEUNUMERO"
+    href="https://wa.me/5511984309480"
     target="_blank"
     style={{
       backgroundColor: "#25D366",
