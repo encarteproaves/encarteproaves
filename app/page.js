@@ -202,9 +202,7 @@ export default function Home() {
           </>
         )}
       </div>
-{/* BOTÃO WHATSAPP FLUTUANTE */}
-<a
-  {/* BOTÃO WHATSAPP OFICIAL */}
+{/* BOTÃO WHATSAPP OFICIAL */}
 <a
   href="https://wa.me/5511984309480"
   target="_blank"
@@ -232,3 +230,4 @@ export default function Home() {
     }}
   />
 </a>
+
