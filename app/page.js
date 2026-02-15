@@ -202,6 +202,26 @@ export default function Home() {
           </>
         )}
       </div>
+{/* BOTÃO WHATSAPP FLUTUANTE */}
+<a
+  href="https://wa.me/5511984309480"
+  target="_blank"
+  style={{
+    position: "fixed",
+    bottom: "20px",
+    right: "20px",
+    backgroundColor: "#25D366",
+    color: "#fff",
+    padding: "15px",
+    borderRadius: "50%",
+    fontSize: "22px",
+    textDecoration: "none",
+    boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
+    zIndex: 1000
+  }}
+>
+  💬
+</a>
 
     </main>
   );
