@@ -1,67 +1,95 @@
 export default function Home() {
   return (
-    <main style={{
-      fontFamily: "Arial, sans-serif",
-      backgroundColor: "#f5f5f5",
-      padding: "0",
-      margin: "0"
-    }}>
+    <main style={{ fontFamily: "Arial, sans-serif", margin: 0 }}>
+
+      {/* MENU SUPERIOR */}
+      <header style={{
+        backgroundColor: "#111",
+        padding: "15px 40px",
+        color: "#fff",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        position: "sticky",
+        top: 0,
+        zIndex: 1000
+      }}>
+        <h2 style={{ margin: 0 }}>Encarte Pro Aves</h2>
+        <a 
+          href="https://wa.me/55SEUNUMERO"
+          target="_blank"
+          style={{
+            backgroundColor: "#25D366",
+            padding: "10px 18px",
+            borderRadius: "6px",
+            color: "#fff",
+            textDecoration: "none",
+            fontWeight: "bold"
+          }}
+        >
+          WhatsApp
+        </a>
+      </header>
 
       {/* BANNER */}
       <section style={{
-        backgroundColor: "#000",
+        background: "linear-gradient(135deg, #000, #222)",
         color: "#fff",
-        padding: "60px 20px",
-        textAlign: "center"
+        textAlign: "center",
+        padding: "100px 20px"
       }}>
-        <h1 style={{fontSize: "40px", marginBottom: "10px"}}>
-          Encarte Pro Aves
+        <h1 style={{ fontSize: "42px", marginBottom: "20px" }}>
+          Equipamentos Profissionais para Encarte
         </h1>
-        <p style={{fontSize: "18px", opacity: 0.8}}>
-          Equipamentos Profissionais para Encarte de Canto
+        <p style={{ fontSize: "20px", opacity: 0.8 }}>
+          Qualidade, potência e desempenho para seus pássaros
         </p>
       </section>
 
       {/* PRODUTOS */}
       <section style={{
+        padding: "80px 20px",
+        backgroundColor: "#f4f4f4",
         display: "flex",
         justifyContent: "center",
-        gap: "40px",
-        padding: "60px 20px",
+        gap: "50px",
         flexWrap: "wrap"
       }}>
 
         {/* CAIXA */}
         <div style={{
           backgroundColor: "#fff",
-          width: "320px",
-          borderRadius: "12px",
-          boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+          width: "340px",
+          borderRadius: "15px",
+          boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
           overflow: "hidden",
-          textAlign: "center"
+          transition: "0.3s"
         }}>
-          <img src="/caixa.jpg" alt="Caixa Acústica" style={{width: "100%"}} />
-          <div style={{padding: "20px"}}>
+          <img src="/caixa.jpg" alt="Caixa Acústica" style={{ width: "100%" }} />
+          <div style={{ padding: "25px" }}>
             <h2>Caixa Acústica Profissional</h2>
-            <p>MDF 15mm • Vidro 8mm Temperado • Alto rendimento</p>
-            <h3 style={{color: "#00a859", fontSize: "24px"}}>
+            <p style={{ color: "#555" }}>
+              MDF 15mm • Vidro 8mm temperado • Alto rendimento • Entradas laterais
+            </p>
+            <h3 style={{ color: "#000", fontSize: "26px" }}>
               R$ 1.500,00
             </h3>
             <a
               href="https://wa.me/55SEUNUMERO"
               target="_blank"
               style={{
-                display: "inline-block",
-                marginTop: "15px",
-                padding: "12px 25px",
-                backgroundColor: "#00a859",
+                display: "block",
+                marginTop: "20px",
+                textAlign: "center",
+                padding: "12px",
+                backgroundColor: "#000",
                 color: "#fff",
-                textDecoration: "none",
                 borderRadius: "8px",
+                textDecoration: "none",
                 fontWeight: "bold"
               }}
             >
-              Comprar pelo WhatsApp
+              Comprar Agora
             </a>
           </div>
         </div>
@@ -69,34 +97,36 @@ export default function Home() {
         {/* APARELHO */}
         <div style={{
           backgroundColor: "#fff",
-          width: "320px",
-          borderRadius: "12px",
-          boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
-          overflow: "hidden",
-          textAlign: "center"
+          width: "340px",
+          borderRadius: "15px",
+          boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+          overflow: "hidden"
         }}>
-          <img src="/aparelho.jpg" alt="Aparelho Digital" style={{width: "100%"}} />
-          <div style={{padding: "20px"}}>
+          <img src="/aparelho.jpg" alt="Aparelho Digital" style={{ width: "100%" }} />
+          <div style={{ padding: "25px" }}>
             <h2>Aparelho Digital Programável</h2>
-            <p>8 programações • USB • Cartão SD • Rádio AM/FM</p>
-            <h3 style={{color: "#00a859", fontSize: "24px"}}>
+            <p style={{ color: "#555" }}>
+              8 programações • USB • Cartão SD • Rádio AM/FM • Programação automática
+            </p>
+            <h3 style={{ color: "#000", fontSize: "26px" }}>
               R$ 330,00
             </h3>
             <a
               href="https://wa.me/5511984309480"
               target="_blank"
               style={{
-                display: "inline-block",
-                marginTop: "15px",
-                padding: "12px 25px",
-                backgroundColor: "#00a859",
+                display: "block",
+                marginTop: "20px",
+                textAlign: "center",
+                padding: "12px",
+                backgroundColor: "#000",
                 color: "#fff",
-                textDecoration: "none",
                 borderRadius: "8px",
+                textDecoration: "none",
                 fontWeight: "bold"
               }}
             >
-              Comprar pelo WhatsApp
+              Comprar Agora
             </a>
           </div>
         </div>
@@ -105,12 +135,12 @@ export default function Home() {
 
       {/* RODAPÉ */}
       <footer style={{
-        backgroundColor: "#000",
+        backgroundColor: "#111",
         color: "#fff",
         textAlign: "center",
-        padding: "20px"
+        padding: "30px"
       }}>
-        © 2026 Encarte Pro Aves - Todos os direitos reservados
+        © 2026 Encarte Pro Aves - Loja Oficial
       </footer>
 
     </main>
