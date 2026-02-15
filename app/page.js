@@ -3,17 +3,25 @@ import { useState } from "react";
 
 export default function Home() {
   const [cart, setCart] = useState([]);
+  const [openCart, setOpenCart] = useState(false);
 
   const addToCart = (product) => {
     setCart([...cart, product]);
+    setOpenCart(true);
+  };
+
+  const removeItem = (index) => {
+    const newCart = [...cart];
+    newCart.splice(index, 1);
+    setCart(newCart);
   };
 
   const total = cart.reduce((sum, item) => sum + item.price, 0);
 
   return (
-    <main style={{ fontFamily: "Arial, sans-serif", margin: 0 }}>
+    <main style={{ fontFamily: "Arial, sans-serif" }}>
 
-      {/* MENU */}
+      {/* HEADER */}
       <header style={{
         backgroundColor: "#111",
         padding: "15px 40px",
@@ -23,8 +31,12 @@ export default function Home() {
         alignItems: "center"
       }}>
         <h2>Encarte Pro Aves</h2>
-        <div>
-          🛒 {cart.length} itens | R$ {total.toFixed(2)}
+
+        <div
+          onClick={() => setOpenCart(true)}
+          style={{ cursor: "pointer" }}
+        >
+          🛒 {cart.length}
         </div>
       </header>
 
@@ -40,7 +52,7 @@ export default function Home() {
         {/* CAIXA */}
         <div style={{
           backgroundColor: "#fff",
-          width: "340px",
+          width: "320px",
           borderRadius: "15px",
           boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
           overflow: "hidden",
@@ -54,14 +66,14 @@ export default function Home() {
           <button
             onClick={() =>
               addToCart({
-                name: "Caixa",
+                name: "Caixa Acústica",
                 price: 1500,
                 link: "https://mpago.la/2foFNjY"
               })
             }
             style={{
               padding: "12px 20px",
-              margin: "10px",
+              marginTop: "10px",
               backgroundColor: "#000",
               color: "#fff",
               border: "none",
@@ -71,25 +83,12 @@ export default function Home() {
           >
             Adicionar ao Carrinho
           </button>
-
-          <a
-            href="https://mpago.la/2foFNjY"
-            target="_blank"
-            style={{
-              display: "block",
-              marginTop: "10px",
-              color: "green",
-              fontWeight: "bold"
-            }}
-          >
-            Comprar Agora
-          </a>
         </div>
 
         {/* APARELHO */}
         <div style={{
           backgroundColor: "#fff",
-          width: "340px",
+          width: "320px",
           borderRadius: "15px",
           boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
           overflow: "hidden",
@@ -103,14 +102,14 @@ export default function Home() {
           <button
             onClick={() =>
               addToCart({
-                name: "Aparelho",
+                name: "Aparelho Digital",
                 price: 330,
                 link: "https://mpago.la/1Po2ehy"
               })
             }
             style={{
               padding: "12px 20px",
-              margin: "10px",
+              marginTop: "10px",
               backgroundColor: "#000",
               color: "#fff",
               border: "none",
@@ -120,29 +119,89 @@ export default function Home() {
           >
             Adicionar ao Carrinho
           </button>
-
-          <a
-            href="https://mpago.la/1Po2ehy"
-            target="_blank"
-            style={{
-              display: "block",
-              marginTop: "10px",
-              color: "green",
-              fontWeight: "bold"
-            }}
-          >
-            Comprar Agora
-          </a>
         </div>
       </section>
 
-      {/* FINALIZAR */}
-      {cart.length > 0 && (
-        <section style={{ textAlign: "center", padding: "40px" }}>
-          <h2>Total: R$ {total.toFixed(2)}</h2>
-          <p>Para finalizar, escolha o produto no carrinho acima e clique em Comprar Agora.</p>
-        </section>
+      {/* OVERLAY */}
+      {openCart && (
+        <div
+          onClick={() => setOpenCart(false)}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0,0,0,0.5)"
+          }}
+        />
       )}
+
+      {/* CARRINHO MODAL */}
+      <div style={{
+        position: "fixed",
+        top: 0,
+        right: openCart ? 0 : "-400px",
+        width: "350px",
+        height: "100%",
+        backgroundColor: "#fff",
+        boxShadow: "-5px 0 15px rgba(0,0,0,0.2)",
+        padding: "20px",
+        transition: "0.3s"
+      }}>
+        <h2>Seu Carrinho</h2>
+
+        {cart.length === 0 && <p>Seu carrinho está vazio</p>}
+
+        {cart.map((item, index) => (
+          <div key={index} style={{
+            borderBottom: "1px solid #ddd",
+            padding: "10px 0"
+          }}>
+            <p>{item.name}</p>
+            <p>R$ {item.price.toFixed(2)}</p>
+            <button
+              onClick={() => removeItem(index)}
+              style={{
+                backgroundColor: "red",
+                color: "#fff",
+                border: "none",
+                padding: "5px 10px",
+                borderRadius: "5px",
+                cursor: "pointer"
+              }}
+            >
+              Remover
+            </button>
+          </div>
+        ))}
+
+        {cart.length > 0 && (
+          <>
+            <h3 style={{ marginTop: "20px" }}>
+              Total: R$ {total.toFixed(2)}
+            </h3>
+
+            <a
+              href={cart[cart.length - 1].link}
+              target="_blank"
+              style={{
+                display: "block",
+                marginTop: "20px",
+                textAlign: "center",
+                padding: "12px",
+                backgroundColor: "#000",
+                color: "#fff",
+                borderRadius: "8px",
+                textDecoration: "none",
+                fontWeight: "bold"
+              }}
+            >
+              Finalizar Compra
+            </a>
+          </>
+        )}
+      </div>
 
     </main>
   );
