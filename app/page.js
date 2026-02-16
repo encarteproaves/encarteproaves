@@ -19,8 +19,8 @@ export default function Home() {
   const total = cart.reduce((sum, item) => sum + item.price, 0);
 
   return (
-    <main style={{ fontFamily: "Arial, sans-serif" }}>
-
+    <div style={{ fontFamily: "Arial, sans-serif" }}>
+</div>
       {/* HEADER */}
       <header
   style={{
