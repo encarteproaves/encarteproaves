@@ -25,23 +25,50 @@ export default function Home() {
       <header
   style={{
     background: "linear-gradient(90deg, #0d1b2a, #1b263b)",
-    padding: "30px 0",
+    padding: "35px 50px",
+    color: "#fff",
     display: "flex",
-    justifyContent: "center",
+    justifyContent: "space-between",
     alignItems: "center",
-    boxShadow: "0 4px 10px rgba(0,0,0,0.4)"
+    position: "relative"
   }}
 >
+
   <img
     src="/logo.png"
     alt="Encarte Pro Aves"
     style={{
       width: "220px",
-      height: "auto",
-      display: "block"
+      height: "auto"
+    }}
+  />
+
+  <div
+    style={{
+      flex: 1,
+      textAlign: "center",
+      fontSize: "20px",
+      fontWeight: "500",
+      letterSpacing: "1px"
+    }}
+  >
+    Tecnologia e Qualidade para o Melhor Encarte de Canto
+  </div>
+
+  <div style={{ width: "220px" }}></div>
+
+  <div
+    style={{
+      position: "absolute",
+      bottom: 0,
+      left: 0,
+      width: "100%",
+      height: "3px",
+      background: "linear-gradient(90deg, #c9a227, #f5d76e, #c9a227)"
     }}
   />
 </header>
+
        <img 
   src="/logo.png"
   alt="Logo Encarte Pro Aves"
