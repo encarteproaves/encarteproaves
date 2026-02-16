@@ -24,7 +24,7 @@ export default function Home() {
       {/* HEADER */}
       <header
   style={{
-    background: "linear-gradient(90deg, #0d1b2a, #1b263b)",
+    background: "red",
     padding: "35px 50px",
     color: "#fff",
     display: "flex",
