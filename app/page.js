@@ -32,7 +32,14 @@ export default function Home() {
           alignItems: "center"
         }}
       >
-        <h2>Encarte Pro Aves</h2>
+        <img 
+  src="/logo.png" 
+  alt="Encarte Pro Aves"
+  style={{
+    height: "45px"
+  }}
+/>
+
 
         <div
           onClick={() => setOpenCart(true)}
