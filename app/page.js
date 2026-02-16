@@ -34,11 +34,9 @@ export default function Home() {
       >
         <img 
   src="/logo.png"
-  alt="Encarte Pro Aves"
-  style={{
-    height: "50px",
-    objectFit: "contain"
-  }}
+  alt="Logo Encarte Pro Aves"
+  width="180"
+  style={{ objectFit: "contain" }}
 />
         <div
           onClick={() => setOpenCart(true)}
