@@ -23,15 +23,25 @@ export default function Home() {
 
       {/* HEADER */}
       <header
-        style={{
-          backgroundColor: "#111",
-          padding: "15px 40px",
-          color: "#fff",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center"
-        }}
-      >
+  style={{
+    background: "linear-gradient(90deg, #0d1b2a, #1b263b)",
+    padding: "30px 0",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    boxShadow: "0 4px 10px rgba(0,0,0,0.4)"
+  }}
+>
+  <img
+    src="/logo.png"
+    alt="Encarte Pro Aves"
+    style={{
+      width: "220px",
+      height: "auto",
+      display: "block"
+    }}
+  />
+</header>
        <img 
   src="/logo.png"
   alt="Logo Encarte Pro Aves"
