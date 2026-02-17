@@ -20,7 +20,7 @@ export default function Home() {
       name: "Aparelho Digital",
       price: 330,
       mpLink: "https://mpago.la/1Po2ehy",
-      image: "/aparelho-novo.jpg",
+      image: "/aparelho.jpg", // ⚠️ confirme o nome na pasta public
       description:
         "Aparelho digital para encarte de canto, com até 8 programações de liga/desliga, toca pen drive e cartão de memória, além de rádio AM/FM."
     }
@@ -31,71 +31,32 @@ export default function Home() {
     setOpenCart(true);
   };
 
-  const removeItem = (index) => {
-    const newCart = [...cart];
-    newCart.splice(index, 1);
-    setCart(newCart);
-  };
-
-  const total = cart.reduce(
-    (sum, item) => sum + item.price + (frete[item.name] || 0),
-    0
-  );
-
   const calcularFrete = (productName) => {
     if (!cep) {
-      alert("Informe o CEP primeiro!");
+      alert("Digite o CEP!");
       return;
     }
-    const valorFrete = 20;
+
+    const valorFrete = 20; // simulação
     setFrete({ ...frete, [productName]: valorFrete });
   };
 
   return (
-    <div
-      style={{
-        fontFamily: "'Segoe UI', sans-serif",
-        background: "#f4f6f8",
-        minHeight: "100vh"
-      }}
-    >
+    <div style={{ fontFamily: "Segoe UI, sans-serif", background: "#f4f6f8", minHeight: "100vh" }}>
+      
       {/* HEADER */}
       <header
         style={{
           background: "#000",
-          padding: "40px 50px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          position: "relative",
+          padding: "40px",
           color: "#f5d76e",
-          fontFamily: "'Arial Black', Arial, sans-serif"
+          textAlign: "center",
+          fontFamily: "Arial Black"
         }}
       >
-        <img src="/logo.png" style={{ width: "250px" }} />
-
-        <div style={{ flex: 1, textAlign: "center" }}>
-          <div style={{ fontSize: "30px", fontWeight: "900" }}>
-            Encarte Pro Aves
-          </div>
-          <div style={{ fontSize: "18px", marginTop: "5px" }}>
-            Tecnologia e Qualidade para o Melhor Encarte de Canto
-          </div>
-        </div>
-
-        <div style={{ width: "250px" }}></div>
-
-        <div
-          style={{
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            width: "100%",
-            height: "3px",
-            background:
-              "linear-gradient(90deg, #c9a227, #f5d76e, #c9a227)"
-          }}
-        />
+        <img src="/logo.png" style={{ width: "220px" }} />
+        <h1>Encarte Pro Aves</h1>
+        <p>Tecnologia e Qualidade para o Melhor Encarte de Canto</p>
       </header>
 
       {/* PRODUTOS */}
@@ -112,22 +73,14 @@ export default function Home() {
           <div
             key={i}
             style={{
-              backgroundColor: "#fff",
+              background: "#fff",
               width: "340px",
               borderRadius: "18px",
               boxShadow: "0 15px 40px rgba(0,0,0,0.08)",
               overflow: "hidden",
               textAlign: "center",
-              paddingBottom: "25px",
-              transition: "0.3s",
-              cursor: "pointer"
+              paddingBottom: "25px"
             }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.transform = "translateY(-8px)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.transform = "translateY(0)")
-            }
           >
             {/* IMAGEM */}
             {product.name === "Aparelho Digital" ? (
@@ -136,7 +89,6 @@ export default function Home() {
                   backgroundColor: "#ffffff",
                   padding: "25px",
                   display: "flex",
-                  alignItems: "center",
                   justifyContent: "center"
                 }}
               >
@@ -145,78 +97,73 @@ export default function Home() {
                   style={{
                     maxWidth: "100%",
                     maxHeight: "220px",
-                    objectFit: "contain",
-                    transition: "0.3s"
+                    objectFit: "contain"
                   }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.transform = "scale(1.05)")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.transform = "scale(1)")
-                  }
                 />
               </div>
             ) : (
-              <img
-                src={product.image}
-                style={{
-                  width: "100%",
-                  transition: "0.3s"
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.transform = "scale(1.05)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.transform = "scale(1)")
-                }
-              />
+              <img src={product.image} style={{ width: "100%" }} />
             )}
 
-            <h2 style={{ margin: "18px 0 10px 0" }}>
-              {product.name}
-            </h2>
+            <h2 style={{ margin: "15px 0 5px" }}>{product.name}</h2>
 
-            <p
-              style={{
-                color: "#555",
-                fontSize: "14px",
-                padding: "0 20px",
-                minHeight: "60px"
-              }}
-            >
+            <p style={{ fontSize: "14px", color: "#555", padding: "0 20px" }}>
               {product.description}
             </p>
 
-            <h3
-              style={{
-                color: "#0d3b26",
-                margin: "15px 0",
-                fontSize: "22px"
-              }}
-            >
+            <h3 style={{ color: "#0d3b26", margin: "15px 0" }}>
               R$ {product.price.toFixed(2)}
             </h3>
 
+            {/* FRETE */}
+            <div style={{ padding: "0 20px", marginBottom: "15px" }}>
+              <input
+                type="text"
+                placeholder="Digite seu CEP"
+                value={cep}
+                onChange={(e) => setCep(e.target.value)}
+                style={{
+                  padding: "8px",
+                  width: "65%",
+                  borderRadius: "5px",
+                  border: "1px solid #ccc"
+                }}
+              />
+              <button
+                onClick={() => calcularFrete(product.name)}
+                style={{
+                  padding: "8px 12px",
+                  marginLeft: "5px",
+                  background: "#0d3b26",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "5px",
+                  cursor: "pointer"
+                }}
+              >
+                Calcular
+              </button>
+
+              {frete[product.name] && (
+                <p style={{ marginTop: "8px", fontWeight: "bold" }}>
+                  Frete: R$ {frete[product.name].toFixed(2)}
+                </p>
+              )}
+            </div>
+
             {/* BOTÕES */}
-            <div
-              style={{
-                display: "flex",
-                gap: "10px",
-                padding: "0 20px"
-              }}
-            >
+            <div style={{ display: "flex", gap: "10px", padding: "0 20px" }}>
               <a
                 href={product.mpLink}
                 target="_blank"
                 style={{
                   flex: 1,
                   padding: "12px",
-                  backgroundColor: "#ffc107",
+                  background: "#ffc107",
                   color: "#000",
                   borderRadius: "10px",
-                  fontWeight: "bold",
                   textDecoration: "none",
-                  textAlign: "center"
+                  fontWeight: "bold"
                 }}
               >
                 Mercado Pago
@@ -227,7 +174,7 @@ export default function Home() {
                 style={{
                   flex: 1,
                   padding: "12px",
-                  backgroundColor: "#0d3b26",
+                  background: "#0d3b26",
                   color: "#fff",
                   border: "none",
                   borderRadius: "10px",
