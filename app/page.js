@@ -1,21 +1,27 @@
-{/* IMAGEM PADRONIZADA */}
+{/* ÁREA DA IMAGEM PADRONIZADA */}
 <div
   style={{
-    height: "260px",            // 🔥 altura fixa igual para os dois
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+    width: "100%",
+    height: "300px",
     backgroundColor:
       product.name === "Aparelho Digital" ? "#ffffff" : "transparent",
-    padding: "20px"
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
   }}
 >
   <img
     src={product.image}
     style={{
-      maxWidth: "100%",
-      maxHeight: "100%",
-      objectFit: "contain"
+      width:
+        product.name === "Aparelho Digital" ? "auto" : "100%",
+      height:
+        product.name === "Aparelho Digital" ? "85%" : "100%",
+      objectFit:
+        product.name === "Aparelho Digital"
+          ? "contain"
+          : "cover"
     }}
   />
 </div>
+
