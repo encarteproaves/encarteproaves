@@ -67,13 +67,6 @@ export default function Home() {
     }}
   />
 </header>
-
-       <img 
-  src="/logo.png"
-  alt="Logo Encarte Pro Aves"
-  width="180"
-  style={{ objectFit: "contain" }}
-/>
         <div
           onClick={() => setOpenCart(true)}
           style={{ cursor: "pointer" }}
