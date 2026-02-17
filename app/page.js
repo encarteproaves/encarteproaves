@@ -20,7 +20,6 @@ export default function Home() {
 
   return (
     <div style={{ fontFamily: "Arial, sans-serif", background: "yellow" }}>
-</div>
       {/* HEADER */}
       <header
   style={{
