@@ -19,11 +19,11 @@ export default function Home() {
   const total = cart.reduce((sum, item) => sum + item.price, 0);
 
   return (
-    <div style={{ fontFamily: "Arial, sans-serif", background: "yellow" }}>
+    <div style={{ fontFamily: "Arial, sans-serif", background: "#f5f5f5" }}>
       {/* HEADER */}
       <header
   style={{
-    background: "red",
+    background: background: "#000",
     padding: "35px 50px",
     color: "#fff",
     display: "flex",
