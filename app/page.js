@@ -8,23 +8,24 @@ export default function Home() {
   const [cep, setCep] = useState("");
 
   const products = [
-    {
-      name: "Caixa Acústica",
-      price: 1500,
-      mpLink: "https://mpago.la/2foFNjY",
-      image: "/caixa.jpg",
-      description:
-        "Caixa acústica para encarte de canto, com vidro temperado, alto falante de alto rendimento e design robusto em MDF de 15mm."
-    },
-    {
-      name: "Aparelho Digital",
-      price: 330,
-      mpLink: "https://mpago.la/1Po2ehy",
-      image: "/aparelho.jpg",
-      description:
-        "Aparelho digital para encarte de canto, com até 8 programações de liga/desliga, toca pen drive e cartão de memória, além de rádio AM/FM."
-    }
-  ];
+  {
+    name: "Caixa Acústica",
+    price: 1500,
+    mpLink: "https://mpago.la/2foFNjY",
+    image: "/caixa.jpg",
+    description:
+      "Caixa acústica para encarte de canto, com medidas 65x65x35 cm, vidro temperado, alto falante de alto rendimento e design robusto em MDF de 15mm."
+  },
+  {
+    name: "Aparelho Digital",
+    price: 330,
+    mpLink: "https://mpago.la/1Po2ehy",
+    image: "/aparelho.jpg",
+    description:
+      "Aparelho digital para encarte de canto, com até 8 programações de liga/desliga, toca pen drive e cartão de memória, além de rádio AM/FM."
+  }
+];
+
 
   const addToCart = (product) => {
     setCart([...cart, product]);
