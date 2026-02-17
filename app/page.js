@@ -35,21 +35,19 @@ export default function Home() {
 
   const total = cart.reduce((sum, item) => sum + item.price + (frete[item.name] || 0), 0);
 
-  // Simulação simples de frete: R$ 20 por padrão
   const calcularFrete = (productName) => {
     if (!cep) {
       alert("Informe o CEP primeiro!");
       return;
     }
-    // aqui você pode integrar API real dos Correios
-    const valorFrete = 20; 
+    const valorFrete = 20; // Simulação de frete
     setFrete({ ...frete, [productName]: valorFrete });
   };
 
   return (
     <div style={{ fontFamily: "'Arial', sans-serif", background: "#f4f6f8", minHeight: "100vh" }}>
 
-      {/* HEADER PREMIUM */}
+      {/* HEADER */}
       <header
         style={{
           background: "#000",
@@ -58,7 +56,8 @@ export default function Home() {
           alignItems: "center",
           justifyContent: "space-between",
           position: "relative",
-          fontFamily: "'Arial Black', Arial, sans-serif"
+          fontFamily: "'Arial Black', Arial, sans-serif",
+          color: "#f5d76e"
         }}
       >
         <img src="/logo.png" alt="Encarte Pro Aves" style={{ width: "250px", height: "auto" }} />
@@ -70,7 +69,6 @@ export default function Home() {
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            color: "#f5d76e",
             textShadow: "1px 1px 2px rgba(0,0,0,0.5)"
           }}
         >
@@ -158,43 +156,47 @@ export default function Home() {
               )}
             </div>
 
-            {/* Botões */}
-            <button
-              onClick={() => addToCart(product)}
-              style={{
-                padding: "12px 20px",
-                backgroundColor: "#0d3b26",
-                color: "#fff",
-                border: "none",
-                borderRadius: "8px",
-                cursor: "pointer",
-                fontWeight: "bold",
-                marginRight: "10px",
-                transition: "0.2s"
-              }}
-              onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#144d34")}
-              onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#0d3b26")}
-            >
-              Adicionar ao Carrinho
-            </button>
+            {/* BOTÕES ORGANIZADOS */}
+            <div style={{ display: "flex", justifyContent: "center", gap: "10px", marginTop: "15px" }}>
+              <a
+                href={product.mpLink}
+                target="_blank"
+                style={{
+                  flex: 1,
+                  padding: "12px 0",
+                  backgroundColor: "#ffc107",
+                  color: "#000",
+                  borderRadius: "8px",
+                  fontWeight: "bold",
+                  textDecoration: "none",
+                  textAlign: "center",
+                  transition: "0.2s"
+                }}
+                onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#e6b800")}
+                onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#ffc107")}
+              >
+                Pagar Mercado Pago
+              </a>
 
-            <a
-              href={product.mpLink}
-              target="_blank"
-              style={{
-                padding: "12px 20px",
-                backgroundColor: "#ffc107",
-                color: "#000",
-                borderRadius: "8px",
-                fontWeight: "bold",
-                textDecoration: "none",
-                transition: "0.2s"
-              }}
-              onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#e6b800")}
-              onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#ffc107")}
-            >
-              Pagar Mercado Pago
-            </a>
+              <button
+                onClick={() => addToCart(product)}
+                style={{
+                  flex: 1,
+                  padding: "12px 0",
+                  backgroundColor: "#0d3b26",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "8px",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                  transition: "0.2s"
+                }}
+                onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#144d34")}
+                onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#0d3b26")}
+              >
+                Adicionar ao Carrinho
+              </button>
+            </div>
           </div>
         ))}
       </section>
@@ -319,8 +321,6 @@ export default function Home() {
           style={{ width: "30px", height: "30px" }}
         />
       </a>
-
     </div>
   );
 }
-
