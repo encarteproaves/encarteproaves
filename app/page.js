@@ -12,13 +12,17 @@ export default function Home() {
       name: "Caixa Acústica",
       price: 1500,
       mpLink: "https://mpago.la/2foFNjY",
-      image: "/caixa.jpg"
+      image: "/caixa.jpg",
+      description:
+        "Caixa acústica para encarte de canto, com vidro temperado, alto falante de alto rendimento e design robusto em MDF de 15mm."
     },
     {
       name: "Aparelho Digital",
       price: 330,
       mpLink: "https://mpago.la/1Po2ehy",
-      image: "/aparelho.jpg"
+      image: "/aparelho.jpg",
+      description:
+        "Aparelho digital para encarte de canto, com até 8 programações de liga/desliga, toca pen drive e cartão de memória, além de rádio AM/FM."
     }
   ];
 
@@ -46,7 +50,7 @@ export default function Home() {
 
   return (
     <div style={{ fontFamily: "'Arial', sans-serif", background: "#f4f6f8", minHeight: "100vh" }}>
-
+      
       {/* HEADER */}
       <header
         style={{
@@ -56,8 +60,8 @@ export default function Home() {
           alignItems: "center",
           justifyContent: "space-between",
           position: "relative",
-          fontFamily: "'Arial Black', Arial, sans-serif",
-          color: "#f5d76e"
+          color: "#f5d76e",
+          fontFamily: "'Arial Black', Arial, sans-serif"
         }}
       >
         <img src="/logo.png" alt="Encarte Pro Aves" style={{ width: "250px", height: "auto" }} />
@@ -118,9 +122,15 @@ export default function Home() {
           >
             <img src={product.image} style={{ width: "100%", borderRadius: "15px 15px 0 0" }} />
             <h2 style={{ margin: "15px 0" }}>{product.name}</h2>
+
+            {/* DESCRIÇÃO */}
+            <p style={{ color: "#555", fontSize: "14px", margin: "0 15px 10px 15px", minHeight: "40px" }}>
+              {product.description}
+            </p>
+
             <h3 style={{ color: "#0d3b26", marginBottom: "10px" }}>R$ {product.price.toFixed(2)}</h3>
 
-            {/* Frete */}
+            {/* FRETE */}
             <div style={{ marginBottom: "10px" }}>
               <input
                 type="text"
