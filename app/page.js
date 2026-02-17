@@ -80,8 +80,6 @@ export default function Home() {
         >
           🛒 {cart.length}
         </div>
-      </header>
-
       {/* PRODUTOS */}
       <section
         style={{
@@ -285,6 +283,6 @@ export default function Home() {
         />
       </a>
 
-    </main>
+    </div>
   );
 }
