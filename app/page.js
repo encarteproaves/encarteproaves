@@ -21,18 +21,19 @@ export default function Home() {
   return (
     <div style={{ fontFamily: "Arial, sans-serif", background: "#f5f5f5" }}>
       {/* HEADER */}
-      <header
+     <header
   style={{
     background: "#000",
-    padding: "35px 50px",
+    padding: "50px 40px",
     color: "#fff",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    position: "relative"
+    position: "relative",
+    fontFamily: "'Arial Black', Arial, sans-serif" // fonte mais grossa
   }}
 >
-
+  {/* Logo */}
   <img
     src="/logo.png"
     alt="Encarte Pro Aves"
@@ -42,20 +43,24 @@ export default function Home() {
     }}
   />
 
+  {/* Slogan */}
   <div
     style={{
       flex: 1,
       textAlign: "center",
-      fontSize: "20px",
-      fontWeight: "500",
-      letterSpacing: "1px"
+      fontSize: "22px",
+      fontWeight: "700",
+      letterSpacing: "1px",
+      color: "#f5d76e" // dourado claro
     }}
   >
     Tecnologia e Qualidade para o Melhor Encarte de Canto
   </div>
 
+  {/* Espaço do lado direito */}
   <div style={{ width: "220px" }}></div>
 
+  {/* Faixa dourada embaixo */}
   <div
     style={{
       position: "absolute",
