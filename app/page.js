@@ -24,13 +24,12 @@ export default function Home() {
      <header
   style={{
     background: "#000",
-    padding: "50px 40px",
-    color: "#fff",
+    padding: "40px 50px",
     display: "flex",
-    justifyContent: "space-between",
     alignItems: "center",
+    justifyContent: "space-between",
     position: "relative",
-    fontFamily: "'Arial Black', Arial, sans-serif" // fonte mais grossa
+    fontFamily: "'Arial Black', Arial, sans-serif"
   }}
 >
   {/* Logo */}
@@ -38,27 +37,31 @@ export default function Home() {
     src="/logo.png"
     alt="Encarte Pro Aves"
     style={{
-      width: "220px",
+      width: "250px",
       height: "auto"
     }}
   />
 
-  {/* Slogan */}
+  {/* Texto central */}
   <div
     style={{
       flex: 1,
       textAlign: "center",
-      fontSize: "22px",
-      fontWeight: "700",
-      letterSpacing: "1px",
-      color: "#f5d76e" // dourado claro
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      color: "#f5d76e",
+      textShadow: "1px 1px 2px rgba(0,0,0,0.5)"
     }}
   >
-    Tecnologia e Qualidade para o Melhor Encarte de Canto
+    <span style={{ fontSize: "28px", fontWeight: "900" }}>Encarte Pro Aves</span>
+    <span style={{ fontSize: "18px", fontWeight: "500", marginTop: "5px" }}>
+      Tecnologia e Qualidade para o Melhor Encarte de Canto
+    </span>
   </div>
 
   {/* Espaço do lado direito */}
-  <div style={{ width: "220px" }}></div>
+  <div style={{ width: "250px" }}></div>
 
   {/* Faixa dourada embaixo */}
   <div
@@ -72,6 +75,7 @@ export default function Home() {
     }}
   />
 </header>
+
         <div
           onClick={() => setOpenCart(true)}
           style={{ cursor: "pointer" }}
