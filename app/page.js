@@ -84,23 +84,28 @@ export default function Home() {
           >
             {/* IMAGEM */}
             {product.name === "Aparelho Digital" ? (
-              <div
-                style={{
-                  backgroundColor: "#ffffff",
-                  padding: "25px",
-                  display: "flex",
-                  justifyContent: "center"
-                }}
-              >
-                <img
-                  src={product.image}
-                  style={{
-                    maxWidth: "100%",
-                    maxHeight: "220px",
-                    objectFit: "contain"
-                  }}
-                />
-              </div>
+            {/* IMAGEM PADRONIZADA */}
+<div
+  style={{
+    height: "260px",            // 🔥 altura fixa igual para os dois
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor:
+      product.name === "Aparelho Digital" ? "#ffffff" : "transparent",
+    padding: "20px"
+  }}
+>
+  <img
+    src={product.image}
+    style={{
+      maxWidth: "100%",
+      maxHeight: "100%",
+      objectFit: "contain"
+    }}
+  />
+</div>
+ 
             ) : (
               <img src={product.image} style={{ width: "100%" }} />
             )}
