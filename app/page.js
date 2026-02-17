@@ -23,7 +23,7 @@ export default function Home() {
       {/* HEADER */}
       <header
   style={{
-    background: background: "#000",
+    background: "#000",
     padding: "35px 50px",
     color: "#fff",
     display: "flex",
