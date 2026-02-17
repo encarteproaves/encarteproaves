@@ -121,7 +121,26 @@ export default function Home() {
               transition: "0.3s"
             }}
           >
-            <img src={product.image} style={{ width: "100%", borderRadius: "15px 15px 0 0" }} />
+            <div
+  style={{
+    backgroundColor: "#ffffff",
+    padding: "20px",
+    borderRadius: "15px 15px 0 0",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
+  }}
+>
+  <img
+    src={product.image}
+    style={{
+      maxWidth: "100%",
+      maxHeight: "220px",
+      objectFit: "contain"
+    }}
+  />
+</div>
+
             <h2 style={{ margin: "15px 0" }}>{product.name}</h2>
 
             {/* DESCRIÇÃO */}
