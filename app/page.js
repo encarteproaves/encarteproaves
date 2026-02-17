@@ -4,6 +4,23 @@ import { useState } from "react";
 export default function Home() {
   const [cart, setCart] = useState([]);
   const [openCart, setOpenCart] = useState(false);
+  const [frete, setFrete] = useState({});
+  const [cep, setCep] = useState("");
+
+  const products = [
+    {
+      name: "Caixa Acústica",
+      price: 1500,
+      mpLink: "https://mpago.la/2foFNjY",
+      image: "/caixa.jpg"
+    },
+    {
+      name: "Aparelho Digital",
+      price: 330,
+      mpLink: "https://mpago.la/1Po2ehy",
+      image: "/aparelho.jpg"
+    }
+  ];
 
   const addToCart = (product) => {
     setCart([...cart, product]);
@@ -16,7 +33,18 @@ export default function Home() {
     setCart(newCart);
   };
 
-  const total = cart.reduce((sum, item) => sum + item.price, 0);
+  const total = cart.reduce((sum, item) => sum + item.price + (frete[item.name] || 0), 0);
+
+  // Simulação simples de frete: R$ 20 por padrão
+  const calcularFrete = (productName) => {
+    if (!cep) {
+      alert("Informe o CEP primeiro!");
+      return;
+    }
+    // aqui você pode integrar API real dos Correios
+    const valorFrete = 20; 
+    setFrete({ ...frete, [productName]: valorFrete });
+  };
 
   return (
     <div style={{ fontFamily: "'Arial', sans-serif", background: "#f4f6f8", minHeight: "100vh" }}>
@@ -33,14 +61,8 @@ export default function Home() {
           fontFamily: "'Arial Black', Arial, sans-serif"
         }}
       >
-        {/* Logo */}
-        <img
-          src="/logo.png"
-          alt="Encarte Pro Aves"
-          style={{ width: "250px", height: "auto" }}
-        />
+        <img src="/logo.png" alt="Encarte Pro Aves" style={{ width: "250px", height: "auto" }} />
 
-        {/* Texto central */}
         <div
           style={{
             flex: 1,
@@ -58,10 +80,8 @@ export default function Home() {
           </span>
         </div>
 
-        {/* Espaço direito */}
         <div style={{ width: "250px" }}></div>
 
-        {/* Faixa dourada */}
         <div
           style={{
             position: "absolute",
@@ -84,92 +104,102 @@ export default function Home() {
           flexWrap: "wrap"
         }}
       >
-        {/* CAIXA */}
-        <div
-          style={{
-            backgroundColor: "#fff",
-            width: "320px",
-            borderRadius: "15px",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
-            overflow: "hidden",
-            textAlign: "center",
-            paddingBottom: "20px",
-            transition: "0.3s",
-          }}
-        >
-          <img src="/caixa.jpg" style={{ width: "100%", borderRadius: "15px 15px 0 0" }} />
-          <h2 style={{ margin: "15px 0" }}>Caixa Acústica</h2>
-          <h3 style={{ color: "#0d3b26", marginBottom: "15px" }}>R$ 1.500,00</h3>
-
-          <button
-            onClick={() =>
-              addToCart({
-                name: "Caixa Acústica",
-                price: 1500,
-                link: "https://mpago.la/2foFNjY"
-              })
-            }
+        {products.map((product, i) => (
+          <div
+            key={i}
             style={{
-              padding: "12px 20px",
-              backgroundColor: "#0d3b26",
-              color: "#fff",
-              border: "none",
-              borderRadius: "8px",
-              cursor: "pointer",
-              fontWeight: "bold",
-              transition: "0.2s",
+              backgroundColor: "#fff",
+              width: "320px",
+              borderRadius: "15px",
+              boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+              overflow: "hidden",
+              textAlign: "center",
+              paddingBottom: "20px",
+              transition: "0.3s"
             }}
-            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#144d34")}
-            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#0d3b26")}
           >
-            Adicionar ao Carrinho
-          </button>
-        </div>
+            <img src={product.image} style={{ width: "100%", borderRadius: "15px 15px 0 0" }} />
+            <h2 style={{ margin: "15px 0" }}>{product.name}</h2>
+            <h3 style={{ color: "#0d3b26", marginBottom: "10px" }}>R$ {product.price.toFixed(2)}</h3>
 
-        {/* APARELHO */}
-        <div
-          style={{
-            backgroundColor: "#fff",
-            width: "320px",
-            borderRadius: "15px",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
-            overflow: "hidden",
-            textAlign: "center",
-            paddingBottom: "20px",
-            transition: "0.3s",
-          }}
-        >
-          <img src="/aparelho.jpg" style={{ width: "100%", borderRadius: "15px 15px 0 0" }} />
-          <h2 style={{ margin: "15px 0" }}>Aparelho Digital</h2>
-          <h3 style={{ color: "#0d3b26", marginBottom: "15px" }}>R$ 330,00</h3>
+            {/* Frete */}
+            <div style={{ marginBottom: "10px" }}>
+              <input
+                type="text"
+                placeholder="Digite seu CEP"
+                value={cep}
+                onChange={(e) => setCep(e.target.value)}
+                style={{
+                  padding: "8px",
+                  width: "70%",
+                  borderRadius: "5px",
+                  border: "1px solid #ccc",
+                  marginBottom: "5px"
+                }}
+              />
+              <button
+                onClick={() => calcularFrete(product.name)}
+                style={{
+                  padding: "8px 12px",
+                  marginLeft: "5px",
+                  backgroundColor: "#0d3b26",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "5px",
+                  cursor: "pointer"
+                }}
+              >
+                Calcular
+              </button>
+              {frete[product.name] !== undefined && (
+                <div style={{ marginTop: "5px", fontWeight: "bold" }}>
+                  Frete: R$ {frete[product.name].toFixed(2)}
+                </div>
+              )}
+            </div>
 
-          <button
-            onClick={() =>
-              addToCart({
-                name: "Aparelho Digital",
-                price: 330,
-                link: "https://mpago.la/1Po2ehy"
-              })
-            }
-            style={{
-              padding: "12px 20px",
-              backgroundColor: "#0d3b26",
-              color: "#fff",
-              border: "none",
-              borderRadius: "8px",
-              cursor: "pointer",
-              fontWeight: "bold",
-              transition: "0.2s",
-            }}
-            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#144d34")}
-            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#0d3b26")}
-          >
-            Adicionar ao Carrinho
-          </button>
-        </div>
+            {/* Botões */}
+            <button
+              onClick={() => addToCart(product)}
+              style={{
+                padding: "12px 20px",
+                backgroundColor: "#0d3b26",
+                color: "#fff",
+                border: "none",
+                borderRadius: "8px",
+                cursor: "pointer",
+                fontWeight: "bold",
+                marginRight: "10px",
+                transition: "0.2s"
+              }}
+              onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#144d34")}
+              onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#0d3b26")}
+            >
+              Adicionar ao Carrinho
+            </button>
+
+            <a
+              href={product.mpLink}
+              target="_blank"
+              style={{
+                padding: "12px 20px",
+                backgroundColor: "#ffc107",
+                color: "#000",
+                borderRadius: "8px",
+                fontWeight: "bold",
+                textDecoration: "none",
+                transition: "0.2s"
+              }}
+              onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#e6b800")}
+              onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#ffc107")}
+            >
+              Pagar Mercado Pago
+            </a>
+          </div>
+        ))}
       </section>
 
-      {/* OVERLAY */}
+      {/* OVERLAY CARRINHO */}
       {openCart && (
         <div
           onClick={() => setOpenCart(false)}
@@ -217,7 +247,9 @@ export default function Home() {
           >
             <div>
               <p style={{ margin: 0 }}>{item.name}</p>
-              <p style={{ margin: 0 }}>R$ {item.price.toFixed(2)}</p>
+              <p style={{ margin: 0 }}>
+                R$ {(item.price + (frete[item.name] || 0)).toFixed(2)}
+              </p>
             </div>
             <button
               onClick={() => removeItem(index)}
@@ -242,7 +274,7 @@ export default function Home() {
             </h3>
 
             <a
-              href={cart[cart.length - 1].link}
+              href={cart[cart.length - 1].mpLink}
               target="_blank"
               style={{
                 display: "block",
@@ -262,7 +294,7 @@ export default function Home() {
         )}
       </div>
 
-      {/* BOTÃO WHATSAPP OFICIAL */}
+      {/* BOTÃO WHATSAPP */}
       <a
         href="https://wa.me/5511984309480"
         target="_blank"
