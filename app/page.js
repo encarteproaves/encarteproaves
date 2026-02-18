@@ -27,7 +27,7 @@ export default function Home() {
     },
     {
       name: "Pen Drive 8GB Personalizado",
-      price: 120,
+      price: 150,
       mpLink: "#",
       image: "/pendrive-8gb.jpg",
       description:
