@@ -6,7 +6,7 @@ export default function Home() {
   const [cep, setCep] = useState("");
   const [cantoPersonalizado, setCantoPersonalizado] = useState("");
 
-  const whatsappNumber = "5511984309480"; // 🔥 COLOQUE SEU NÚMERO AQUI
+  const whatsappNumber = "5511984309480"; // COLOQUE SEU NÚMERO
 
   const products = [
     {
@@ -15,7 +15,7 @@ export default function Home() {
       mpLink: "https://mpago.la/2foFNjY",
       image: "/caixa-nova.png",
       description:
-        "Caixa acústica 65x65x35 cm, MDF 15mm, vidro temperado 8mm e alto falante de alto rendimento."
+        "Caixa acústica profissional para encarte. Forte, resistente e com excelente propagação sonora."
     },
     {
       name: "Aparelho Digital para encarte de canto",
@@ -23,7 +23,7 @@ export default function Home() {
       mpLink: "https://mpago.la/1Po2ehy",
       image: "/aparelho-novo.jpg",
       description:
-        "Aparelho digital para encarte de canto em pássaros com 8 programações, USB, cartão de memória e rádio AM/FM."
+        "Aparelho digital com programações automáticas para manter o treino do canto com regularidade."
     },
     {
       name: "Pen Drive 8GB Personalizado",
@@ -31,7 +31,7 @@ export default function Home() {
       mpLink: "#",
       image: "/pendrive-8gb.jpg",
       description:
-        "Pen drive 8GB com canto editado e gravado conforme pedido do comprador."
+        "Pen drive com canto editado conforme seu pedido. Pronto para usar no treino."
     }
   ];
 
@@ -41,15 +41,14 @@ export default function Home() {
       return;
     }
 
-    const valorFrete = 20;
-    setFrete({ ...frete, [productName]: valorFrete });
+    setFrete({ ...frete, [productName]: 20 });
   };
 
   const gerarLinkWhatsApp = (productName) => {
     let mensagem = `Olá, tenho interesse no produto: ${productName}`;
 
     if (productName === "Pen Drive 8GB Personalizado" && cantoPersonalizado) {
-      mensagem += `\nCanto desejado: ${cantoPersonalizado}`;
+      mensagem += ` - Canto desejado: ${cantoPersonalizado}`;
     }
 
     return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(mensagem)}`;
@@ -57,185 +56,110 @@ export default function Home() {
 
   return (
     <div style={{ fontFamily: "Segoe UI, sans-serif", background: "#f4f6f8" }}>
-      
+
       {/* HEADER */}
-      <header
-        style={{
-          background: "#000",
-          padding: "30px 15px",
-          color: "#f5d76e",
-          textAlign: "center"
-        }}
-      >
-        <img src="/logo.png" style={{ width: "180px", maxWidth: "90%" }} />
-        <h1 style={{ fontSize: "22px" }}>Encarte Pro Aves</h1>
-        <p style={{ fontSize: "14px" }}>
-          Tecnologia e Qualidade para o Melhor Encarte
-        </p>
+      <header style={{ background: "#0d3b26", padding: "25px 15px", color: "#fff", textAlign: "center" }}>
+        <h1>Encarte Pro Aves</h1>
+        <p>Qualidade profissional com preço justo</p>
       </header>
 
+      {/* BLOCO AUTORIDADE */}
+      <section style={{ padding: "25px 15px", textAlign: "center", background: "#fff" }}>
+        <h2>Especialistas em Encarte Profissional</h2>
+        <p>
+          Trabalhamos com equipamentos testados e aprovados por criadores.
+          Atendimento direto pelo WhatsApp e envio rápido para todo o Brasil.
+        </p>
+      </section>
+
+      {/* BLOCO CONFIANÇA */}
+      <section style={{ padding: "20px 15px", background: "#e9f5ef", textAlign: "center" }}>
+        <h3>Compra 100% Segura</h3>
+        <p>Pagamento protegido via Mercado Pago.</p>
+        <p>Atendimento rápido e suporte direto.</p>
+        <p>Direito garantido pelo Código de Defesa do Consumidor.</p>
+      </section>
+
+      {/* BLOCO ENVIO */}
+      <section style={{ padding: "20px 15px", background: "#fff", textAlign: "center" }}>
+        <h3>Envio Rápido</h3>
+        <p>Aparelho e Pen Drive: envio imediato.</p>
+        <p>Caixa: envio imediato se em estoque ou até 5 dias úteis.</p>
+      </section>
+
       {/* PRODUTOS */}
-      <section
-        style={{
-          padding: "30px 15px",
-          display: "flex",
-          justifyContent: "center",
-          gap: "30px",
-          flexWrap: "wrap"
-        }}
-      >
+      <section style={{ padding: "30px 15px", display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "25px" }}>
         {products.map((product, i) => (
-          <div
-            key={i}
-            style={{
-              background: "#fff",
-              width: "100%",
-              maxWidth: "350px",
-              borderRadius: "15px",
-              boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
-              overflow: "hidden",
-              textAlign: "center",
-              paddingBottom: "20px"
-            }}
-          >
-            {/* IMAGEM */}
-            <div
-              style={{
-                width: "100%",
-                height: "250px",
-                backgroundColor:
-                  product.name === "Aparelho Digital"
-                    ? "#ffffff"
-                    : "transparent",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center"
-              }}
-            >
-              <img
-                src={product.image}
-                style={{
-                  width:
-                    product.name === "Aparelho Digital"
-                      ? "auto"
-                      : "100%",
-                  height:
-                    product.name === "Aparelho Digital"
-                      ? "85%"
-                      : "100%",
-                  objectFit:
-                    product.name === "Aparelho Digital"
-                      ? "contain"
-                      : "cover"
-                }}
-              />
-            </div>
+          <div key={i} style={{
+            background: "#fff",
+            width: "100%",
+            maxWidth: "340px",
+            borderRadius: "12px",
+            boxShadow: "0 8px 25px rgba(0,0,0,0.08)",
+            paddingBottom: "20px",
+            textAlign: "center"
+          }}>
 
-            <h2 style={{ fontSize: "18px", margin: "10px 0" }}>
-              {product.name}
-            </h2>
+            <img src={product.image} style={{ width: "100%", height: "240px", objectFit: "cover", borderRadius: "12px 12px 0 0" }} />
 
-            <p style={{ fontSize: "13px", color: "#555", padding: "0 15px" }}>
-              {product.description}
-            </p>
+            <h3 style={{ marginTop: "10px" }}>{product.name}</h3>
+            <p style={{ padding: "0 15px", fontSize: "14px" }}>{product.description}</p>
+            <h2 style={{ color: "#0d3b26" }}>R$ {product.price.toFixed(2)}</h2>
 
-            <h3 style={{ color: "#0d3b26", margin: "10px 0" }}>
-              R$ {product.price.toFixed(2)}
-            </h3>
-
-            {/* CAMPO PERSONALIZAÇÃO PEN DRIVE */}
             {product.name === "Pen Drive 8GB Personalizado" && (
-              <div style={{ padding: "0 15px", marginBottom: "10px" }}>
-                <input
-                  type="text"
-                  placeholder="Digite o canto desejado"
-                  value={cantoPersonalizado}
-                  onChange={(e) => setCantoPersonalizado(e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: "8px",
-                    borderRadius: "6px",
-                    border: "1px solid #ccc"
-                  }}
-                />
-              </div>
-            )}
-
-            {/* FRETE */}
-            <div style={{ padding: "0 15px", marginBottom: "10px" }}>
               <input
                 type="text"
-                placeholder="CEP"
-                value={cep}
-                onChange={(e) => setCep(e.target.value)}
-                style={{
-                  padding: "6px",
-                  width: "60%",
-                  borderRadius: "5px",
-                  border: "1px solid #ccc"
-                }}
+                placeholder="Digite o canto desejado"
+                value={cantoPersonalizado}
+                onChange={(e) => setCantoPersonalizado(e.target.value)}
+                style={{ width: "85%", padding: "8px", marginBottom: "10px" }}
               />
-              <button
-                onClick={() => calcularFrete(product.name)}
-                style={{
-                  padding: "6px 10px",
-                  marginLeft: "5px",
-                  background: "#0d3b26",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "5px"
-                }}
-              >
-                OK
-              </button>
+            )}
 
-              {frete[product.name] && (
-                <p style={{ marginTop: "5px", fontWeight: "bold" }}>
-                  Frete: R$ {frete[product.name].toFixed(2)}
-                </p>
-              )}
-            </div>
-
-            {/* BOTÕES */}
-            <div style={{ display: "flex", gap: "8px", padding: "0 15px", flexWrap: "wrap" }}>
-              
-              <a
-                href={product.mpLink}
-                target="_blank"
-                style={{
-                  flex: 1,
-                  padding: "10px",
-                  background: "#ffc107",
-                  color: "#000",
-                  borderRadius: "8px",
-                  textDecoration: "none",
-                  fontWeight: "bold",
-                  fontSize: "13px"
-                }}
-              >
-                Mercado Pago
+            <div style={{ display: "flex", gap: "8px", padding: "0 15px" }}>
+              <a href={product.mpLink} target="_blank"
+                style={{ flex: 1, background: "#ffc107", padding: "10px", borderRadius: "6px", textDecoration: "none", color: "#000" }}>
+                Comprar
               </a>
 
-              <a
-                href={gerarLinkWhatsApp(product.name)}
-                target="_blank"
-                style={{
-                  flex: 1,
-                  padding: "10px",
-                  background: "#25D366",
-                  color: "#fff",
-                  borderRadius: "8px",
-                  textDecoration: "none",
-                  fontWeight: "bold",
-                  fontSize: "13px"
-                }}
-              >
+              <a href={gerarLinkWhatsApp(product.name)} target="_blank"
+                style={{ flex: 1, background: "#25D366", padding: "10px", borderRadius: "6px", textDecoration: "none", color: "#fff" }}>
                 WhatsApp
               </a>
             </div>
+
           </div>
         ))}
       </section>
+
+      {/* RODAPÉ PROFISSIONAL */}
+      <footer style={{ background: "#0d3b26", color: "#fff", textAlign: "center", padding: "20px" }}>
+        <p>© 2026 Encarte Pro Aves</p>
+        <p>Atendimento via WhatsApp</p>
+        <p>Envio para todo o Brasil</p>
+      </footer>
+
+      {/* BOTÃO FLUTUANTE */}
+      <a href={`https://wa.me/${whatsappNumber}`} target="_blank"
+        style={{
+          position: "fixed",
+          bottom: "20px",
+          right: "20px",
+          backgroundColor: "#25D366",
+          width: "60px",
+          height: "60px",
+          borderRadius: "50%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#fff",
+          fontSize: "28px",
+          textDecoration: "none",
+          boxShadow: "0 8px 20px rgba(0,0,0,0.2)"
+        }}>
+        💬
+      </a>
+
     </div>
   );
 }
