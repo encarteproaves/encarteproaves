@@ -10,7 +10,7 @@ export default function Home() {
 
   const products = [
     {
-      name: "Caixa Acústica",
+      name: "Caixa Acústica para encarte de canto",
       price: 1500,
       mpLink: "https://mpago.la/2foFNjY",
       image: "/caixa-nova.png",
