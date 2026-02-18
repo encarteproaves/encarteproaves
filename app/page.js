@@ -4,15 +4,18 @@ import { useState } from "react";
 export default function Home() {
   const [frete, setFrete] = useState({});
   const [cep, setCep] = useState("");
+  const [cantoPersonalizado, setCantoPersonalizado] = useState("");
+
+  const whatsappNumber = "5511984309480"; // 🔥 COLOQUE SEU NÚMERO AQUI
 
   const products = [
     {
       name: "Caixa Acústica",
       price: 1500,
       mpLink: "https://mpago.la/2foFNjY",
-      image: "/caixa-nova.png",
+      image: "/caixa.jpg",
       description:
-        "Caixa acústica para encarte de canto, com medidas 65x65x35 cm, vidro temperado, alto falante de alto rendimento e design robusto em MDF de 15mm."
+        "Caixa acústica 65x65x35 cm, MDF 15mm, vidro temperado 8mm e alto falante de alto rendimento."
     },
     {
       name: "Aparelho Digital",
@@ -20,15 +23,15 @@ export default function Home() {
       mpLink: "https://mpago.la/1Po2ehy",
       image: "/aparelho-novo.jpg",
       description:
-        "Aparelho digital para encarte de canto, com até 8 programações de liga/desliga, toca pen drive e cartão de memória, além de rádio AM/FM."
+        "Aparelho digital com 8 programações, USB, cartão de memória e rádio AM/FM."
     },
     {
       name: "Pen Drive 8GB Personalizado",
-      price: 150,
-      mpLink: "#", // 🔥 coloque aqui seu link do Mercado Pago depois
+      price: 120,
+      mpLink: "#",
       image: "/pendrive-8gb.jpg",
       description:
-        "Pen drive 8GB com canto de pássaro editado e gravado conforme pedido do comprador. Arquivos organizados, qualidade profissional e pronto para uso."
+        "Pen drive 8GB com canto editado e gravado conforme pedido do comprador."
     }
   ];
 
@@ -42,34 +45,42 @@ export default function Home() {
     setFrete({ ...frete, [productName]: valorFrete });
   };
 
+  const gerarLinkWhatsApp = (productName) => {
+    let mensagem = `Olá, tenho interesse no produto: ${productName}`;
+
+    if (productName === "Pen Drive 8GB Personalizado" && cantoPersonalizado) {
+      mensagem += `\nCanto desejado: ${cantoPersonalizado}`;
+    }
+
+    return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(mensagem)}`;
+  };
+
   return (
-    <div
-      style={{
-        fontFamily: "Segoe UI, sans-serif",
-        background: "#f4f6f8",
-        minHeight: "100vh"
-      }}
-    >
+    <div style={{ fontFamily: "Segoe UI, sans-serif", background: "#f4f6f8" }}>
+      
+      {/* HEADER */}
       <header
         style={{
           background: "#000",
-          padding: "40px",
+          padding: "30px 15px",
           color: "#f5d76e",
-          textAlign: "center",
-          fontFamily: "Arial Black"
+          textAlign: "center"
         }}
       >
-        <img src="/logo.png" style={{ width: "220px" }} />
-        <h1>Encarte Pro Aves</h1>
-        <p>Tecnologia e Qualidade para o Melhor Encarte de Canto</p>
+        <img src="/logo.png" style={{ width: "180px", maxWidth: "90%" }} />
+        <h1 style={{ fontSize: "22px" }}>Encarte Pro Aves</h1>
+        <p style={{ fontSize: "14px" }}>
+          Tecnologia e Qualidade para o Melhor Encarte
+        </p>
       </header>
 
+      {/* PRODUTOS */}
       <section
         style={{
-          padding: "60px 20px",
+          padding: "30px 15px",
           display: "flex",
           justifyContent: "center",
-          gap: "50px",
+          gap: "30px",
           flexWrap: "wrap"
         }}
       >
@@ -78,19 +89,20 @@ export default function Home() {
             key={i}
             style={{
               background: "#fff",
-              width: "350px",
-              borderRadius: "18px",
-              boxShadow: "0 15px 40px rgba(0,0,0,0.08)",
+              width: "100%",
+              maxWidth: "350px",
+              borderRadius: "15px",
+              boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
               overflow: "hidden",
               textAlign: "center",
-              paddingBottom: "25px"
+              paddingBottom: "20px"
             }}
           >
             {/* IMAGEM */}
             <div
               style={{
                 width: "100%",
-                height: "300px",
+                height: "250px",
                 backgroundColor:
                   product.name === "Aparelho Digital"
                     ? "#ffffff"
@@ -119,28 +131,46 @@ export default function Home() {
               />
             </div>
 
-            <h2 style={{ margin: "15px 0 5px" }}>
+            <h2 style={{ fontSize: "18px", margin: "10px 0" }}>
               {product.name}
             </h2>
 
-            <p style={{ fontSize: "14px", color: "#555", padding: "0 20px" }}>
+            <p style={{ fontSize: "13px", color: "#555", padding: "0 15px" }}>
               {product.description}
             </p>
 
-            <h3 style={{ color: "#0d3b26", margin: "15px 0" }}>
+            <h3 style={{ color: "#0d3b26", margin: "10px 0" }}>
               R$ {product.price.toFixed(2)}
             </h3>
 
+            {/* CAMPO PERSONALIZAÇÃO PEN DRIVE */}
+            {product.name === "Pen Drive 8GB Personalizado" && (
+              <div style={{ padding: "0 15px", marginBottom: "10px" }}>
+                <input
+                  type="text"
+                  placeholder="Digite o canto desejado"
+                  value={cantoPersonalizado}
+                  onChange={(e) => setCantoPersonalizado(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "8px",
+                    borderRadius: "6px",
+                    border: "1px solid #ccc"
+                  }}
+                />
+              </div>
+            )}
+
             {/* FRETE */}
-            <div style={{ padding: "0 20px", marginBottom: "15px" }}>
+            <div style={{ padding: "0 15px", marginBottom: "10px" }}>
               <input
                 type="text"
-                placeholder="Digite seu CEP"
+                placeholder="CEP"
                 value={cep}
                 onChange={(e) => setCep(e.target.value)}
                 style={{
-                  padding: "8px",
-                  width: "65%",
+                  padding: "6px",
+                  width: "60%",
                   borderRadius: "5px",
                   border: "1px solid #ccc"
                 }}
@@ -148,57 +178,60 @@ export default function Home() {
               <button
                 onClick={() => calcularFrete(product.name)}
                 style={{
-                  padding: "8px 12px",
+                  padding: "6px 10px",
                   marginLeft: "5px",
                   background: "#0d3b26",
                   color: "#fff",
                   border: "none",
-                  borderRadius: "5px",
-                  cursor: "pointer"
+                  borderRadius: "5px"
                 }}
               >
-                Calcular
+                OK
               </button>
 
               {frete[product.name] && (
-                <p style={{ marginTop: "8px", fontWeight: "bold" }}>
+                <p style={{ marginTop: "5px", fontWeight: "bold" }}>
                   Frete: R$ {frete[product.name].toFixed(2)}
                 </p>
               )}
             </div>
 
             {/* BOTÕES */}
-            <div style={{ display: "flex", gap: "10px", padding: "0 20px" }}>
+            <div style={{ display: "flex", gap: "8px", padding: "0 15px", flexWrap: "wrap" }}>
+              
               <a
                 href={product.mpLink}
                 target="_blank"
                 style={{
                   flex: 1,
-                  padding: "12px",
+                  padding: "10px",
                   background: "#ffc107",
                   color: "#000",
-                  borderRadius: "10px",
+                  borderRadius: "8px",
                   textDecoration: "none",
-                  fontWeight: "bold"
+                  fontWeight: "bold",
+                  fontSize: "13px"
                 }}
               >
                 Mercado Pago
               </a>
 
-              <button
+              <a
+                href={gerarLinkWhatsApp(product.name)}
+                target="_blank"
                 style={{
                   flex: 1,
-                  padding: "12px",
-                  background: "#0d3b26",
+                  padding: "10px",
+                  background: "#25D366",
                   color: "#fff",
-                  border: "none",
-                  borderRadius: "10px",
+                  borderRadius: "8px",
+                  textDecoration: "none",
                   fontWeight: "bold",
-                  cursor: "pointer"
+                  fontSize: "13px"
                 }}
               >
-                Carrinho
-              </button>
+                WhatsApp
+              </a>
             </div>
           </div>
         ))}
