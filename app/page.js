@@ -10,7 +10,7 @@ export default function Home() {
       name: "Caixa Acústica",
       price: 1500,
       mpLink: "https://mpago.la/2foFNjY",
-      image: "/caixa-nova.png",
+      image: "/caixa-nova.jpg",
       description:
         "Caixa acústica para encarte de canto, com medidas 65x65x35 cm, vidro temperado, alto falante de alto rendimento e design robusto em MDF de 15mm."
     },
@@ -18,9 +18,17 @@ export default function Home() {
       name: "Aparelho Digital",
       price: 330,
       mpLink: "https://mpago.la/1Po2ehy",
-      image: "/aparelho-novo.jpg", // 🔥 NOVA IMAGEM AQUI
+      image: "/aparelho-novo.jpg",
       description:
         "Aparelho digital para encarte de canto, com até 8 programações de liga/desliga, toca pen drive e cartão de memória, além de rádio AM/FM."
+    },
+    {
+      name: "Pen Drive 8GB Personalizado",
+      price: 120,
+      mpLink: "#", // 🔥 coloque aqui seu link do Mercado Pago depois
+      image: "/pendrive-8gb.jpg",
+      description:
+        "Pen drive 8GB com canto de pássaro editado e gravado conforme pedido do comprador. Arquivos organizados, qualidade profissional e pronto para uso."
     }
   ];
 
