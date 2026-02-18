@@ -18,12 +18,12 @@ export default function Home() {
         "Caixa acústica 65x65x35 cm, MDF 15mm, vidro temperado 8mm e alto falante de alto rendimento."
     },
     {
-      name: "Aparelho Digital",
+      name: "Aparelho Digital para encarte de canto",
       price: 330,
       mpLink: "https://mpago.la/1Po2ehy",
       image: "/aparelho-novo.jpg",
       description:
-        "Aparelho digital com 8 programações, USB, cartão de memória e rádio AM/FM."
+        "Aparelho digital para encarte de canto em pássaros com 8 programações, USB, cartão de memória e rádio AM/FM."
     },
     {
       name: "Pen Drive 8GB Personalizado",
