@@ -13,7 +13,7 @@ export default function Home() {
       name: "Caixa Acústica",
       price: 1500,
       mpLink: "https://mpago.la/2foFNjY",
-      image: "/caixa.jpg",
+      image: "/caixa-nova.png",
       description:
         "Caixa acústica 65x65x35 cm, MDF 15mm, vidro temperado 8mm e alto falante de alto rendimento."
     },
