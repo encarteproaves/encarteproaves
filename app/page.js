@@ -10,7 +10,7 @@ export default function Home() {
       name: "Caixa Acústica",
       price: 1500,
       mpLink: "https://mpago.la/2foFNjY",
-      image: "/caixa.jpg",
+      image: "/caixa-nova.png",
       description:
         "Caixa acústica para encarte de canto, com medidas 65x65x35 cm, vidro temperado, alto falante de alto rendimento e design robusto em MDF de 15mm."
     },
