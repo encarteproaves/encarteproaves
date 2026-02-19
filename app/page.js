@@ -22,7 +22,7 @@ export default function Home() {
       name: "Pen Drive 8GB",
       description: "Pen drive com canto editado conforme pedido do cliente",
       price: 150,
-      image: "/pendrive.jpg",
+      image: "/pendrive-8gb.jpg",
       mpLink: "https://wa.me/5511984309480"
     }
   ];
