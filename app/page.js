@@ -55,42 +55,50 @@ export default function Home() {
   };
 
   return (
-    <div style={{ fontFamily: "Segoe UI, sans-serif", background: "#f4f6f8" }}>
-
-      {/* HEADER */}
+    <div style={{ fontFamily: "Segoe UI, sans-serif", background: "#f4f6f8" }}
+{/* HEADER */}
 <header
   style={{
     background: "#111",
-    padding: "35px 50px",
+    padding: "35px 20px",
     color: "#fff",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
     position: "relative"
   }}
 >
-  <img
-    src="/logo.png"
-    alt="Encarte Pro Aves"
-    style={{
-      width: "220px",
-      height: "auto"
-    }}
-  />
-
   <div
     style={{
-      flex: 1,
-      textAlign: "center",
-      fontSize: "20px",
-      fontWeight: "600",
-      letterSpacing: "1px"
+      maxWidth: "1200px",
+      margin: "0 auto",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: "30px",
+      flexWrap: "wrap"
     }}
   >
-    Tecnologia e Qualidade para o Melhor Encarte de Canto
-  </div>
+    {/* LOGO */}
+    <img
+      src="/logo.png"
+      alt="Encarte Pro Aves"
+      style={{
+        width: "230px",
+        height: "auto"
+      }}
+    />
 
-  <div style={{ width: "220px" }}></div>
+    {/* TEXTO */}
+    <div
+      style={{
+        fontSize: "22px",
+        fontWeight: "700",
+        letterSpacing: "1px",
+        textAlign: "center",
+        fontFamily: "Segoe UI, Arial, sans-serif"
+      }}
+    >
+      Tecnologia e Qualidade para o Melhor Encarte de Canto
+    </div>
+  </div>
 
   {/* LINHA DOURADA */}
   <div
@@ -104,6 +112,7 @@ export default function Home() {
     }}
   />
 </header>
+
       {/* BLOCO AUTORIDADE */}
       <section style={{ padding: "25px 15px", textAlign: "center", background: "#fff" }}>
         <h2>Especialistas em Encarte Profissional</h2>
