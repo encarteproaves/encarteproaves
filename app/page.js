@@ -4,313 +4,238 @@ import { useState } from "react";
 export default function Home() {
 
   const products = [
+
     {
-      name: "Caixa Acústica profissional para encarte de canto",
-      description:
-        "Caixa acústica profissional 65x65x35 cm em MDF 15mm com excelente propagação sonora para treinamento de canto.",
+      id: 1,
+      name: "Caixa Acústica Profissional",
+      description: "Caixa acústica profissional para encarte de canto - Medidas 65x65x35 cm",
       price: 1500,
       image: "/caixa-nova.png",
+      weight: 8,
+      width: 65,
+      height: 65,
+      length: 35,
       mpLink: "https://mpago.la/2foFNjY",
-      estoque: 3
+      estoque: 7,
+      badge: "Mais Vendido"
     },
+
     {
-      name: "Aparelho Digital para encarte de canto",
-      description:
-        "Aparelho digital automático com programações inteligentes para treino contínuo de canto.",
+      id: 2,
+      name: "Aparelho Digital para Encarte",
+      description: "Aparelho digital programável para treino de canto automático",
       price: 330,
       image: "/aparelho-novo.jpg",
+      weight: 1,
+      width: 20,
+      height: 20,
+      length: 20,
       mpLink: "https://mpago.la/1Po2ehy",
-      estoque: 8
+      estoque: 12
     },
+
     {
-      name: "Pen Drive 8GB com canto editado",
-      description:
-        "Pen drive com canto editado conforme pedido do cliente, pronto para treino profissional.",
+      id: 3,
+      name: "Pen Drive 8GB Canto Editado",
+      description: "Pen drive com canto personalizado conforme pedido",
       price: 150,
       image: "/pendrive-8gb.jpg",
+      weight: 0.2,
+      width: 10,
+      height: 10,
+      length: 10,
       mpLink: "https://wa.me/5511984309480",
-      estoque: 12
+      estoque: 20
     }
+
   ];
 
-  const [cep, setCep] = useState({});
-  const [frete, setFrete] = useState({});
+  const [cep, setCep] = useState("");
+  const [frete, setFrete] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  async function calcularFrete(index) {
-    if (!cep[index]) return alert("Digite o CEP");
+  async function calcularFrete(product){
 
-    const response = await fetch("/api/frete", {
+    setLoading(true);
+
+    const res = await fetch("/api/frete", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        cep: cep[index]
+        cep,
+        price: product.price,
+        weight: product.weight,
+        width: product.width,
+        height: product.height,
+        length: product.length
       })
     });
 
-    const data = await response.json();
+    const data = await res.json();
 
-    setFrete({
-      ...frete,
-      [index]: data.valor
-    });
+    setFrete(data);
+    setLoading(false);
   }
 
   return (
-    <main style={{ fontFamily: "Arial", background: "#f5f5f5" }}>
+
+    <main style={{background:"#f5f5f5", fontFamily:"Arial"}}>
 
       {/* HEADER */}
-      <header
-        style={{
-          background: "#111",
-          padding: "40px 20px",
-          textAlign: "center",
-          position: "relative"
-        }}
-      >
-        <img
-          src="/logo.png"
-          style={{
-            width: "240px",
-            display: "block",
-            margin: "0 auto"
-          }}
-        />
+      <header style={{
+        background:"#000",
+        textAlign:"center",
+        padding:"40px"
+      }}>
 
-        <div
-          style={{
-            color: "#f5d76e",
-            fontSize: "22px",
-            fontWeight: "700",
-            marginTop: "10px"
-          }}
-        >
+        <img src="/logo.png" style={{width:"240px"}} />
+
+        <h2 style={{
+          color:"#f5d76e",
+          marginTop:"10px",
+          letterSpacing:"1px"
+        }}>
           Tecnologia e Qualidade para o Melhor Encarte de Canto
-        </div>
+        </h2>
 
-        <div
-          style={{
-            position: "absolute",
-            bottom: 0,
-            width: "100%",
-            height: "3px",
-            background: "linear-gradient(90deg,#c9a227,#f5d76e,#c9a227)"
-          }}
-        />
       </header>
 
       {/* PRODUTOS */}
-      <section
-        style={{
-          padding: "40px 20px",
-          display: "flex",
-          gap: "30px",
-          flexWrap: "wrap",
-          justifyContent: "center"
-        }}
-      >
-        {products.map((product, index) => (
+      <section style={{
+        display:"flex",
+        flexWrap:"wrap",
+        justifyContent:"center",
+        gap:"40px",
+        padding:"50px"
+      }}>
 
-          <div
-            key={index}
-            style={{
-              width: "320px",
-              background: "#fff",
-              borderRadius: "14px",
-              overflow: "hidden",
-              boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
-              paddingBottom: "20px"
-            }}
-          >
+        {products.map(product => (
 
-            {/* MAIS VENDIDO */}
-            {index === 0 && (
-              <div
-                style={{
-                  background: "#ffb300",
-                  color: "#000",
-                  padding: "6px",
-                  fontWeight: "bold",
-                  textAlign: "center"
-                }}
-              >
-                MAIS VENDIDO
+          <div key={product.id} style={{
+            width:"320px",
+            background:"#fff",
+            borderRadius:"15px",
+            boxShadow:"0 10px 25px rgba(0,0,0,.08)",
+            overflow:"hidden",
+            textAlign:"center"
+          }}>
+
+            {product.badge && (
+              <div style={{
+                background:"#ff0000",
+                color:"#fff",
+                padding:"6px",
+                fontWeight:"bold"
+              }}>
+                {product.badge}
               </div>
             )}
 
             {/* IMAGEM */}
-            <div
-              style={{
-                height: "300px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "#fff"
-              }}
-            >
-              <img
-                src={product.image}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "contain"
-                }}
-              />
+            <div style={{height:"300px"}}>
+              <img src={product.image} style={{
+                width:"100%",
+                height:"100%",
+                objectFit:"contain"
+              }} />
             </div>
 
-            <h2 style={{ padding: "10px" }}>{product.name}</h2>
+            <h3>{product.name}</h3>
 
-            <p style={{ padding: "0 15px", color: "#555" }}>
+            <p style={{padding:"0 15px"}}>
               {product.description}
             </p>
 
-            <h3 style={{ marginTop: "10px", textAlign: "center" }}>
-              R$ {product.price.toFixed(2)}
-            </h3>
+            <h2>R$ {product.price}</h2>
 
             {/* ESTOQUE */}
-            <div
-              style={{
-                textAlign: "center",
-                color: "red",
-                fontWeight: "bold",
-                marginTop: "5px"
-              }}
-            >
+            <p style={{color:"#e67e22"}}>
               Restam apenas {product.estoque} unidades
-            </div>
+            </p>
 
-            {/* AVALIAÇÕES */}
-            <div style={{ textAlign: "center", marginTop: "8px" }}>
-              ⭐⭐⭐⭐⭐ (27 avaliações)
-            </div>
-
-            {/* PERSONALIZAÇÃO PEN DRIVE */}
-            {product.name.includes("Pen Drive") && (
-              <textarea
-                placeholder="Escreva qual canto deseja gravar..."
-                style={{
-                  width: "90%",
-                  margin: "10px auto",
-                  display: "block",
-                  height: "70px",
-                  borderRadius: "8px",
-                  border: "1px solid #ccc",
-                  padding: "10px"
-                }}
-              />
-            )}
+            {/* GARANTIA */}
+            <p style={{fontSize:"13px", color:"#777"}}>
+              Garantia de 7 dias
+            </p>
 
             {/* CEP */}
-            <div style={{ padding: "0 20px" }}>
-              <input
-                placeholder="Digite seu CEP"
-                value={cep[index] || ""}
-                onChange={(e) =>
-                  setCep({
-                    ...cep,
-                    [index]: e.target.value
-                  })
-                }
-                style={{
-                  width: "100%",
-                  padding: "10px",
-                  borderRadius: "8px",
-                  border: "1px solid #ccc",
-                  marginTop: "10px"
-                }}
-              />
+            <input
+              placeholder="Digite seu CEP"
+              value={cep}
+              onChange={(e)=>setCep(e.target.value)}
+              style={{
+                width:"80%",
+                padding:"10px",
+                marginTop:"10px",
+                borderRadius:"8px",
+                border:"1px solid #ddd"
+              }}
+            />
 
-              <button
-                onClick={() => calcularFrete(index)}
-                style={{
-                  width: "100%",
-                  background: "#000",
-                  color: "#fff",
-                  padding: "10px",
-                  borderRadius: "8px",
-                  marginTop: "8px",
-                  cursor: "pointer"
-                }}
-              >
-                Calcular Frete
-              </button>
+            <button
+              onClick={()=>calcularFrete(product)}
+              style={{
+                background:"#000",
+                color:"#fff",
+                border:"none",
+                padding:"10px",
+                borderRadius:"8px",
+                marginTop:"10px",
+                cursor:"pointer"
+              }}
+            >
+              Calcular Frete
+            </button>
 
-              {frete[index] && (
-                <div style={{ marginTop: "8px", fontWeight: "bold" }}>
-                  Frete: R$ {frete[index]}
-                </div>
-              )}
-            </div>
+            {loading && <p>Calculando...</p>}
 
-            {/* BOTÕES */}
-            <div style={{ padding: "0 20px" }}>
+            {frete && (
+              <p style={{color:"green"}}>
+                Frete disponível
+              </p>
+            )}
 
-              <a
-                href={product.mpLink}
-                target="_blank"
-                style={{
-                  display: "block",
-                  background: "#000",
-                  color: "#fff",
-                  padding: "12px",
-                  borderRadius: "8px",
-                  textDecoration: "none",
-                  marginTop: "12px",
-                  fontWeight: "bold"
-                }}
-              >
-                Compra Segura
-              </a>
+            {/* BOTÃO COMPRA */}
+            <a
+              href={product.mpLink}
+              target="_blank"
+              style={{
+                display:"block",
+                background:"#000",
+                color:"#fff",
+                margin:"15px",
+                padding:"12px",
+                borderRadius:"8px",
+                textDecoration:"none",
+                fontWeight:"bold"
+              }}
+            >
+              Compra Segura
+            </a>
 
-              <a
-                href="https://wa.me/5511984309480"
-                target="_blank"
-                style={{
-                  display: "block",
-                  background: "#25D366",
-                  color: "#fff",
-                  padding: "12px",
-                  borderRadius: "8px",
-                  textDecoration: "none",
-                  marginTop: "8px",
-                  fontWeight: "bold"
-                }}
-              >
-                Falar no WhatsApp
-              </a>
-
-            </div>
+            {/* WHATSAPP */}
+            <a
+              href="https://wa.me/5511984309480"
+              target="_blank"
+              style={{
+                display:"block",
+                background:"#25D366",
+                color:"#fff",
+                margin:"0 15px 20px",
+                padding:"12px",
+                borderRadius:"8px",
+                textDecoration:"none",
+                fontWeight:"bold"
+              }}
+            >
+              Atendimento WhatsApp
+            </a>
 
           </div>
 
         ))}
-      </section>
 
-      {/* BOTÃO WHATSAPP FLUTUANTE */}
-      <a
-        href="https://wa.me/5511984309480"
-        target="_blank"
-        style={{
-          position: "fixed",
-          bottom: "20px",
-          right: "20px",
-          width: "60px",
-          height: "60px",
-          borderRadius: "50%",
-          background: "#25D366",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          boxShadow: "0 5px 15px rgba(0,0,0,0.3)"
-        }}
-      >
-        <img
-          src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
-          style={{ width: "30px" }}
-        />
-      </a>
+      </section>
 
     </main>
   );
