@@ -3,10 +3,11 @@ import { useState } from "react";
 
 export default function Home() {
 
+  /* PRODUTOS */
   const products = [
     {
       name: "Caixa Acústica profissional para encarte de canto",
-      description: "Caixa acústica profissional para encarte de canto em pássaros nas medidas 65x65x35 cm, resitente e com excelente propagação sonora.",
+      description: "Caixa acústica profissional para encarte de canto em pássaros nas medidas 65x65x35 cm, resistente e com excelente propagação sonora.",
       price: 1500,
       image: "/caixa-nova.png",
       mpLink: "https://mpago.la/2foFNjY"
@@ -27,20 +28,26 @@ export default function Home() {
     }
   ];
 
+  /* ESTADOS */
   const [cart, setCart] = useState([]);
-const [cep, setCep] = useState("");
-const [frete, setFrete] = useState("");
+  const [cep, setCep] = useState("");
+  const [frete, setFrete] = useState("");
+  const [canto, setCanto] = useState("");
+
   const addToCart = (product) => {
     setCart([...cart, product]);
   };
-const calcularFrete = () => {
-  if (!cep || cep.length < 8) {
-    alert("Digite um CEP válido");
-    return;
-  }
 
-  setFrete("Frete estimado: R$ 25,00");
-};
+  /* FRETE SIMPLES */
+  const calcularFrete = () => {
+    if (!cep || cep.length < 8) {
+      alert("Digite um CEP válido");
+      return;
+    }
+
+    setFrete("Frete estimado: R$ 25,00");
+  };
+
   return (
     <main style={{ fontFamily: "Arial, sans-serif", background: "#f5f5f5" }}>
 
@@ -97,7 +104,6 @@ const calcularFrete = () => {
           flexWrap: "wrap"
         }}
       >
-
         {products.map((product, index) => (
 
           <div
@@ -129,71 +135,73 @@ const calcularFrete = () => {
                 style={{
                   width: "100%",
                   height: "100%",
-                  objectFit: product.name === "Aparelho Digital" ? "contain" : "cover"
+                  objectFit: product.name.includes("Aparelho") ? "contain" : "cover"
                 }}
               />
             </div>
 
             <h2>{product.name}</h2>
+
             <p style={{ padding: "0 15px", color: "#555" }}>
               {product.description}
             </p>
 
-            <h3 style={{ marginTop: "10px" }}>
-              R$ {product.price.toFixed(2)}
-            </h3>
-            {/* CÁLCULO DE FRETE */}
-<div style={{ marginTop: "10px" }}>
-  <input
-    type="text"
-    placeholder="Digite seu CEP"
-    value={cep}
-    onChange={(e) => setCep(e.target.value)}
-    style={{
-      width: "70%",
-      padding: "8px",
-      borderRadius: "6px",
-      border: "1px solid #ccc"
-    }}
-  />
+            <h3>R$ {product.price.toFixed(2)}</h3>
 
-  <button
-    onClick={calcularFrete}
-    style={{
-      marginLeft: "5px",
-      padding: "8px 10px",
-      border: "none",
-      borderRadius: "6px",
-      background: "#000",
-      color: "#fff",
-      cursor: "pointer"
-    }}
-  >
-    Calcular
-  </button>
+            {/* FRETE */}
+            <div style={{ marginTop: "10px" }}>
+              <input
+                type="text"
+                placeholder="Digite seu CEP"
+                value={cep}
+                onChange={(e) => setCep(e.target.value)}
+                style={{
+                  width: "70%",
+                  padding: "8px",
+                  borderRadius: "6px",
+                  border: "1px solid #ccc"
+                }}
+              />
 
-  {frete && (
-    <div style={{ marginTop: "6px", fontSize: "14px" }}>
-      {frete}
-    </div>
-  )}
-</div>
-{/* CAMPO PERSONALIZAÇÃO PEN DRIVE */}
-{product.name === "Pen Drive 8GB" && (
-  <textarea
-    placeholder="Escreva aqui qual canto deseja gravar..."
-    style={{
-      width: "90%",
-      height: "70px",
-      marginTop: "10px",
-      borderRadius: "8px",
-      border: "1px solid #ccc",
-      padding: "10px",
-      fontSize: "14px",
-      resize: "none"
-    }}
-  />
-)}
+              <button
+                onClick={calcularFrete}
+                style={{
+                  marginLeft: "5px",
+                  padding: "8px 10px",
+                  border: "none",
+                  borderRadius: "6px",
+                  background: "#000",
+                  color: "#fff",
+                  cursor: "pointer"
+                }}
+              >
+                Calcular
+              </button>
+
+              {frete && (
+                <div style={{ marginTop: "6px", fontSize: "14px" }}>
+                  {frete}
+                </div>
+              )}
+            </div>
+
+            {/* PERSONALIZAÇÃO PEN DRIVE */}
+            {product.name === "Pen Drive 8GB" && (
+              <textarea
+                placeholder="Escreva qual canto deseja gravar..."
+                value={canto}
+                onChange={(e) => setCanto(e.target.value)}
+                style={{
+                  width: "90%",
+                  height: "70px",
+                  marginTop: "10px",
+                  borderRadius: "8px",
+                  border: "1px solid #ccc",
+                  padding: "10px",
+                  resize: "none"
+                }}
+              />
+            )}
 
             {/* BOTÕES */}
             <div style={{ padding: "0 20px" }}>
@@ -235,9 +243,7 @@ const calcularFrete = () => {
             </div>
 
           </div>
-
         ))}
-
       </section>
 
 
@@ -269,3 +275,4 @@ const calcularFrete = () => {
     </main>
   );
 }
+
