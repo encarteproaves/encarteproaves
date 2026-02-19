@@ -10,41 +10,39 @@ export default function Home() {
       description: "Caixa acústica profissional para encarte de canto em pássaros nas medidas 65x65x35 cm, resistente e com excelente propagação sonora.",
       price: 1500,
       image: "/caixa-nova.png",
-      mpLink: "https://mpago.la/2foFNjY"
+      mpLink: "https://mpago.la/2foFNjY",
+      estoque: 3,
+      maisVendido: true
     },
     {
       name: "Aparelho Digital para encarte de canto",
       description: "Aparelho digital com programações automáticas para manter o treino do canto com regularidade.",
       price: 330,
       image: "/aparelho-novo.jpg",
-      mpLink: "https://mpago.la/1Po2ehy"
+      mpLink: "https://mpago.la/1Po2ehy",
+      estoque: 8
     },
     {
       name: "Pen Drive 8GB",
       description: "Pen drive com canto editado conforme pedido do cliente",
       price: 150,
       image: "/pendrive-8gb.jpg",
-      mpLink: "https://wa.me/5511984309480"
+      mpLink: "https://wa.me/5511984309480",
+      estoque: 20
     }
   ];
 
   /* ESTADOS */
-  const [cart, setCart] = useState([]);
   const [cep, setCep] = useState("");
   const [frete, setFrete] = useState("");
   const [canto, setCanto] = useState("");
 
-  const addToCart = (product) => {
-    setCart([...cart, product]);
-  };
-
-  /* FRETE SIMPLES */
+  /* FRETE */
   const calcularFrete = () => {
     if (!cep || cep.length < 8) {
       alert("Digite um CEP válido");
       return;
     }
-
     setFrete("Frete estimado: R$ 25,00");
   };
 
@@ -62,7 +60,6 @@ export default function Home() {
       >
         <img
           src="/logo.png"
-          alt="Encarte Pro Aves"
           style={{
             width: "240px",
             marginBottom: "10px"
@@ -80,12 +77,10 @@ export default function Home() {
           Tecnologia e Qualidade para o Melhor Encarte de Canto
         </div>
 
-        {/* LINHA DOURADA */}
         <div
           style={{
             position: "absolute",
             bottom: 0,
-            left: 0,
             width: "100%",
             height: "3px",
             background: "linear-gradient(90deg, #c9a227, #f5d76e, #c9a227)"
@@ -97,27 +92,49 @@ export default function Home() {
       {/* PRODUTOS */}
       <section
         style={{
-          padding: "50px 20px",
+          padding: "50px 15px",
           display: "flex",
           justifyContent: "center",
-          gap: "40px",
+          gap: "30px",
           flexWrap: "wrap"
         }}
       >
+
         {products.map((product, index) => (
 
           <div
             key={index}
             style={{
               width: "320px",
+              maxWidth: "100%",
               background: "#fff",
               borderRadius: "15px",
               overflow: "hidden",
               boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
               textAlign: "center",
-              paddingBottom: "20px"
+              paddingBottom: "20px",
+              position: "relative"
             }}
           >
+
+            {/* SELO MAIS VENDIDO */}
+            {product.maisVendido && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: "10px",
+                  left: "10px",
+                  background: "#ffb300",
+                  color: "#000",
+                  padding: "6px 10px",
+                  borderRadius: "8px",
+                  fontWeight: "bold",
+                  fontSize: "12px"
+                }}
+              >
+                MAIS VENDIDO
+              </div>
+            )}
 
             {/* IMAGEM */}
             <div
@@ -140,23 +157,40 @@ export default function Home() {
               />
             </div>
 
-            <h2>{product.name}</h2>
+            <h2 style={{ padding: "10px" }}>{product.name}</h2>
 
-            <p style={{ padding: "0 15px", color: "#555" }}>
+            {/* AVALIAÇÕES */}
+            <div style={{ color: "#ffb400", fontSize: "18px" }}>
+              ★★★★★
+            </div>
+
+            <div style={{ fontSize: "13px", color: "#777" }}>
+              +137 clientes satisfeitos
+            </div>
+
+            <p style={{ padding: "10px 15px", color: "#555" }}>
               {product.description}
             </p>
 
             <h3>R$ {product.price.toFixed(2)}</h3>
 
+            {/* ESTOQUE */}
+            <div style={{
+              fontSize: "13px",
+              color: "#d32f2f",
+              fontWeight: "bold"
+            }}>
+              Restam apenas {product.estoque} unidades
+            </div>
+
             {/* FRETE */}
             <div style={{ marginTop: "10px" }}>
               <input
-                type="text"
                 placeholder="Digite seu CEP"
                 value={cep}
                 onChange={(e) => setCep(e.target.value)}
                 style={{
-                  width: "70%",
+                  width: "65%",
                   padding: "8px",
                   borderRadius: "6px",
                   border: "1px solid #ccc"
@@ -167,7 +201,7 @@ export default function Home() {
                 onClick={calcularFrete}
                 style={{
                   marginLeft: "5px",
-                  padding: "8px 10px",
+                  padding: "8px",
                   border: "none",
                   borderRadius: "6px",
                   background: "#000",
@@ -179,7 +213,7 @@ export default function Home() {
               </button>
 
               {frete && (
-                <div style={{ marginTop: "6px", fontSize: "14px" }}>
+                <div style={{ marginTop: "5px", fontSize: "13px" }}>
                   {frete}
                 </div>
               )}
@@ -188,7 +222,7 @@ export default function Home() {
             {/* PERSONALIZAÇÃO PEN DRIVE */}
             {product.name === "Pen Drive 8GB" && (
               <textarea
-                placeholder="Escreva qual canto deseja gravar..."
+                placeholder="Digite qual canto deseja gravar..."
                 value={canto}
                 onChange={(e) => setCanto(e.target.value)}
                 style={{
@@ -197,14 +231,13 @@ export default function Home() {
                   marginTop: "10px",
                   borderRadius: "8px",
                   border: "1px solid #ccc",
-                  padding: "10px",
-                  resize: "none"
+                  padding: "10px"
                 }}
               />
             )}
 
             {/* BOTÕES */}
-            <div style={{ padding: "0 20px" }}>
+            <div style={{ padding: "15px" }}>
 
               <a
                 href={product.mpLink}
@@ -216,12 +249,21 @@ export default function Home() {
                   padding: "12px",
                   borderRadius: "8px",
                   textDecoration: "none",
-                  marginTop: "10px",
                   fontWeight: "bold"
                 }}
               >
                 Comprar Agora
               </a>
+
+              {/* BOTÃO COMPRA SEGURA */}
+              <div style={{
+                marginTop: "8px",
+                fontSize: "13px",
+                color: "#2e7d32",
+                fontWeight: "bold"
+              }}>
+                🔒 Compra 100% Segura
+              </div>
 
               <a
                 href="https://wa.me/5511984309480"
@@ -233,7 +275,7 @@ export default function Home() {
                   padding: "12px",
                   borderRadius: "8px",
                   textDecoration: "none",
-                  marginTop: "8px",
+                  marginTop: "10px",
                   fontWeight: "bold"
                 }}
               >
@@ -243,11 +285,12 @@ export default function Home() {
             </div>
 
           </div>
+
         ))}
       </section>
 
 
-      {/* WHATSAPP FLUTUANTE */}
+      {/* WHATSAPP FIXO */}
       <a
         href="https://wa.me/5511984309480"
         target="_blank"
@@ -275,4 +318,5 @@ export default function Home() {
     </main>
   );
 }
+
 
