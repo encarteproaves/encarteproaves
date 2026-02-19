@@ -2,206 +2,210 @@
 import { useState } from "react";
 
 export default function Home() {
-  const [frete, setFrete] = useState({});
-  const [cep, setCep] = useState("");
-  const [cantoPersonalizado, setCantoPersonalizado] = useState("");
-
-  const whatsappNumber = "5511984309480"; // COLOQUE SEU NÚMERO
 
   const products = [
     {
-      name: "Caixa Acústica para encarte de canto",
+      name: "Caixa Acústica profissional para encarte de canto",
+      description: "Caixa acústica profissional para encarte de canto em pássaros nas medidas 65x65x35 cm, resitente e com excelente propagação sonora.",
       price: 1500,
-      mpLink: "https://mpago.la/2foFNjY",
       image: "/caixa-nova.png",
-      description:
-        "Caixa acústica profissional para encarte. Forte, resistente e com excelente propagação sonora."
+      mpLink: "https://mpago.la/2foFNjY"
     },
     {
       name: "Aparelho Digital para encarte de canto",
+      description: "Aparelho digital com programações automáticas para manter o treino do canto com regularidade.",
       price: 330,
-      mpLink: "https://mpago.la/1Po2ehy",
       image: "/aparelho-novo.jpg",
-      description:
-        "Aparelho digital com programações automáticas para manter o treino do canto com regularidade."
+      mpLink: "https://mpago.la/1Po2ehy"
     },
     {
-      name: "Pen Drive 8GB Personalizado",
+      name: "Pen Drive 8GB",
+      description: "Pen drive com canto editado conforme pedido do cliente",
       price: 150,
-      mpLink: "#",
-      image: "/pendrive-8gb.jpg",
-      description:
-        "Pen drive com canto editado conforme seu pedido. Pronto para usar no treino."
+      image: "/pendrive.jpg",
+      mpLink: "https://wa.me/5511984309480"
     }
   ];
 
-  const calcularFrete = (productName) => {
-    if (!cep) {
-      alert("Digite o CEP!");
-      return;
-    }
+  const [cart, setCart] = useState([]);
 
-    setFrete({ ...frete, [productName]: 20 });
-  };
-
-  const gerarLinkWhatsApp = (productName) => {
-    let mensagem = `Olá, tenho interesse no produto: ${productName}`;
-
-    if (productName === "Pen Drive 8GB Personalizado" && cantoPersonalizado) {
-      mensagem += ` - Canto desejado: ${cantoPersonalizado}`;
-    }
-
-    return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(mensagem)}`;
+  const addToCart = (product) => {
+    setCart([...cart, product]);
   };
 
   return (
-    <div style={{ fontFamily: "Segoe UI, sans-serif", background: "#f4f6f8" }}
-{/* HEADER */}
-<header
-  style={{
-    background: "#111",
-    padding: "35px 20px",
-    color: "#fff",
-    textAlign: "center",
-    position: "relative"
-  }}
->
+    <main style={{ fontFamily: "Arial, sans-serif", background: "#f5f5f5" }}>
 
-  {/* LOGO CENTRALIZADA */}
-  <img
-    src="/logo.png"
-    alt="Encarte Pro Aves"
-    style={{
-      width: "240px",
-      height: "auto",
-      display: "block",
-      margin: "0 auto 10px auto"
-    }}
-  />
+      {/* HEADER */}
+      <header
+        style={{
+          background: "#111",
+          padding: "40px 20px",
+          textAlign: "center",
+          position: "relative"
+        }}
+      >
+        <img
+          src="/logo.png"
+          alt="Encarte Pro Aves"
+          style={{
+            width: "240px",
+            marginBottom: "10px"
+          }}
+        />
 
-  {/* TEXTO DOURADO */}
-  <div
-    style={{
-      fontSize: "22px",
-      fontWeight: "700",
-      letterSpacing: "1px",
-      color: "#f5d76e",
-      fontFamily: "Segoe UI, Arial, sans-serif"
-    }}
-  >
-    Tecnologia e Qualidade para o Melhor Encarte de Canto
-  </div>
+        <div
+          style={{
+            color: "#f5d76e",
+            fontSize: "22px",
+            fontWeight: "700",
+            letterSpacing: "1px"
+          }}
+        >
+          Tecnologia e Qualidade para o Melhor Encarte de Canto
+        </div>
 
-  {/* LINHA DOURADA */}
-  <div
-    style={{
-      position: "absolute",
-      bottom: 0,
-      left: 0,
-      width: "100%",
-      height: "3px",
-      background: "linear-gradient(90deg, #c9a227, #f5d76e, #c9a227)"
-    }}
-  />
-</header>
+        {/* LINHA DOURADA */}
+        <div
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            width: "100%",
+            height: "3px",
+            background: "linear-gradient(90deg, #c9a227, #f5d76e, #c9a227)"
+          }}
+        />
+      </header>
 
-      {/* BLOCO AUTORIDADE */}
-      <section style={{ padding: "25px 15px", textAlign: "center", background: "#fff" }}>
-        <h2>Especialistas em Encarte Profissional</h2>
-        <p>
-          Trabalhamos com equipamentos testados e aprovados por criadores.
-          Atendimento direto pelo WhatsApp e envio rápido para todo o Brasil.
-        </p>
-      </section>
-
-      {/* BLOCO CONFIANÇA */}
-      <section style={{ padding: "20px 15px", background: "#e9f5ef", textAlign: "center" }}>
-        <h3>Compra 100% Segura</h3>
-        <p>Pagamento protegido via Mercado Pago.</p>
-        <p>Atendimento rápido e suporte direto.</p>
-        <p>Direito garantido pelo Código de Defesa do Consumidor.</p>
-      </section>
-
-      {/* BLOCO ENVIO */}
-      <section style={{ padding: "20px 15px", background: "#fff", textAlign: "center" }}>
-        <h3>Envio Rápido</h3>
-        <p>Aparelho e Pen Drive: envio imediato.</p>
-        <p>Caixa: envio imediato se em estoque ou até 5 dias úteis.</p>
-      </section>
 
       {/* PRODUTOS */}
-      <section style={{ padding: "30px 15px", display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "25px" }}>
-        {products.map((product, i) => (
-          <div key={i} style={{
-            background: "#fff",
-            width: "100%",
-            maxWidth: "340px",
-            borderRadius: "12px",
-            boxShadow: "0 8px 25px rgba(0,0,0,0.08)",
-            paddingBottom: "20px",
-            textAlign: "center"
-          }}>
+      <section
+        style={{
+          padding: "50px 20px",
+          display: "flex",
+          justifyContent: "center",
+          gap: "40px",
+          flexWrap: "wrap"
+        }}
+      >
 
-            <img src={product.image} style={{ width: "100%", height: "240px", objectFit: "cover", borderRadius: "12px 12px 0 0" }} />
+        {products.map((product, index) => (
 
-            <h3 style={{ marginTop: "10px" }}>{product.name}</h3>
-            <p style={{ padding: "0 15px", fontSize: "14px" }}>{product.description}</p>
-            <h2 style={{ color: "#0d3b26" }}>R$ {product.price.toFixed(2)}</h2>
+          <div
+            key={index}
+            style={{
+              width: "320px",
+              background: "#fff",
+              borderRadius: "15px",
+              overflow: "hidden",
+              boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
+              textAlign: "center",
+              paddingBottom: "20px"
+            }}
+          >
 
-            {product.name === "Pen Drive 8GB Personalizado" && (
-              <input
-                type="text"
-                placeholder="Digite o canto desejado"
-                value={cantoPersonalizado}
-                onChange={(e) => setCantoPersonalizado(e.target.value)}
-                style={{ width: "85%", padding: "8px", marginBottom: "10px" }}
+            {/* IMAGEM */}
+            <div
+              style={{
+                width: "100%",
+                height: "300px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "#fff"
+              }}
+            >
+              <img
+                src={product.image}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: product.name === "Aparelho Digital" ? "contain" : "cover"
+                }}
               />
-            )}
+            </div>
 
-            <div style={{ display: "flex", gap: "8px", padding: "0 15px" }}>
-              <a href={product.mpLink} target="_blank"
-                style={{ flex: 1, background: "#ffc107", padding: "10px", borderRadius: "6px", textDecoration: "none", color: "#000" }}>
-                Comprar
+            <h2>{product.name}</h2>
+            <p style={{ padding: "0 15px", color: "#555" }}>
+              {product.description}
+            </p>
+
+            <h3 style={{ marginTop: "10px" }}>
+              R$ {product.price.toFixed(2)}
+            </h3>
+
+            {/* BOTÕES */}
+            <div style={{ padding: "0 20px" }}>
+
+              <a
+                href={product.mpLink}
+                target="_blank"
+                style={{
+                  display: "block",
+                  background: "#000",
+                  color: "#fff",
+                  padding: "12px",
+                  borderRadius: "8px",
+                  textDecoration: "none",
+                  marginTop: "10px",
+                  fontWeight: "bold"
+                }}
+              >
+                Comprar Agora
               </a>
 
-              <a href={gerarLinkWhatsApp(product.name)} target="_blank"
-                style={{ flex: 1, background: "#25D366", padding: "10px", borderRadius: "6px", textDecoration: "none", color: "#fff" }}>
-                WhatsApp
+              <a
+                href="https://wa.me/5511984309480"
+                target="_blank"
+                style={{
+                  display: "block",
+                  background: "#25D366",
+                  color: "#fff",
+                  padding: "12px",
+                  borderRadius: "8px",
+                  textDecoration: "none",
+                  marginTop: "8px",
+                  fontWeight: "bold"
+                }}
+              >
+                Falar no WhatsApp
               </a>
+
             </div>
 
           </div>
+
         ))}
+
       </section>
 
-      {/* RODAPÉ PROFISSIONAL */}
-      <footer style={{ background: "#0d3b26", color: "#fff", textAlign: "center", padding: "20px" }}>
-        <p>© 2026 Encarte Pro Aves</p>
-        <p>Atendimento via WhatsApp</p>
-        <p>Envio para todo o Brasil</p>
-      </footer>
 
-      {/* BOTÃO FLUTUANTE */}
-      <a href={`https://wa.me/${whatsappNumber}`} target="_blank"
+      {/* WHATSAPP FLUTUANTE */}
+      <a
+        href="https://wa.me/5511984309480"
+        target="_blank"
         style={{
           position: "fixed",
           bottom: "20px",
           right: "20px",
-          backgroundColor: "#25D366",
           width: "60px",
           height: "60px",
           borderRadius: "50%",
+          background: "#25D366",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          color: "#fff",
-          fontSize: "28px",
-          textDecoration: "none",
-          boxShadow: "0 8px 20px rgba(0,0,0,0.2)"
-        }}>
-        💬
+          boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
+          zIndex: 999
+        }}
+      >
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+          style={{ width: "30px" }}
+        />
       </a>
 
-    </div>
+    </main>
   );
 }
