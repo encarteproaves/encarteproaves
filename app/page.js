@@ -134,6 +134,22 @@ export default function Home() {
             <h3 style={{ marginTop: "10px" }}>
               R$ {product.price.toFixed(2)}
             </h3>
+{/* CAMPO PERSONALIZAÇÃO PEN DRIVE */}
+{product.name === "Pen Drive 8GB" && (
+  <textarea
+    placeholder="Escreva aqui qual canto deseja gravar..."
+    style={{
+      width: "90%",
+      height: "70px",
+      marginTop: "10px",
+      borderRadius: "8px",
+      border: "1px solid #ccc",
+      padding: "10px",
+      fontSize: "14px",
+      resize: "none"
+    }}
+  />
+)}
 
             {/* BOTÕES */}
             <div style={{ padding: "0 20px" }}>
