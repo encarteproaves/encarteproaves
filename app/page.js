@@ -3,51 +3,62 @@ import { useState } from "react";
 
 export default function Home() {
 
-  /* PRODUTOS */
   const products = [
     {
       name: "Caixa Acústica profissional para encarte de canto",
-      description: "Caixa acústica profissional para encarte de canto em pássaros nas medidas 65x65x35 cm, resistente e com excelente propagação sonora.",
+      description:
+        "Caixa acústica profissional 65x65x35 cm em MDF 15mm com excelente propagação sonora para treinamento de canto.",
       price: 1500,
       image: "/caixa-nova.png",
       mpLink: "https://mpago.la/2foFNjY",
-      estoque: 3,
-      maisVendido: true
+      estoque: 3
     },
     {
       name: "Aparelho Digital para encarte de canto",
-      description: "Aparelho digital com programações automáticas para manter o treino do canto com regularidade.",
+      description:
+        "Aparelho digital automático com programações inteligentes para treino contínuo de canto.",
       price: 330,
       image: "/aparelho-novo.jpg",
       mpLink: "https://mpago.la/1Po2ehy",
       estoque: 8
     },
     {
-      name: "Pen Drive 8GB",
-      description: "Pen drive com canto editado conforme pedido do cliente",
+      name: "Pen Drive 8GB com canto editado",
+      description:
+        "Pen drive com canto editado conforme pedido do cliente, pronto para treino profissional.",
       price: 150,
       image: "/pendrive-8gb.jpg",
       mpLink: "https://wa.me/5511984309480",
-      estoque: 20
+      estoque: 12
     }
   ];
 
-  /* ESTADOS */
-  const [cep, setCep] = useState("");
-  const [frete, setFrete] = useState("");
-  const [canto, setCanto] = useState("");
+  const [cep, setCep] = useState({});
+  const [frete, setFrete] = useState({});
 
-  /* FRETE */
-  const calcularFrete = () => {
-    if (!cep || cep.length < 8) {
-      alert("Digite um CEP válido");
-      return;
-    }
-    setFrete("Frete estimado: R$ 25,00");
-  };
+  async function calcularFrete(index) {
+    if (!cep[index]) return alert("Digite o CEP");
+
+    const response = await fetch("/api/frete", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        cep: cep[index]
+      })
+    });
+
+    const data = await response.json();
+
+    setFrete({
+      ...frete,
+      [index]: data.valor
+    });
+  }
 
   return (
-    <main style={{ fontFamily: "Arial, sans-serif", background: "#f5f5f5" }}>
+    <main style={{ fontFamily: "Arial", background: "#f5f5f5" }}>
 
       {/* HEADER */}
       <header
@@ -62,7 +73,8 @@ export default function Home() {
           src="/logo.png"
           style={{
             width: "240px",
-            marginBottom: "10px"
+            display: "block",
+            margin: "0 auto"
           }}
         />
 
@@ -71,7 +83,7 @@ export default function Home() {
             color: "#f5d76e",
             fontSize: "22px",
             fontWeight: "700",
-            letterSpacing: "1px"
+            marginTop: "10px"
           }}
         >
           Tecnologia e Qualidade para o Melhor Encarte de Canto
@@ -83,53 +95,44 @@ export default function Home() {
             bottom: 0,
             width: "100%",
             height: "3px",
-            background: "linear-gradient(90deg, #c9a227, #f5d76e, #c9a227)"
+            background: "linear-gradient(90deg,#c9a227,#f5d76e,#c9a227)"
           }}
         />
       </header>
 
-
       {/* PRODUTOS */}
       <section
         style={{
-          padding: "50px 15px",
+          padding: "40px 20px",
           display: "flex",
-          justifyContent: "center",
           gap: "30px",
-          flexWrap: "wrap"
+          flexWrap: "wrap",
+          justifyContent: "center"
         }}
       >
-
         {products.map((product, index) => (
 
           <div
             key={index}
             style={{
               width: "320px",
-              maxWidth: "100%",
               background: "#fff",
-              borderRadius: "15px",
+              borderRadius: "14px",
               overflow: "hidden",
               boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
-              textAlign: "center",
-              paddingBottom: "20px",
-              position: "relative"
+              paddingBottom: "20px"
             }}
           >
 
-            {/* SELO MAIS VENDIDO */}
-            {product.maisVendido && (
+            {/* MAIS VENDIDO */}
+            {index === 0 && (
               <div
                 style={{
-                  position: "absolute",
-                  top: "10px",
-                  left: "10px",
                   background: "#ffb300",
                   color: "#000",
-                  padding: "6px 10px",
-                  borderRadius: "8px",
+                  padding: "6px",
                   fontWeight: "bold",
-                  fontSize: "12px"
+                  textAlign: "center"
                 }}
               >
                 MAIS VENDIDO
@@ -139,7 +142,6 @@ export default function Home() {
             {/* IMAGEM */}
             <div
               style={{
-                width: "100%",
                 height: "300px",
                 display: "flex",
                 alignItems: "center",
@@ -152,83 +154,47 @@ export default function Home() {
                 style={{
                   width: "100%",
                   height: "100%",
-                  objectFit: product.name.includes("Aparelho") ? "contain" : "cover"
+                  objectFit: "contain"
                 }}
               />
             </div>
 
             <h2 style={{ padding: "10px" }}>{product.name}</h2>
 
-            {/* AVALIAÇÕES */}
-            <div style={{ color: "#ffb400", fontSize: "18px" }}>
-              ★★★★★
-            </div>
-
-            <div style={{ fontSize: "13px", color: "#777" }}>
-              +137 clientes satisfeitos
-            </div>
-
-            <p style={{ padding: "10px 15px", color: "#555" }}>
+            <p style={{ padding: "0 15px", color: "#555" }}>
               {product.description}
             </p>
 
-            <h3>R$ {product.price.toFixed(2)}</h3>
+            <h3 style={{ marginTop: "10px", textAlign: "center" }}>
+              R$ {product.price.toFixed(2)}
+            </h3>
 
             {/* ESTOQUE */}
-            <div style={{
-              fontSize: "13px",
-              color: "#d32f2f",
-              fontWeight: "bold"
-            }}>
+            <div
+              style={{
+                textAlign: "center",
+                color: "red",
+                fontWeight: "bold",
+                marginTop: "5px"
+              }}
+            >
               Restam apenas {product.estoque} unidades
             </div>
 
-            {/* FRETE */}
-            <div style={{ marginTop: "10px" }}>
-              <input
-                placeholder="Digite seu CEP"
-                value={cep}
-                onChange={(e) => setCep(e.target.value)}
-                style={{
-                  width: "65%",
-                  padding: "8px",
-                  borderRadius: "6px",
-                  border: "1px solid #ccc"
-                }}
-              />
-
-              <button
-                onClick={calcularFrete}
-                style={{
-                  marginLeft: "5px",
-                  padding: "8px",
-                  border: "none",
-                  borderRadius: "6px",
-                  background: "#000",
-                  color: "#fff",
-                  cursor: "pointer"
-                }}
-              >
-                Calcular
-              </button>
-
-              {frete && (
-                <div style={{ marginTop: "5px", fontSize: "13px" }}>
-                  {frete}
-                </div>
-              )}
+            {/* AVALIAÇÕES */}
+            <div style={{ textAlign: "center", marginTop: "8px" }}>
+              ⭐⭐⭐⭐⭐ (27 avaliações)
             </div>
 
             {/* PERSONALIZAÇÃO PEN DRIVE */}
-            {product.name === "Pen Drive 8GB" && (
+            {product.name.includes("Pen Drive") && (
               <textarea
-                placeholder="Digite qual canto deseja gravar..."
-                value={canto}
-                onChange={(e) => setCanto(e.target.value)}
+                placeholder="Escreva qual canto deseja gravar..."
                 style={{
                   width: "90%",
+                  margin: "10px auto",
+                  display: "block",
                   height: "70px",
-                  marginTop: "10px",
                   borderRadius: "8px",
                   border: "1px solid #ccc",
                   padding: "10px"
@@ -236,8 +202,50 @@ export default function Home() {
               />
             )}
 
+            {/* CEP */}
+            <div style={{ padding: "0 20px" }}>
+              <input
+                placeholder="Digite seu CEP"
+                value={cep[index] || ""}
+                onChange={(e) =>
+                  setCep({
+                    ...cep,
+                    [index]: e.target.value
+                  })
+                }
+                style={{
+                  width: "100%",
+                  padding: "10px",
+                  borderRadius: "8px",
+                  border: "1px solid #ccc",
+                  marginTop: "10px"
+                }}
+              />
+
+              <button
+                onClick={() => calcularFrete(index)}
+                style={{
+                  width: "100%",
+                  background: "#000",
+                  color: "#fff",
+                  padding: "10px",
+                  borderRadius: "8px",
+                  marginTop: "8px",
+                  cursor: "pointer"
+                }}
+              >
+                Calcular Frete
+              </button>
+
+              {frete[index] && (
+                <div style={{ marginTop: "8px", fontWeight: "bold" }}>
+                  Frete: R$ {frete[index]}
+                </div>
+              )}
+            </div>
+
             {/* BOTÕES */}
-            <div style={{ padding: "15px" }}>
+            <div style={{ padding: "0 20px" }}>
 
               <a
                 href={product.mpLink}
@@ -249,21 +257,12 @@ export default function Home() {
                   padding: "12px",
                   borderRadius: "8px",
                   textDecoration: "none",
+                  marginTop: "12px",
                   fontWeight: "bold"
                 }}
               >
-                Comprar Agora
+                Compra Segura
               </a>
-
-              {/* BOTÃO COMPRA SEGURA */}
-              <div style={{
-                marginTop: "8px",
-                fontSize: "13px",
-                color: "#2e7d32",
-                fontWeight: "bold"
-              }}>
-                🔒 Compra 100% Segura
-              </div>
 
               <a
                 href="https://wa.me/5511984309480"
@@ -275,7 +274,7 @@ export default function Home() {
                   padding: "12px",
                   borderRadius: "8px",
                   textDecoration: "none",
-                  marginTop: "10px",
+                  marginTop: "8px",
                   fontWeight: "bold"
                 }}
               >
@@ -289,8 +288,7 @@ export default function Home() {
         ))}
       </section>
 
-
-      {/* WHATSAPP FIXO */}
+      {/* BOTÃO WHATSAPP FLUTUANTE */}
       <a
         href="https://wa.me/5511984309480"
         target="_blank"
@@ -305,8 +303,7 @@ export default function Home() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
-          zIndex: 999
+          boxShadow: "0 5px 15px rgba(0,0,0,0.3)"
         }}
       >
         <img
@@ -318,5 +315,3 @@ export default function Home() {
     </main>
   );
 }
-
-
