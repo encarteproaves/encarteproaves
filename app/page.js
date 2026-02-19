@@ -1,8 +1,9 @@
 "use client";
 import { useState } from "react";
 export default function Home() {
-
   const [cart,setCart] = useState([]);
+const [cep, setCep] = useState("");
+const [frete, setFrete] = useState(null);
 
     {
       id: 1,
