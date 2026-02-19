@@ -28,11 +28,19 @@ export default function Home() {
   ];
 
   const [cart, setCart] = useState([]);
-
+const [cep, setCep] = useState("");
+const [frete, setFrete] = useState("");
   const addToCart = (product) => {
     setCart([...cart, product]);
   };
+const calcularFrete = () => {
+  if (!cep || cep.length < 8) {
+    alert("Digite um CEP válido");
+    return;
+  }
 
+  setFrete("Frete estimado: R$ 25,00");
+};
   return (
     <main style={{ fontFamily: "Arial, sans-serif", background: "#f5f5f5" }}>
 
@@ -134,6 +142,42 @@ export default function Home() {
             <h3 style={{ marginTop: "10px" }}>
               R$ {product.price.toFixed(2)}
             </h3>
+            {/* CÁLCULO DE FRETE */}
+<div style={{ marginTop: "10px" }}>
+  <input
+    type="text"
+    placeholder="Digite seu CEP"
+    value={cep}
+    onChange={(e) => setCep(e.target.value)}
+    style={{
+      width: "70%",
+      padding: "8px",
+      borderRadius: "6px",
+      border: "1px solid #ccc"
+    }}
+  />
+
+  <button
+    onClick={calcularFrete}
+    style={{
+      marginLeft: "5px",
+      padding: "8px 10px",
+      border: "none",
+      borderRadius: "6px",
+      background: "#000",
+      color: "#fff",
+      cursor: "pointer"
+    }}
+  >
+    Calcular
+  </button>
+
+  {frete && (
+    <div style={{ marginTop: "6px", fontSize: "14px" }}>
+      {frete}
+    </div>
+  )}
+</div>
 {/* CAMPO PERSONALIZAÇÃO PEN DRIVE */}
 {product.name === "Pen Drive 8GB" && (
   <textarea
