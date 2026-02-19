@@ -58,7 +58,6 @@ export default function Home() {
     <div style={{ fontFamily: "Segoe UI, sans-serif", background: "#f4f6f8" }}>
 
       {/* HEADER */}
-      {/* HEADER */}
 <header
   style={{
     background: "#111",
