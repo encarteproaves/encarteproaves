@@ -58,9 +58,54 @@ export default function Home() {
     <div style={{ fontFamily: "Segoe UI, sans-serif", background: "#f4f6f8" }}>
 
       {/* HEADER */}
-      <header style={{ background: "#0d3b26", padding: "25px 15px", color: "#fff", textAlign: "center" }}>
-        <h1>Encarte Pro Aves</h1>
-        <p>Qualidade profissional com preço justo</p>
+      {/* HEADER */}
+<header
+  style={{
+    background: "#111",
+    padding: "35px 50px",
+    color: "#fff",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    position: "relative"
+  }}
+>
+  <img
+    src="/logo.png"
+    alt="Encarte Pro Aves"
+    style={{
+      width: "220px",
+      height: "auto"
+    }}
+  />
+
+  <div
+    style={{
+      flex: 1,
+      textAlign: "center",
+      fontSize: "20px",
+      fontWeight: "600",
+      letterSpacing: "1px"
+    }}
+  >
+    Tecnologia e Qualidade para o Melhor Encarte de Canto
+  </div>
+
+  <div style={{ width: "220px" }}></div>
+
+  {/* LINHA DOURADA */}
+  <div
+    style={{
+      position: "absolute",
+      bottom: 0,
+      left: 0,
+      width: "100%",
+      height: "3px",
+      background: "linear-gradient(90deg, #c9a227, #f5d76e, #c9a227)"
+    }}
+  />
+</header>
+
       </header>
 
       {/* BLOCO AUTORIDADE */}
