@@ -105,9 +105,6 @@ export default function Home() {
     }}
   />
 </header>
-
-      </header>
-
       {/* BLOCO AUTORIDADE */}
       <section style={{ padding: "25px 15px", textAlign: "center", background: "#fff" }}>
         <h2>Especialistas em Encarte Profissional</h2>
