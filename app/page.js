@@ -62,42 +62,34 @@ export default function Home() {
     background: "#111",
     padding: "35px 20px",
     color: "#fff",
+    textAlign: "center",
     position: "relative"
   }}
 >
+
+  {/* LOGO CENTRALIZADA */}
+  <img
+    src="/logo.png"
+    alt="Encarte Pro Aves"
+    style={{
+      width: "240px",
+      height: "auto",
+      display: "block",
+      margin: "0 auto 10px auto"
+    }}
+  />
+
+  {/* TEXTO DOURADO */}
   <div
     style={{
-      maxWidth: "1200px",
-      margin: "0 auto",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: "30px",
-      flexWrap: "wrap"
+      fontSize: "22px",
+      fontWeight: "700",
+      letterSpacing: "1px",
+      color: "#f5d76e",
+      fontFamily: "Segoe UI, Arial, sans-serif"
     }}
   >
-    {/* LOGO */}
-    <img
-      src="/logo.png"
-      alt="Encarte Pro Aves"
-      style={{
-        width: "230px",
-        height: "auto"
-      }}
-    />
-
-    {/* TEXTO */}
-    <div
-      style={{
-        fontSize: "22px",
-        fontWeight: "700",
-        letterSpacing: "1px",
-        textAlign: "center",
-        fontFamily: "Segoe UI, Arial, sans-serif"
-      }}
-    >
-      Tecnologia e Qualidade para o Melhor Encarte de Canto
-    </div>
+    Tecnologia e Qualidade para o Melhor Encarte de Canto
   </div>
 
   {/* LINHA DOURADA */}
