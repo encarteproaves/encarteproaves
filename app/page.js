@@ -1,36 +1,10 @@
 "use client";
 import { useState } from "react";
+
 export default function Home() {
-  const [cart,setCart] = useState([]);
-const [cep, setCep] = useState("");
-const [frete, setFrete] = useState(null);
-const calcularFrete = async () => {
-  if (cep.length < 8) {
-    alert("Digite um CEP válido");
-    return;
-  }
 
-  const response = await fetch("/api/frete", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      cep,
-      width: 30,
-      height: 30,
-      length: 30,
-      weight: 1,
-      price: 100
-    })
-  });
-
-  const data = await response.json();
-
-  if (data && data[0]) {
-    setFrete(data[0].price);
-  }
-};
+  /* PRODUTOS */
+  const products = [
 
     {
       id: 1,
@@ -77,11 +51,18 @@ const calcularFrete = async () => {
 
   ];
 
+  /* STATES */
   const [cep, setCep] = useState("");
   const [frete, setFrete] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  /* FUNÇÃO FRETE */
   async function calcularFrete(product){
+
+    if (cep.length < 8){
+      alert("Digite um CEP válido");
+      return;
+    }
 
     setLoading(true);
 
@@ -175,12 +156,10 @@ const calcularFrete = async () => {
 
             <h2>R$ {product.price}</h2>
 
-            {/* ESTOQUE */}
             <p style={{color:"#e67e22"}}>
               Restam apenas {product.estoque} unidades
             </p>
 
-            {/* GARANTIA */}
             <p style={{fontSize:"13px", color:"#777"}}>
               Garantia de 7 dias
             </p>
@@ -218,7 +197,7 @@ const calcularFrete = async () => {
 
             {frete && (
               <p style={{color:"green"}}>
-                Frete disponível
+                Frete calculado com sucesso
               </p>
             )}
 
