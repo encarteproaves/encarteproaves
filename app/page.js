@@ -10,7 +10,7 @@ export default function Home() {
       id: 1,
       name: "Caixa Acústica Profissional para encarte de canto em aves",
       description: "Caixa acústica profissional para encarte de canto em pássaros, - Medidas 65x65x35 cm auto falante de auto rendimento, perfeita para um bom aprendizado de canto",
-      price: 1.500,00
+      price: 1.500,
       image: "/caixa-nova.png",
       weight: 8,
       width: 65,
@@ -25,7 +25,7 @@ export default function Home() {
       id: 2,
       name: "Aparelho Digital para Encarte de canto em aves",
       description: "Aparelho digital programável para treino de canto automático",
-      price: 330,00
+      price: 330,
       image: "/aparelho-novo.jpg",
       weight: 1,
       width: 20,
@@ -39,7 +39,7 @@ export default function Home() {
       id: 3,
       name: "Pen Drive 8GB Canto Editado",
       description: "Pen drive com canto personalizado conforme pedido",
-      price: 150,00
+      price: 150,
       image: "/pendrive-8gb.jpg",
       weight: 0.2,
       width: 10,
