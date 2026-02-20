@@ -4,6 +4,33 @@ export default function Home() {
   const [cart,setCart] = useState([]);
 const [cep, setCep] = useState("");
 const [frete, setFrete] = useState(null);
+const calcularFrete = async () => {
+  if (cep.length < 8) {
+    alert("Digite um CEP válido");
+    return;
+  }
+
+  const response = await fetch("/api/frete", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      cep,
+      width: 30,
+      height: 30,
+      length: 30,
+      weight: 1,
+      price: 100
+    })
+  });
+
+  const data = await response.json();
+
+  if (data && data[0]) {
+    setFrete(data[0].price);
+  }
+};
 
     {
       id: 1,
