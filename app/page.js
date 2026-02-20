@@ -23,7 +23,7 @@ export default function Home() {
 
     {
       id: 2,
-      name: "Aparelho Digital para Encarte",
+      name: "Aparelho Digital para Encarte de canto em aves",
       description: "Aparelho digital programável para treino de canto automático",
       price: 330,
       image: "/aparelho-novo.jpg",
