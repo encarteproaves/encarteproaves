@@ -200,21 +200,7 @@ onChange={(e)=>
 >
   Calcular Frete
 </button> 
-  <div style={{marginTop:"10px"}}>
-
-    {frete.map((f, index) => (
-      <div key={index} style={{
-        border:"1px solid #eee",
-        padding:"8px",
-        marginBottom:"6px",
-        borderRadius:"8px"
-      }}>
-        <strong>{f.name}</strong><br/>
-        💰 R$ {f.price}<br/>
-        ⏱ Prazo: {f.delivery_time} dias
-      </div>
-    ))}
-
+  
   </div>
 )}
               style={{
