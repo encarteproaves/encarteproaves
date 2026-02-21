@@ -59,7 +59,7 @@ const [frete, setFrete] = useState({});
   /* FUNÇÃO FRETE */
   async function calcularFrete(product){
 
-    if (cep.length < 8){
+if (!cep[product.id] || cep[product.id].length < 8){
       alert("Digite um CEP válido");
       return;
     }
