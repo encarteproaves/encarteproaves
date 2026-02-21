@@ -28,8 +28,8 @@ export default function Home() {
       price: 330,
       image: "/aparelho-novo.jpg",
       weight: 1,
-      width: 20,
-      height: 20,
+      width: 15,
+      height: 10,
       length: 20,
       mpLink: "https://mpago.la/1Po2ehy",
       estoque: 10
