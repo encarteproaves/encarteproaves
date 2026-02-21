@@ -195,11 +195,7 @@ export default function Home() {
 
             {loading && <p>Calculando...</p>}
 
-            {frete && (
-              <p style={{color:"green"}}>
-                Frete calculado com sucesso
-              </p>
-            )}
+            
 
             {/* BOTÃO COMPRA */}
             <a
