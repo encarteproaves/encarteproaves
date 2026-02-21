@@ -81,7 +81,10 @@ if (!cep[product.id] || cep[product.id].length < 8){
 
     const data = await res.json();
 
-    setFrete(data);
+    setFrete({
+  ...frete,
+  [product.id]: data
+});
     setLoading(false);
   }
 
