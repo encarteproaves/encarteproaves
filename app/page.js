@@ -55,7 +55,7 @@ export default function Home() {
   const [cep, setCep] = useState("");
   const [frete, setFrete] = useState(null);
   const [loading, setLoading] = useState(false);
-const [frete, setFrete] = useState([]);
+
   /* FUNÇÃO FRETE */
   async function calcularFrete(product){
 
