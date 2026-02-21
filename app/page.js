@@ -186,11 +186,20 @@ onChange={(e)=>
               }}
             />
 
-            <button
-              onClick={()=>calcularFrete(product)}
-{loading && <p>Calculando...</p>}
-
-{frete && frete.length > 0 && (
+          <button
+  onClick={()=>calcularFrete(product)}
+  style={{
+    background:"#000",
+    color:"#fff",
+    border:"none",
+    padding:"10px",
+    borderRadius:"8px",
+    marginTop:"10px",
+    cursor:"pointer"
+  }}
+>
+  Calcular Frete
+</button> 
   <div style={{marginTop:"10px"}}>
 
     {frete.map((f, index) => (
