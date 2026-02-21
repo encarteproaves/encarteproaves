@@ -167,8 +167,13 @@ const [frete, setFrete] = useState({});
             {/* CEP */}
             <input
               placeholder="Digite seu CEP"
-              value={cep}
-              onChange={(e)=>setCep(e.target.value)}
+              value={cep[product.id] || ""}
+onChange={(e)=>
+  setCep({
+    ...cep,
+    [product.id]: e.target.value
+  })
+}
               style={{
                 width:"80%",
                 padding:"10px",
