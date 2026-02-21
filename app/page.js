@@ -70,7 +70,7 @@ if (!cep[product.id] || cep[product.id].length < 8){
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        cep,
+  cep: cep[product.id],
         price: product.price,
         weight: product.weight,
         width: product.width,
