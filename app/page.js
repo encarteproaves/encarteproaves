@@ -12,12 +12,12 @@ export default function Home() {
       description: "Caixa acústica profissional para encarte de canto em pássaros, - Medidas 65x65x35 cm auto falante de auto rendimento, perfeita para um bom aprendizado de canto",
       price: 1500,
       image: "/caixa-nova.png",
-      weight: 8,
+      weight: 22,
       width: 65,
       height: 65,
       length: 35,
       mpLink: "https://mpago.la/2foFNjY",
-      estoque: 7,
+      estoque: 1,
       badge: "Mais Vendido"
     },
 
@@ -32,7 +32,7 @@ export default function Home() {
       height: 20,
       length: 20,
       mpLink: "https://mpago.la/1Po2ehy",
-      estoque: 12
+      estoque: 10
     },
 
     {
@@ -46,7 +46,7 @@ export default function Home() {
       height: 10,
       length: 10,
       mpLink: "https://wa.me/5511984309480",
-      estoque: 20
+      estoque: 10
     }
 
   ];
@@ -55,7 +55,7 @@ export default function Home() {
   const [cep, setCep] = useState("");
   const [frete, setFrete] = useState(null);
   const [loading, setLoading] = useState(false);
-
+const [frete, setFrete] = useState([]);
   /* FUNÇÃO FRETE */
   async function calcularFrete(product){
 
