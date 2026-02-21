@@ -195,7 +195,17 @@ export default function Home() {
 
             {loading && <p>Calculando...</p>}
 
-            
+           {frete?.length > 0 && (
+  <div style={{marginTop:"10px"}}>
+
+    {frete.map((item, index)=>(
+      <p key={index} style={{fontSize:"14px", color:"#2c3e50"}}>
+        {item.name} - R$ {item.price} - {item.delivery_time} dias
+      </p>
+    ))}
+
+  </div>
+)} 
 
             {/* BOTÃO COMPRA */}
             <a
