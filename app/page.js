@@ -232,17 +232,26 @@ onChange={(e)=>
 
             {loading && <p>Calculando...</p>}
 
-           {frete?.length > 0 && (
+           {frete[product.id] && (
+
   <div style={{marginTop:"10px"}}>
 
-    {frete.map((item, index)=>(
-      <p key={index} style={{fontSize:"14px", color:"#2c3e50"}}>
-        {item.name} - R$ {item.price} - {item.delivery_time} dias
-      </p>
+    {frete[product.id].map((item, index)=>(
+      <div key={index} style={{
+        border:"1px solid #eee",
+        padding:"8px",
+        marginBottom:"6px",
+        borderRadius:"8px"
+      }}>
+        <strong>{item.name}</strong><br/>
+        💰 R$ {item.price}<br/>
+        ⏱ {item.delivery_time} dias
+      </div>
     ))}
 
   </div>
-)} 
+
+)}
 
             {/* BOTÃO COMPRA */}
             <a
