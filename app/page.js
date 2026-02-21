@@ -52,8 +52,8 @@ export default function Home() {
   ];
 
   /* STATES */
-  const [cep, setCep] = useState("");
-  const [frete, setFrete] = useState(null);
+  const [cep, setCep] = useState({});
+const [frete, setFrete] = useState({});
   const [loading, setLoading] = useState(false);
 
   /* FUNÇÃO FRETE */
