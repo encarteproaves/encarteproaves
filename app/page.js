@@ -171,12 +171,13 @@ if (!cep[product.id] || cep[product.id].length < 8){
             <input
               placeholder="Digite seu CEP"
               value={cep?.[product.id] ?? ""}
-onChange={(e)=>
-  setCep({
-    ...cep,
-    [product.id]: e.target.value
-  })
-}
+onChange={(e)=>{
+  const value = e.target.value.replace(/\D/g,'');
+  setCep(prev => ({
+    ...prev,
+    [product.id]: value
+  }));
+}}
               style={{
                 width:"80%",
                 padding:"10px",
