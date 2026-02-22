@@ -196,22 +196,61 @@ onChange={(e)=>
   {loading && <p>Calculando...</p>}
 
 {frete[product.id] && (
-  <div style={{marginTop:"10px"}}>
-    {frete[product.id].map((item, index)=>(
-  </div>
-)}
-      <div key={index} style={{
-        border:"1px solid #eee",
-        padding:"8px",
-        marginBottom:"6px",
-        borderRadius:"8px"
-      }}>
-       <strong>{item.company?.name} - {item.name}</strong> 
-        💰 R$ {item.price}<br/>
-        ⏱ {item.delivery_time} dias
-      </div>
+  {frete[product.id] && (
 
-    ))}
+  <div style={{
+    marginTop:"12px",
+    textAlign:"left",
+    padding:"10px",
+    background:"#fafafa",
+    borderRadius:"10px",
+    border:"1px solid #eee"
+  }}>
+
+    <strong style={{fontSize:"14px"}}>
+      Opções de entrega
+    </strong>
+
+    {frete[product.id]
+
+      /* remove fretes sem valor */
+      .filter(item => item.price && item.price > 0)
+
+      /* ordena pelo mais barato */
+      .sort((a,b)=> Number(a.price) - Number(b.price))
+
+      .map((item, index)=>(
+        <div key={index} style={{
+          borderBottom:"1px solid #eee",
+          padding:"8px 0"
+        }}>
+
+          <div style={{
+            display:"flex",
+            justifyContent:"space-between"
+          }}>
+
+            <span style={{fontWeight:"bold"}}>
+              {item.company?.name} - {item.name}
+            </span>
+
+            <span style={{color:"#27ae60"}}>
+              R$ {Number(item.price).toFixed(2)}
+            </span>
+
+          </div>
+
+          <div style={{
+            fontSize:"13px",
+            color:"#777"
+          }}>
+            Prazo: {item.delivery_time} dias úteis
+          </div>
+
+        </div>
+      ))
+
+    }
 
   </div>
 
