@@ -170,7 +170,7 @@ if (!cep[product.id] || cep[product.id].length < 8){
             {/* CEP */}
             <input
               placeholder="Digite seu CEP"
-              value={cep[product.id] || ""}
+              value={cep?.[product.id] ?? ""}
 onChange={(e)=>
   setCep({
     ...cep,
