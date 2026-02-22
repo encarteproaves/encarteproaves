@@ -215,14 +215,9 @@ onChange={(e)=>
             >
               Calcular Frete
             </button>
-
             {loading && <p>Calculando...</p>}
-
-           {frete[product.id] && (
-
-  <div style={{marginTop:"10px"}}>
-
-    {frete[product.id].map((item, index)=>(
+ <div style={{marginTop:"10px"}}>
+{frete[product.id].map((item, index)=>(
       <div key={index} style={{
         border:"1px solid #eee",
         padding:"8px",
@@ -234,9 +229,7 @@ onChange={(e)=>
         ⏱ {item.delivery_time} dias
       </div>
     ))}
-
   </div>
-
 )}
 
             {/* BOTÃO COMPRA */}
