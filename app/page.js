@@ -206,7 +206,7 @@ onChange={(e)=>
         marginBottom:"6px",
         borderRadius:"8px"
       }}>
-        <strong>{item.name}</strong><br/>
+       <strong>{item.company?.name} - {item.name}</strong> 
         💰 R$ {item.price}<br/>
         ⏱ {item.delivery_time} dias
       </div>
