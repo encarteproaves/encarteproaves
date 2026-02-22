@@ -188,18 +188,7 @@ onChange={(e)=>
 
           <button
   onClick={()=>calcularFrete(product)}
-  style={{
-    background:"#000",
-    color:"#fff",
-    border:"none",
-    padding:"10px",
-    borderRadius:"8px",
-    marginTop:"10px",
-    cursor:"pointer"
-  }}
->
-  Calcular Frete
-</button> 
+  
   {loading && <p>Calculando...</p>}
 
 {frete[product.id] && (
