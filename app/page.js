@@ -201,20 +201,7 @@ onChange={(e)=>
   Calcular Frete
 </button> 
   
-  </div>
-)}
-              style={{
-                background:"#000",
-                color:"#fff",
-                border:"none",
-                padding:"10px",
-                borderRadius:"8px",
-                marginTop:"10px",
-                cursor:"pointer"
-              }}
-            >
-              Calcular Frete
-            </button>
+ 
             {loading && <p>Calculando...</p>}
  <div style={{marginTop:"10px"}}>
 {frete[product.id].map((item, index)=>(
