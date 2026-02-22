@@ -192,7 +192,7 @@ onChange={(e)=>{
   
   {loading && <p>Calculando...</p>}
 
-{frete[product.id] && (
+{Array.isArray(frete?.[product.id]) && (
 
   {loading && <p>Calculando...</p>}
 
