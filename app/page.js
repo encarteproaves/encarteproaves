@@ -193,10 +193,29 @@ onChange={(e)=>
 
 {frete[product.id] && (
 
+  {loading && <p>Calculando...</p>}
+
+{frete[product.id] && (
   <div style={{marginTop:"10px"}}>
-
     {frete[product.id].map((item, index)=>(
+  </div>
+)}
+      <div key={index} style={{
+        border:"1px solid #eee",
+        padding:"8px",
+        marginBottom:"6px",
+        borderRadius:"8px"
+      }}>
+        <strong>{item.name}</strong><br/>
+        💰 R$ {item.price}<br/>
+        ⏱ {item.delivery_time} dias
+      </div>
 
+    ))}
+
+  </div>
+
+)}
       <div key={index} style={{
         border:"1px solid #eee",
         padding:"8px",
