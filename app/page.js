@@ -78,16 +78,19 @@ if (!cep[product.id] || cep[product.id].length < 8){
         length: product.length
       })
     });
-
     const data = await res.json();
 
-    setFrete({
-  ...frete,
+if (!Array.isArray(data)){
+  console.log("Erro retorno frete:", data);
+  setLoading(false);
+  return;
+}
+setFrete(prev => ({
+  ...prev,
   [product.id]: data
-});
+}));
     setLoading(false);
   }
-
   return (
 
     <main style={{background:"#f5f5f5", fontFamily:"Arial"}}>
