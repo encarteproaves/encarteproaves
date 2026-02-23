@@ -172,7 +172,7 @@ setCep(prev => ({
             <h2>R$ {product.price}</h2>
 
             <p style={{color:"#e67e22"}}>
-              Restam apenas {product.estoque} unidades
+              
             </p>
 
             {/* ================= CEP ================= */}
