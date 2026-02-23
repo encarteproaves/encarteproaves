@@ -175,10 +175,6 @@ setCep(prev => ({
               Restam apenas {product.estoque} unidades
             </p>
 
-            <p style={{fontSize:"13px", color:"#777"}}>
-              Garantia de 7 dias
-            </p>
-
             {/* ================= CEP ================= */}
 
             <input
