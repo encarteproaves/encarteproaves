@@ -201,9 +201,7 @@ onChange={(e)=>{
   {loading && <p>Calculando...</p>}
 
 {frete[product.id] && (
-  {frete[product.id] && (
-
-  <div style={{
+ <div style={{
     marginTop:"12px",
     textAlign:"left",
     padding:"10px",
