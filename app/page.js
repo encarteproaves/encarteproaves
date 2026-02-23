@@ -317,8 +317,3 @@ onChange={(e)=>{
 
         ))}
 
-      </section>
-
-    </main>
-  );
-}
