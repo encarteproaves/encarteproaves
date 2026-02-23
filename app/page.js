@@ -3,7 +3,8 @@ import { useState } from "react";
 
 export default function Home() {
 
-  /* PRODUTOS */
+  /* ================= PRODUTOS ================= */
+
   const products = [
 
     {
@@ -51,15 +52,17 @@ export default function Home() {
 
   ];
 
-  /* STATES */
+  /* ================= STATES ================= */
+
   const [cep, setCep] = useState({});
-const [frete, setFrete] = useState({});
+  const [frete, setFrete] = useState({});
   const [loading, setLoading] = useState(false);
 
-  /* FUNÇÃO FRETE */
+  /* ================= FUNÇÃO FRETE ================= */
+
   async function calcularFrete(product){
 
-if (!cep[product.id] || cep[product.id].length < 8){
+    if (!cep[product.id] || cep[product.id].length < 8){
       alert("Digite um CEP válido");
       return;
     }
@@ -70,7 +73,7 @@ if (!cep[product.id] || cep[product.id].length < 8){
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-  cep: cep[product.id],
+        cep: cep[product.id],
         price: product.price,
         weight: product.weight,
         width: product.width,
@@ -78,19 +81,19 @@ if (!cep[product.id] || cep[product.id].length < 8){
         length: product.length
       })
     });
+
     const data = await res.json();
 
-if (!Array.isArray(data)){
-  console.log("Erro retorno frete:", data);
-  setLoading(false);
-  return;
-}
-setFrete(prev => ({
-  ...prev,
-  [product.id]: data
-}));
+    setFrete(prev => ({
+      ...prev,
+      [product.id]: data
+    }));
+
     setLoading(false);
   }
+
+  /* ================= PAGE ================= */
+
   return (
 
     <main style={{background:"#f5f5f5", fontFamily:"Arial"}}>
@@ -106,8 +109,7 @@ setFrete(prev => ({
 
         <h2 style={{
           color:"#f5d76e",
-          marginTop:"10px",
-          letterSpacing:"1px"
+          marginTop:"10px"
         }}>
           Tecnologia e Qualidade para o Melhor Encarte de Canto
         </h2>
@@ -134,6 +136,7 @@ setFrete(prev => ({
             textAlign:"center"
           }}>
 
+            {/* BADGE */}
             {product.badge && (
               <div style={{
                 background:"#ff0000",
@@ -147,13 +150,17 @@ setFrete(prev => ({
 
             {/* IMAGEM */}
             <div style={{height:"300px"}}>
-              <img src={product.image} style={{
-                width:"100%",
-                height:"100%",
-                objectFit:"contain"
-              }} />
+              <img
+                src={product.image}
+                style={{
+                  width:"100%",
+                  height:"100%",
+                  objectFit:"contain"
+                }}
+              />
             </div>
 
+            {/* TEXTO */}
             <h3>{product.name}</h3>
 
             <p style={{padding:"0 15px"}}>
@@ -170,18 +177,21 @@ setFrete(prev => ({
               Garantia de 7 dias
             </p>
 
-            {/* CEP */}
+            {/* ================= CEP ================= */}
+
             <input
               placeholder="Digite seu CEP"
               value={cep?.[product.id] ?? ""}
-onChange={(e)=>{
-  const valor = e.target.value.replace(/\D/g,"");
+              onChange={(e)=>{
 
-  setCep(prev => ({
-    ...prev,
-    [product.id]: valor
-  }));
-}}
+                const valor = e.target.value.replace(/\D/g,"");
+
+                setCep(prev => ({
+                  ...prev,
+                  [product.id]: valor
+                }));
+
+              }}
               style={{
                 width:"80%",
                 padding:"10px",
@@ -191,90 +201,55 @@ onChange={(e)=>{
               }}
             />
 
-          <button
-  onClick={()=>calcularFrete(product)}
-  
-  {loading && <p>Calculando...</p>}
+            {/* BOTÃO FRETE */}
+            <button
+              onClick={()=>calcularFrete(product)}
+              style={{
+                background:"#000",
+                color:"#fff",
+                border:"none",
+                padding:"10px",
+                borderRadius:"8px",
+                marginTop:"10px",
+                cursor:"pointer"
+              }}
+            >
+              Calcular Frete
+            </button>
 
-{Array.isArray(frete?.[product.id]) && (
+            {/* LOADING */}
+            {loading && <p>Calculando...</p>}
 
-  {loading && <p>Calculando...</p>}
+            {/* RESULTADO FRETE */}
+            {Array.isArray(frete?.[product.id]) && (
 
-{frete[product.id] && (
- <div style={{
-    marginTop:"12px",
-    textAlign:"left",
-    padding:"10px",
-    background:"#fafafa",
-    borderRadius:"10px",
-    border:"1px solid #eee"
-  }}>
+              <div style={{marginTop:"10px"}}>
 
-    <strong style={{fontSize:"14px"}}>
-      Opções de entrega
-    </strong>
+                {frete[product.id]
+                  .filter(item => item.price)
+                  .map((item, index)=>(
 
-    {frete[product.id]
+                  <div
+                    key={index}
+                    style={{
+                      border:"1px solid #eee",
+                      padding:"8px",
+                      marginBottom:"6px",
+                      borderRadius:"8px",
+                      textAlign:"left"
+                    }}
+                  >
+                    <strong>{item.name}</strong><br/>
+                    💰 R$ {item.price}<br/>
+                    ⏱ {item.delivery_time} dias
+                  </div>
 
-      /* remove fretes sem valor */
-      .filter(item => item.price && item.price > 0)
+                ))}
 
-      /* ordena pelo mais barato */
-      .sort((a,b)=> Number(a.price) - Number(b.price))
+              </div>
 
-      .map((item, index)=>(
-        <div key={index} style={{
-          borderBottom:"1px solid #eee",
-          padding:"8px 0"
-        }}>
+            )}
 
-          <div style={{
-            display:"flex",
-            justifyContent:"space-between"
-          }}>
-
-            <span style={{fontWeight:"bold"}}>
-              {item.company?.name} - {item.name}
-            </span>
-
-            <span style={{color:"#27ae60"}}>
-              R$ {Number(item.price).toFixed(2)}
-            </span>
-
-          </div>
-
-          <div style={{
-            fontSize:"13px",
-            color:"#777"
-          }}>
-            Prazo: {item.delivery_time} dias úteis
-          </div>
-
-        </div>
-      ))
-
-    }
-
-  </div>
-
-)}
-      <div key={index} style={{
-        border:"1px solid #eee",
-        padding:"8px",
-        marginBottom:"6px",
-        borderRadius:"8px"
-      }}>
-        <strong>{item.name}</strong><br/>
-        💰 R$ {item.price}<br/>
-        ⏱ {item.delivery_time} dias
-      </div>
-
-    ))}
-
-  </div>
-
-)}
-           
             {/* BOTÃO COMPRA */}
             <a
               href={product.mpLink}
@@ -315,3 +290,8 @@ onChange={(e)=>{
 
         ))}
 
+      </section>
+
+    </main>
+  );
+}
