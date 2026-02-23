@@ -175,10 +175,11 @@ setFrete(prev => ({
               placeholder="Digite seu CEP"
               value={cep?.[product.id] ?? ""}
 onChange={(e)=>{
-  const value = e.target.value.replace(/\D/g,'');
+  const valor = e.target.value.replace(/\D/g,"");
+
   setCep(prev => ({
     ...prev,
-    [product.id]: value
+    [product.id]: valor
   }));
 }}
               style={{
