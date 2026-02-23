@@ -66,7 +66,9 @@ export default function Home() {
       alert("Digite um CEP válido");
       return;
     }
-
+setCep(prev => ({
+  [product.id] prev[product.id]
+                }));
     setLoading(true);
 
     const res = await fetch("/api/frete", {
