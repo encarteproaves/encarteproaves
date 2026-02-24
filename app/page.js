@@ -184,7 +184,28 @@ export default function Home() {
           <p style={{color:"#e67e22"}}>
             Restam apenas {product.estoque} unidades
           </p>
+{/* CAMPO NOME DO CANTO (somente Pen Drive) */}
+{product.id === 3 && (
 
+  <input
+    placeholder="Digite o nome do canto (ex: Praia Grande, Paracambi, etc)"
+    value={canto?.[product.id] ?? ""}
+    onChange={(e)=>{
+      setCanto(prev => ({
+        ...prev,
+        [product.id]: e.target.value
+      }));
+    }}
+    style={{
+      width:"80%",
+      padding:"10px",
+      marginTop:"10px",
+      borderRadius:"8px",
+      border:"1px solid #ddd"
+    }}
+  />
+
+)}
 
           {/* CEP */}
           <input
