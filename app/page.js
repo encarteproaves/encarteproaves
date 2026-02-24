@@ -137,190 +137,185 @@ export default function Home() {
         padding:"50px"
       }}>
 
-      {products.map(product => (
+     {products.map(product => (
 
-        <div key={product.id} style={{
-          width:"320px",
-          background:"#fff",
-          borderRadius:"15px",
-          boxShadow:"0 10px 25px rgba(0,0,0,.08)",
-          overflow:"hidden",
-          textAlign:"center",
-          paddingBottom:"15px"
-        }}>
-
-          {product.badge && (
-            <div style={{
-              background:"#ff0000",
-              color:"#fff",
-              padding:"6px",
-              fontWeight:"bold"
-            }}>
-              {product.badge}
-            </div>
-          )}
-
-          {/* IMAGEM */}
-          <div style={{height:"300px"}}>
-            <img
-              src={product.image}
-              style={{
-                width:"100%",
-                height:"100%",
-                objectFit:"contain"
-              }}
-            />
-          </div>
-
-          {/* TEXTO */}
-          <h3>{product.name}</h3>
-
-          <p style={{padding:"0 15px"}}>
-            {product.description}
-          </p>
-
-          <h2>R$ {product.price}</h2>
-
-          <p style={{color:"#e67e22"}}>
-            Restam apenas {product.estoque} unidades
-          </p>
-{/* CAMPO NOME DO CANTO (somente Pen Drive) */}
-{product.id === 3 && (
-
-  <input
-    placeholder="Digite o nome do canto (ex: Praia Grande, Paracambi, etc)"
-    value={canto?.[product.id] ?? ""}
-    onChange={(e)=>{
-      setCanto(prev => ({
-        ...prev,
-        [product.id]: e.target.value
-      }));
-    }}
-    style={{
-      width:"80%",
-      padding:"10px",
-      marginTop:"10px",
-      borderRadius:"8px",
-      border:"1px solid #ddd"
-    }}
-  />
-
-)}
-
-          {/* CEP */}
-          <input
-            placeholder="Digite seu CEP"
-            value={cep?.[product.id] ?? ""}
-            onChange={(e)=>{
-              const valor = e.target.value.replace(/\D/g,"");
-
-              setCep(prev => ({
-                ...prev,
-                [product.id]: valor
-              }));
-            }}
-            style={{
-              width:"80%",
-              padding:"10px",
-              marginTop:"10px",
-              borderRadius:"8px",
-              border:"1px solid #ddd"
-            }}
-          />
-
-
-          {/* BOTÃO FRETE */}
-          <button
-            onClick={()=>calcularFrete(product)}
-            style={{
-              background:"#000",
-              color:"#fff",
-              border:"none",
-              padding:"10px",
-              borderRadius:"8px",
-              marginTop:"10px",
-              cursor:"pointer"
-            }}
-          >
-            Calcular Frete
-          </button>
-
-
-          {loading && <p>Calculando...</p>}
-
-
-          {/* RESULTADO FRETE */}
-          {Array.isArray(frete?.[product.id]) && (
-
-            <div style={{marginTop:"10px"}}>
-
-              {frete[product.id]
-  .filter(item => item.price && item.company?.name)
-  .map((item, index)=>(
-  
-  <div key={index} style={{
-    border:"1px solid #eee",
-    padding:"8px",
-    margin:"6px",
-    borderRadius:"8px",
-    textAlign:"left"
+  <div key={product.id} style={{
+    width:"320px",
+    background:"#fff",
+    borderRadius:"15px",
+    boxShadow:"0 10px 25px rgba(0,0,0,.08)",
+    overflow:"hidden",
+    textAlign:"center",
+    paddingBottom:"15px"
   }}>
-    
-    <strong>
-      {item.company.name} - {item.name}
-    </strong>
-    <br/>
 
-    💰 R$ {Number(item.price).toFixed(2)}<br/>
-    ⏱ {item.delivery_time} dias
+    {product.badge && (
+      <div style={{
+        background:"#ff0000",
+        color:"#fff",
+        padding:"6px",
+        fontWeight:"bold"
+      }}>
+        {product.badge}
+      </div>
+    )}
+
+    {/* IMAGEM */}
+    <div style={{height:"300px"}}>
+      <img src={product.image} style={{
+        width:"100%",
+        height:"100%",
+        objectFit:"contain"
+      }} />
+    </div>
+
+    {/* TEXTO */}
+    <h3>{product.name}</h3>
+
+    <p style={{padding:"0 15px"}}>
+      {product.description}
+    </p>
+
+    <h2>R$ {product.price}</h2>
+
+    <p style={{color:"#e67e22"}}>
+      Restam apenas {product.estoque} unidades
+    </p>
+
+
+    {/* CAMPO CANTO (SOMENTE PEN DRIVE) */}
+    {product.id === 3 && (
+
+      <input
+        placeholder="Digite o nome do canto (ex: Praia Grande, Paracambi, etc)"
+        value={canto?.[product.id] ?? ""}
+        onChange={(e)=>{
+          setCanto(prev => ({
+            ...prev,
+            [product.id]: e.target.value
+          }));
+        }}
+        style={{
+          width:"80%",
+          padding:"10px",
+          marginTop:"10px",
+          borderRadius:"8px",
+          border:"1px solid #ddd"
+        }}
+      />
+
+    )}
+
+
+    {/* CEP */}
+    <input
+      placeholder="Digite seu CEP"
+      value={cep?.[product.id] ?? ""}
+      onChange={(e)=>{
+        const valor = e.target.value.replace(/\D/g,"");
+
+        setCep(prev => ({
+          ...prev,
+          [product.id]: valor
+        }));
+      }}
+      style={{
+        width:"80%",
+        padding:"10px",
+        marginTop:"10px",
+        borderRadius:"8px",
+        border:"1px solid #ddd"
+      }}
+    />
+
+
+    {/* BOTÃO FRETE */}
+    <button
+      onClick={()=>calcularFrete(product)}
+      style={{
+        background:"#000",
+        color:"#fff",
+        border:"none",
+        padding:"10px",
+        borderRadius:"8px",
+        marginTop:"10px",
+        cursor:"pointer"
+      }}
+    >
+      Calcular Frete
+    </button>
+
+
+    {/* LOADING */}
+    {loading && <p>Calculando...</p>}
+
+
+    {/* RESULTADO FRETE */}
+    {Array.isArray(frete?.[product.id]) && (
+
+      <div style={{marginTop:"10px", padding:"0 20px"}}>
+
+        {frete[product.id].map((item,index)=>{
+
+          if (!item.price || item.price === "0.00") return null;
+
+          return (
+            <div key={index} style={{
+              border:"1px solid #eee",
+              padding:"8px",
+              marginBottom:"6px",
+              borderRadius:"8px",
+              textAlign:"left"
+            }}>
+              <strong>{item.company?.name || item.name}</strong><br/>
+              💰 R$ {item.price}<br/>
+              ⏱ {item.delivery_time} dias
+            </div>
+          );
+        })}
+
+      </div>
+
+    )}
+
+
+    {/* BOTÃO COMPRA */}
+    <a
+      href={product.mpLink}
+      target="_blank"
+      style={{
+        display:"block",
+        background:"#000",
+        color:"#fff",
+        margin:"15px",
+        padding:"12px",
+        borderRadius:"8px",
+        textDecoration:"none",
+        fontWeight:"bold"
+      }}
+    >
+      Compra Segura
+    </a>
+
+
+    {/* WHATSAPP */}
+    <a
+      href="https://wa.me/5511984309480"
+      target="_blank"
+      style={{
+        display:"block",
+        background:"#25D366",
+        color:"#fff",
+        margin:"0 15px",
+        padding:"12px",
+        borderRadius:"8px",
+        textDecoration:"none",
+        fontWeight:"bold"
+      }}
+    >
+      Atendimento WhatsApp
+    </a>
 
   </div>
 
 ))}
-
-          {/* BOTÃO COMPRA */}
-          <a
-            href={product.mpLink}
-            target="_blank"
-            style={{
-              display:"block",
-              background:"#000",
-              color:"#fff",
-              margin:"15px",
-              padding:"12px",
-              borderRadius:"8px",
-              textDecoration:"none",
-              fontWeight:"bold"
-            }}
-          >
-            Compra Segura
-          </a>
-
-
-          {/* WHATSAPP */}
-          <a
-            href="https://wa.me/5511984309480"
-            target="_blank"
-            style={{
-              display:"block",
-              background:"#25D366",
-              color:"#fff",
-              margin:"0 15px 20px",
-              padding:"12px",
-              borderRadius:"8px",
-              textDecoration:"none",
-              fontWeight:"bold"
-            }}
-          >
-            Atendimento WhatsApp
-          </a>
-
-        </div>
-
-      ))}
-
-      </section>
-
-    </main>
-  );
-}
