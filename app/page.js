@@ -233,29 +233,28 @@ export default function Home() {
             <div style={{marginTop:"10px"}}>
 
               {frete[product.id]
-                .filter(item => item.price && item.company?.name)
-                .map((item, index)=>(
-                
-                <div key={index} style={{
-                  border:"1px solid #eee",
-                  padding:"8px",
-                  margin:"6px",
-                  borderRadius:"8px",
-                  textAlign:"left"
-                }}>
-                  
-                  <strong>{item.company.name}</strong><br/>
-                  💰 R$ {item.price}<br/>
-                  ⏱ {item.delivery_time} dias
+  .filter(item => item.price && item.company?.name)
+  .map((item, index)=>(
+  
+  <div key={index} style={{
+    border:"1px solid #eee",
+    padding:"8px",
+    margin:"6px",
+    borderRadius:"8px",
+    textAlign:"left"
+  }}>
+    
+    <strong>
+      {item.company.name} - {item.name}
+    </strong>
+    <br/>
 
-                </div>
+    💰 R$ {Number(item.price).toFixed(2)}<br/>
+    ⏱ {item.delivery_time} dias
 
-              ))}
+  </div>
 
-            </div>
-
-          )}
-
+))}
 
           {/* BOTÃO COMPRA */}
           <a
