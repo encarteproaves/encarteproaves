@@ -209,24 +209,23 @@ export default function Home() {
 
 
           {/* CEP */}
-          <input
-            placeholder="Digite seu CEP"
-            value={cep?.[product.id] ?? ""}
-            onChange={(e)=>{
-              const valor = e.target.value.replace(/\D/g,"");
-              setCep(prev => ({
-                ...prev,
-                [product.id]: valor
-              }));
-            }}
-            style={{
-              width:"80%",
-              padding:"10px",
-              marginTop:"10px",
-              borderRadius:"8px",
-              border:"1px solid #ddd"
-            }}
-          />
+         <input
+  placeholder="Digite seu CEP"
+  value={cep?.[product.id] ?? ""}
+  onChange={(e)=>{
+
+    const valor = e.target.value.replace(/\D/g,"");
+
+    setCep(prev => ({
+      ...prev,
+      [product.id]: valor
+    }));
+
+    if(valor.length === 8){
+      calcularFrete(product);
+    }
+
+  }}
 
 
           {/* BOTÃO FRETE */}
