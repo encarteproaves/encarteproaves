@@ -60,6 +60,7 @@ export default function Home() {
 
   const [cep, setCep] = useState({});
   const [frete, setFrete] = useState({});
+  const [canto, setCanto] = useState({});
   const [loading, setLoading] = useState(false);
 
 
