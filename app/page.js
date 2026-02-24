@@ -185,7 +185,8 @@ export default function Home() {
 
     {/* CAMPO CANTO (SOMENTE PEN DRIVE) */}
     {product.id === 3 && (
-
+<h3>TESTE CAMPO CANTO</H3>
+      )}
       <input
         placeholder="Digite o nome do canto (ex: Praia Grande, Paracambi, etc)"
         value={canto?.[product.id] ?? ""}
