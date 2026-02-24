@@ -173,7 +173,13 @@ export default function Home() {
             {product.description}
           </p>
 
-          <h2>R$ {product.price}</h2>
+          <h2 style={{
+  color:"#27ae60",
+  fontSize:"28px",
+  marginTop:"5px"
+}}>
+  R$ {product.price}
+</h2>
 
           <p style={{color:"#e67e22"}}>
             Restam apenas {product.estoque} unidades
