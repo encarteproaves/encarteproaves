@@ -136,14 +136,15 @@ export default function Home() {
       {products.map(product => (
 
         <div key={product.id} style={{
-          width:"320px",
-          background:"#fff",
-          borderRadius:"15px",
-          boxShadow:"0 10px 25px rgba(0,0,0,.08)",
-          overflow:"hidden",
-          textAlign:"center",
-          paddingBottom:"15px"
-        }}>
+  width:"320px",
+  background:"#fff",
+  borderRadius:"18px",
+  boxShadow:"0 15px 35px rgba(0,0,0,.08)",
+  overflow:"hidden",
+  textAlign:"center",
+  paddingBottom:"20px",
+  transition:"0.3s"
+}}
 
           {product.badge && (
             <div style={{
