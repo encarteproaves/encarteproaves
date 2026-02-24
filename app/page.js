@@ -251,30 +251,33 @@ export default function Home() {
 
           {/* RESULTADO FRETE */}
           {Array.isArray(frete?.[product.id]) && (
-            <div style={{marginTop:"10px"}}>
+  <div style={{
+    marginTop:"15px",
+    background:"#fafafa",
+    padding:"10px",
+    borderRadius:"10px"
+  }}>
 
-              {frete[product.id].map((item, index)=>(
+    <strong style={{fontSize:"14px"}}>
+      Opções de entrega
+    </strong>
 
-                <div key={index} style={{
-                  border:"1px solid #eee",
-                  padding:"8px",
-                  marginBottom:"6px",
-                  borderRadius:"8px",
-                  textAlign:"left",
-                  width:"85%",
-                  marginLeft:"auto",
-                  marginRight:"auto"
-                }}>
-                  <strong>{item.name}</strong><br/>
-                  💰 R$ {item.price}<br/>
-                  ⏱ {item.delivery_time} dias
-                </div>
+    {frete[product.id].map((item, index)=>(
 
-              ))}
+      <div key={index} style={{
+        borderBottom:"1px solid #eee",
+        padding:"8px",
+        fontSize:"14px"
+      }}>
+        <b>{item.name}</b><br/>
+        💰 R$ {item.price}<br/>
+        ⏱ {item.delivery_time} dias
+      </div>
 
-            </div>
-          )}
+    ))}
 
+  </div>
+)}
 
           {/* BOTÃO COMPRA */}
           <a
