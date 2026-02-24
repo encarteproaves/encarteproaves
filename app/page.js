@@ -296,22 +296,28 @@ export default function Home() {
 
 
           {/* WHATSAPP */}
-          <a
-            href="https://wa.me/5511984309480"
-            target="_blank"
-            style={{
-              display:"block",
-              background:"#25D366",
-              color:"#fff",
-              margin:"0 15px 20px",
-              padding:"12px",
-              borderRadius:"8px",
-              textDecoration:"none",
-              fontWeight:"bold"
-            }}
-          >
-            Atendimento WhatsApp
-          </a>
+         <a
+  href={`https://wa.me/5511984309480?text=${encodeURIComponent(
+`Pedido:
+Produto: ${product.name}
+Valor: R$ ${product.price}
+Canto: ${canto?.[product.id] ?? "Não informado"}
+CEP: ${cep?.[product.id] ?? ""}`
+  )}`}
+  target="_blank"
+  style={{
+    display:"block",
+    background:"#25D366",
+    color:"#fff",
+    margin:"0 15px 20px",
+    padding:"12px",
+    borderRadius:"8px",
+    textDecoration:"none",
+    fontWeight:"bold"
+  }}
+>
+  Finalizar pelo WhatsApp
+</a>
 
         </div>
 
