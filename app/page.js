@@ -279,8 +279,8 @@ export default function Home() {
 )}
 
           {/* BOTÃO COMPRA */}
-          <a
-            href={product.mpLink}
+          <button
+onClick={()=>finalizarCompra(product)}
             target="_blank"
             style={{
               display:"block",
