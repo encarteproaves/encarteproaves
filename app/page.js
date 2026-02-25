@@ -100,7 +100,24 @@ export default function Home() {
 
     setLoading(false);
   }
+async function finalizarCompra(product){
 
+  const envio = frete?.[product.id]?.[0];
+
+  await fetch("/api/pedido",{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({
+      produto: product.name,
+      valor: product.price,
+      cep: cep?.[product.id],
+      frete: envio,
+      canto: canto?.[product.id]
+    })
+  });
+
+  window.open(product.mpLink,"_blank");
+}
   return (
 
     <main style={{background:"#f5f5f5", fontFamily:"Arial"}}>
