@@ -7,8 +7,8 @@ export default function Home() {
 
     {
       id: 1,
-      name: "Caixa Acústica Profissional para encarte de canto em aves",
-      description: "Caixa acústica profissional para encarte de canto em pássaros - Medidas 65x65x35 cm auto falante de alto rendimento",
+      name: "Caixa Acústica Profissional para Encarte de Canto",
+      description: "Medidas 65x65x35 cm • Alto rendimento • Ideal para aprendizado de canto",
       price: 1500,
       image: "/caixa-nova.png",
       weight: 22,
@@ -22,8 +22,8 @@ export default function Home() {
 
     {
       id: 2,
-      name: "Aparelho Digital para Encarte de canto em aves",
-      description: "Aparelho digital programável para treino automático",
+      name: "Aparelho Digital para Encarte de Canto",
+      description: "Programador digital automático para treino de canto",
       price: 330,
       image: "/aparelho-novo.jpg",
       weight: 1,
@@ -37,7 +37,7 @@ export default function Home() {
     {
       id: 3,
       name: "Pen Drive 8GB Canto Editado",
-      description: "Pen drive com canto personalizado conforme pedido",
+      description: "Canto personalizado conforme pedido",
       price: 150,
       image: "/pendrive-8gb.jpg",
       weight: 0.2,
@@ -57,73 +57,57 @@ export default function Home() {
 
   async function calcularFrete(product){
 
-    if (!cep[product.id] || cep[product.id].length < 8){
-      alert("Digite um CEP válido");
+    if (!cep[product.id] || cep[product.id].length !== 8){
+      alert("Digite um CEP válido com 8 números.");
       return;
     }
 
     setLoading(true);
 
-    const res = await fetch("/api/frete",{
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({
-        cep: cep[product.id],
-        price: product.price,
-        weight: product.weight,
-        width: product.width,
-        height: product.height,
-        length: product.length
-      })
-    });
+    try{
+      const res = await fetch("/api/frete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          cep: cep[product.id],
+          price: product.price,
+          weight: product.weight,
+          width: product.width,
+          height: product.height,
+          length: product.length
+        })
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    setFrete(prev => ({
-      ...prev,
-      [product.id]: data
-    }));
+      setFrete(prev => ({
+        ...prev,
+        [product.id]: Array.isArray(data) ? data : []
+      }));
+
+    } catch (error){
+      console.log(error);
+      alert("Erro ao calcular frete.");
+    }
 
     setLoading(false);
-  }
-
-  async function finalizarCompra(product){
-
-    const envio = frete?.[product.id]?.[0];
-
-    await fetch("/api/pedido",{
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({
-        produto: product.name,
-        valor: product.price,
-        cep: cep?.[product.id],
-        frete: envio,
-        canto: canto?.[product.id]
-      })
-    });
-
-    window.open(product.mpLink,"_blank");
   }
 
   return (
 
     <main style={{background:"#f5f5f5", fontFamily:"Arial"}}>
 
-      {/* HEADER */}
       <header style={{
         background:"#000",
         textAlign:"center",
         padding:"40px"
       }}>
         <img src="/logo.png" style={{width:"240px"}} />
-        <h2 style={{color:"#f5d76e"}}>
+        <h2 style={{color:"#f5d76e", marginTop:"10px"}}>
           Tecnologia e Qualidade para o Melhor Encarte de Canto
         </h2>
       </header>
 
-
-      {/* PRODUTOS */}
       <section style={{
         display:"flex",
         flexWrap:"wrap",
@@ -132,67 +116,79 @@ export default function Home() {
         padding:"50px"
       }}>
 
-      {products.map(product => (
+        {products.map(product => (
 
-        <div
-          key={product.id}
-          style={{
+          <div key={product.id} style={{
             width:"320px",
             background:"#fff",
-            borderRadius:"18px",
-            boxShadow:"0 15px 35px rgba(0,0,0,.08)",
+            borderRadius:"15px",
+            boxShadow:"0 10px 25px rgba(0,0,0,.08)",
             overflow:"hidden",
             textAlign:"center",
             paddingBottom:"20px"
-          }}
-        >
+          }}>
 
-          {product.badge && (
-            <div style={{
-              background:"#ff0000",
-              color:"#fff",
-              padding:"6px",
-              fontWeight:"bold"
-            }}>
-              {product.badge}
-            </div>
-          )}
+            {product.badge && (
+              <div style={{
+                background:"#ff0000",
+                color:"#fff",
+                padding:"6px",
+                fontWeight:"bold"
+              }}>
+                {product.badge}
+              </div>
+            )}
 
-          <div style={{height:"300px"}}>
-            <img
-              src={product.image}
-              style={{
+            <div style={{height:"280px"}}>
+              <img src={product.image} style={{
                 width:"100%",
                 height:"100%",
                 objectFit:"contain"
-              }}
-            />
-          </div>
+              }} />
+            </div>
 
-          <h3>{product.name}</h3>
+            <h3>{product.name}</h3>
 
-          <p style={{padding:"0 15px"}}>
-            {product.description}
-          </p>
+            <p style={{padding:"0 15px"}}>
+              {product.description}
+            </p>
 
-          <h2 style={{color:"#27ae60"}}>
-            R$ {product.price}
-          </h2>
+            <h2 style={{color:"#27ae60"}}>
+              R$ {product.price}
+            </h2>
 
-          <p style={{color:"#e67e22"}}>
-            Restam {product.estoque} unidades
-          </p>
+            <p style={{color:"#e67e22"}}>
+              Restam apenas {product.estoque} unidades
+            </p>
 
+            {product.id === 3 && (
+              <input
+                placeholder="Digite o nome do canto"
+                value={canto?.[product.id] ?? ""}
+                onChange={(e)=>{
+                  setCanto(prev => ({
+                    ...prev,
+                    [product.id]: e.target.value
+                  }));
+                }}
+                style={{
+                  width:"80%",
+                  padding:"10px",
+                  marginTop:"10px",
+                  borderRadius:"8px",
+                  border:"1px solid #ddd"
+                }}
+              />
+            )}
 
-          {/* CAMPO CANTO */}
-          {product.id === 3 && (
             <input
-              placeholder="Digite o nome do canto"
-              value={canto?.[product.id] ?? ""}
+              placeholder="Digite seu CEP"
+              value={cep?.[product.id] ?? ""}
               onChange={(e)=>{
-                setCanto(prev => ({
+                const valor = e.target.value.replace(/\D/g,"");
+                setCep(prev => ({
                   ...prev,
-                  [product.id]: e.target.value
+                  [product.id]: valor
                 }));
               }}
               style={{
@@ -203,98 +199,65 @@ export default function Home() {
                 border:"1px solid #ddd"
               }}
             />
-          )}
 
+            <button
+              onClick={()=>calcularFrete(product)}
+              style={{
+                background:"#000",
+                color:"#fff",
+                border:"none",
+                padding:"10px",
+                borderRadius:"8px",
+                marginTop:"10px",
+                cursor:"pointer"
+              }}
+            >
+              Calcular Frete
+            </button>
 
-          {/* CEP */}
-          <input
-            placeholder="Digite seu CEP"
-            value={cep?.[product.id] ?? ""}
-            onChange={(e)=>{
+            {loading && <p>Calculando...</p>}
 
-              const valor = e.target.value.replace(/\D/g,"");
+            {Array.isArray(frete?.[product.id]) && frete[product.id].length > 0 && (
+              <div style={{
+                marginTop:"15px",
+                background:"#fafafa",
+                padding:"10px",
+                borderRadius:"10px"
+              }}>
+                {frete[product.id].map((item, index)=>(
+                  <div key={index} style={{
+                    borderBottom:"1px solid #eee",
+                    padding:"8px",
+                    fontSize:"14px"
+                  }}>
+                    <b>{item.name}</b><br/>
+                    💰 R$ {item.price}<br/>
+                    ⏱ {item.delivery_time} dias
+                  </div>
+                ))}
+              </div>
+            )}
 
-              setCep(prev => ({
-                ...prev,
-                [product.id]: valor
-              }));
+            <a
+              href={product.mpLink}
+              target="_blank"
+              style={{
+                display:"block",
+                background:"#000",
+                color:"#fff",
+                margin:"15px",
+                padding:"12px",
+                borderRadius:"8px",
+                textDecoration:"none",
+                fontWeight:"bold"
+              }}
+            >
+              Compra Segura
+            </a>
 
-              if(valor.length === 8){
-                calcularFrete(product);
-              }
-            }}
-            style={{
-              width:"80%",
-              padding:"10px",
-              marginTop:"10px",
-              borderRadius:"8px",
-              border:"1px solid #ddd"
-            }}
-          />
+          </div>
 
-          <button
-            onClick={()=>calcularFrete(product)}
-            style={{
-              background:"#000",
-              color:"#fff",
-              border:"none",
-              padding:"10px",
-              borderRadius:"8px",
-              marginTop:"10px",
-              cursor:"pointer"
-            }}
-          >
-            Calcular Frete
-          </button>
-
-          {loading && <p>Calculando...</p>}
-
-
-          {/* COMPRA */}
-          <button
-            onClick={()=>finalizarCompra(product)}
-            style={{
-              display:"block",
-              background:"#000",
-              color:"#fff",
-              margin:"15px",
-              padding:"12px",
-              borderRadius:"8px",
-              fontWeight:"bold",
-              cursor:"pointer"
-            }}
-          >
-            Compra Segura
-          </button>
-
-
-          {/* WHATS */}
-          <a
-            href={`https://wa.me/5511984309480?text=${encodeURIComponent(
-`Pedido:
-Produto: ${product.name}
-Valor: R$ ${product.price}
-Canto: ${canto?.[product.id] ?? "Não informado"}
-CEP: ${cep?.[product.id] ?? ""}`
-            )}`}
-            target="_blank"
-            style={{
-              display:"block",
-              background:"#25D366",
-              color:"#fff",
-              margin:"0 15px 20px",
-              padding:"12px",
-              borderRadius:"8px",
-              textDecoration:"none",
-              fontWeight:"bold"
-            }}
-          >
-            Finalizar pelo WhatsApp
-          </a>
-
-        </div>
-
-      ))}
+        ))}
 
       </section>
 
