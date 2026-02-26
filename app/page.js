@@ -80,10 +80,28 @@ export default function Home() {
 
       const data = await res.json();
 
-      setFrete(prev => ({
-        ...prev,
-        [product.id]: Array.isArray(data) ? data : []
-      }));
+    const filtrado = Array.isArray(data)
+  ? Object.values(
+      data.reduce((acc, item) => {
+
+        /* remove fretes sem valor */
+        if (!item.price || item.price === "0,00") return acc;
+
+        /* remove transportadora duplicada */
+        if (!acc[item.name]) {
+          acc[item.name] = item;
+        }
+
+        return acc;
+
+      }, {})
+    )
+  : [];
+
+setFrete(prev => ({
+  ...prev,
+  [product.id]: filtrado
+})); 
 
     } catch (error){
       console.log(error);
