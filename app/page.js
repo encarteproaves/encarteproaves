@@ -7,8 +7,8 @@ export default function Home() {
 
     {
       id: 1,
-      name: "Caixa Acústica Profissional para Encarte de Canto",
-      description: "Medidas 65x65x35 cm • Alto rendimento • Ideal para aprendizado de canto",
+      name: "Caixa Acústica Profissional para Encarte de Canto em pássaros",
+      description: "Caixa acústica para encarte de canto em pássaros nas Medidas 65x65x35 cm • Alto rendimento • Ideal para aprendizado de canto",
       price: 1500,
       image: "/caixa-nova.png",
       weight: 22,
