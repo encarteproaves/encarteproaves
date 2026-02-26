@@ -57,7 +57,7 @@ export default function Home() {
 
   async function calcularFrete(product){
 
-    if (!cep[product.id] || cep[product.id].length !== 8){
+    if (!cep[product.id] || cep[product.id].replace(/\D/g, "").length !== 8){
       alert("Digite um CEP válido com 8 números.");
       return;
     }
