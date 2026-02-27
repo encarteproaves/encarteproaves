@@ -15,7 +15,7 @@ export default function Home() {
       width: 65,
       height: 65,
       length: 35,
-      mpLink: "https://mpago.la/2foFNjY",
+      mpLink: "https://wa.me/5511984309480",
       estoque: 1,
       badge: "Mais Vendido"
     },
@@ -30,7 +30,7 @@ export default function Home() {
       width: 15,
       height: 10,
       length: 20,
-      mpLink: "https://mpago.la/1Po2ehy",
+      mpLink: "https://wa.me/551984309480",
       estoque: 10
     },
 
