@@ -309,29 +309,25 @@ async function finalizarCompra(product){
 >
   Compra Segura
 </button>
-            <a
-              href={product.mpLink}
-              target="_blank"
-              style={{
-                display:"block",
-                background:"#000",
-                color:"#fff",
-                margin:"15px",
-                padding:"12px",
-                borderRadius:"8px",
-                textDecoration:"none",
-                fontWeight:"bold"
-              }}
-            >
-              Falar no WhatsApp
-            </a>
-
+           <a
+  href={product.whatsappLink}
+  target="_blank"
+  style={{
+    display:"block",
+    background:"#25D366",
+    color:"#fff",
+    margin:"15px",
+    padding:"12px",
+    borderRadius:"8px",
+    textDecoration:"none",
+    fontWeight:"bold"
+  }}
+>
+  Falar no WhatsApp
+</a> 
           </div>
-
         ))}
-
       </section>
-
     </main>
   );
 }
