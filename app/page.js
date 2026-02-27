@@ -97,7 +97,10 @@ export default function Home() {
       }, {})
     )
   : [];
-
+/* ordena pelo frete mais barato */
+filtrado.sort((a,b)=>{
+  return Number(a.price) - Number(b.price);
+});
 setFrete(prev => ({
   ...prev,
   [product.id]: filtrado
