@@ -247,7 +247,8 @@ async function finalizarCompra(product){
             <button
               onClick={()=>calcularFrete(product)}
               style={{
-                background:"#000",
+                display:"block",
+                background:"#808080",
                 color:"#fff",
                 border:"none",
                 padding:"10px",
