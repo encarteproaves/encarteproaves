@@ -280,7 +280,23 @@ async function finalizarCompra(product){
                 ))}
               </div>
             )}
-
+{/* BOTÃO COMPRA */}
+<button
+  onClick={()=>finalizarCompra(product)}
+  style={{
+    display:"block",
+    background:"#000",
+    color:"#fff",
+    margin:"15px",
+    padding:"12px",
+    borderRadius:"8px",
+    border:"none",
+    fontWeight:"bold",
+    cursor:"pointer"
+  }}
+>
+  Compra Segura
+</button>
             <a
               href={product.mpLink}
               target="_blank"
