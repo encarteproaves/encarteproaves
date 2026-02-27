@@ -245,17 +245,21 @@ async function finalizarCompra(product){
             />
 
             <button
-              onClick={()=>calcularFrete(product)}
-              style={{
-                display:"block",
-                background:"#808080",
-                color:"#fff",
-                border:"none",
-                padding:"10px",
-                borderRadius:"8px",
-                marginTop:"10px",
-                cursor:"pointer"
-              }}
+  onClick={()=>calcularFrete(product)}
+  style={{
+    display:"block",
+    background:"#808080",
+    color:"#fff",
+    margin:"10px",
+    padding:"12px",
+    borderRadius:"8px",
+    border:"none",
+    cursor:"pointer",
+    fontWeight:"bold"
+  }}
+>
+  Calcular Frete
+</button>
             >
               Calcular Frete
             </button>
