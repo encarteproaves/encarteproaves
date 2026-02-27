@@ -312,7 +312,7 @@ async function finalizarCompra(product){
                 fontWeight:"bold"
               }}
             >
-              Compra Segura
+              Falar no WhatsApp
             </a>
 
           </div>
