@@ -57,62 +57,63 @@ export default function Home() {
 
   async function calcularFrete(product){
 
-    if (!cep[product.id] || cep[product.id].replace(/\D/g, "").length !== 8){
-      alert("Digite um CEP válido com 8 números.");
-      return;
-    }
-
-    setLoading(true);
-
-    try{
-      const res = await fetch("/api/frete", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          cep: cep[product.id],
-          price: product.price,
-          weight: product.weight,
-          width: product.width,
-          height: product.height,
-          length: product.length
-        })
-      });
-
-      const data = await res.json();
-
-    const filtrado = Array.isArray(data)
-  ? Object.values(
-      data.reduce((acc, item) => {
-
-        /* remove fretes sem valor */
-        if (!item.price || item.price === "0,00") return acc;
-
-        /* remove transportadora duplicada */
-        if (!acc[item.name]) {
-          acc[item.name] = item;
-        }
-
-        return acc;
-
-      }, {})
-    )
-  : [];
-/* ordena pelo frete mais barato */
-filtrado.sort((a,b)=>{
-  return Number(a.price) - Number(b.price);
-});
-setFrete(prev => ({
-  ...prev,
-  [product.id]: filtrado
-})); 
-
-    } catch (error){
-      console.log(error);
-      alert("Erro ao calcular frete.");
-    }
-
-    setLoading(false);
+  if (!cep?.[product.id] || cep[product.id].length < 8){
+    alert("Digite um CEP válido");
+    return;
   }
+
+  setLoading(true);
+
+  try{
+
+    const res = await fetch("/api/frete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        cep: cep[product.id],
+        price: product.price,
+        weight: product.weight,
+        width: product.width,
+        height: product.height,
+        length: product.length
+      })
+    });
+
+    const data = await res.json();
+
+    /* garante array */
+    const lista = Array.isArray(data) ? data : [];
+
+    /* remove transportadoras inválidas */
+    const filtrado = lista.filter(item=>{
+      return item?.price && Number(item.price) > 0;
+    });
+
+    /* remove duplicadas */
+    const unicas = Object.values(
+      filtrado.reduce((acc,item)=>{
+        acc[item.name] = item;
+        return acc;
+      },{})
+    );
+
+    /* ordena pelo frete mais barato */
+    unicas.sort((a,b)=>{
+      return Number(a.price) - Number(b.price);
+    });
+
+    setFrete(prev => ({
+      ...prev,
+      [product.id]: unicas
+    }));
+
+  }catch(err){
+    console.log("Erro no frete:", err);
+    alert("Erro ao calcular frete");
+  }
+
+  setLoading(false);
+}
 async function finalizarCompra(product){
 
   if(!frete?.[product.id]?.length){
