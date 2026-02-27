@@ -3,59 +3,67 @@ import { useState } from "react";
 
 export default function Home() {
 
-  const products = [
+ const products = [
 
-    {
-      id: 1,
-      name: "Caixa Acústica Profissional para Encarte de Canto em pássaros",
-      description: "Caixa acústica para encarte de canto em pássaros nas Medidas 65x65x35 cm • Alto rendimento • Ideal para aprendizado de canto",
-      price: 1500,
-      mpLink: "https://link.mercadopago.com.br/seu_link_aqui",
-  whatsappLink: "https://wa.me/5511984309480"
-      image: "/caixa-nova.png",
-      weight: 22,
-      width: 65,
-      height: 65,
-      length: 35,
-      mpLink: "https://wa.me/5511984309480",
-      estoque: 1,
-      badge: "Mais Vendido"
-    },
+  {
+    id: 1,
+    name: "Caixa Acústica Profissional para Encarte de Canto em pássaros",
+    description: "Caixa acústica para encarte de canto em pássaros nas Medidas 65x65x35 cm • Alto rendimento • Ideal para aprendizado de canto",
+    price: 1500,
 
-    {
-      id: 2,
-      name: "Aparelho Digital para Encarte de Canto",
-      description: "Programador digital automático para treino de canto",
-      price: 330,
-        mpLink: "https://link.mercadopago.com.br/seu_link_aqui",
-  whatsappLink: "https://wa.me/5511984309480"
-      image: "/aparelho-novo.jpg",
-      weight: 1,
-      width: 15,
-      height: 10,
-      length: 20,
-      mpLink: "https://wa.me/5511984309480",
-      estoque: 10
-    },
+    image: "/caixa-nova.png",
 
-    {
-      id: 3,
-      name: "Pen Drive 8GB Canto Editado",
-      description: "Canto personalizado conforme pedido",
-      price: 150,
-        mpLink: "https://link.mercadopago.com.br/seu_link_aqui",
-  whatsappLink: "https://wa.me/5511984309480"
-      image: "/pendrive-8gb.jpg",
-      weight: 0.2,
-      width: 10,
-      height: 10,
-      length: 10,
-      mpLink: "https://wa.me/5511984309480",
-      estoque: 10
-    }
+    weight: 22,
+    width: 65,
+    height: 65,
+    length: 35,
 
-  ];
+    mpLink: "https://link.mercadopago.com.br/seu_link_caixa",
+    whatsappLink: "https://wa.me/5511984309480",
 
+    estoque: 1,
+    badge: "Mais Vendido"
+  },
+
+  {
+    id: 2,
+    name: "Aparelho Digital para Encarte de Canto",
+    description: "Programador digital automático para treino de canto",
+    price: 330,
+
+    image: "/aparelho-novo.jpg",
+
+    weight: 1,
+    width: 15,
+    height: 10,
+    length: 20,
+
+    mpLink: "https://link.mercadopago.com.br/seu_link_aparelho",
+    whatsappLink: "https://wa.me/5511984309480",
+
+    estoque: 10
+  },
+
+  {
+    id: 3,
+    name: "Pen Drive 8GB Canto Editado",
+    description: "Canto personalizado conforme pedido",
+    price: 150,
+
+    image: "/pendrive-8gb.jpg",
+
+    weight: 0.2,
+    width: 10,
+    height: 10,
+    length: 10,
+
+    mpLink: "https://link.mercadopago.com.br/seu_link_pendrive",
+    whatsappLink: "https://wa.me/5511984309480",
+
+    estoque: 10
+  }
+
+];
   const [cep, setCep] = useState({});
   const [frete, setFrete] = useState({});
   const [canto, setCanto] = useState({});
