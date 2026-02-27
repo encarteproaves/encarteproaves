@@ -30,7 +30,7 @@ export default function Home() {
       width: 15,
       height: 10,
       length: 20,
-      mpLink: "https://wa.me/551984309480",
+      mpLink: "https://wa.me/5511984309480",
       estoque: 10
     },
 
