@@ -10,6 +10,8 @@ export default function Home() {
       name: "Caixa Acústica Profissional para Encarte de Canto em pássaros",
       description: "Caixa acústica para encarte de canto em pássaros nas Medidas 65x65x35 cm • Alto rendimento • Ideal para aprendizado de canto",
       price: 1500,
+      mpLink: "https://link.mercadopago.com.br/seu_link_aqui",
+  whatsappLink: "https://wa.me/5511984309480"
       image: "/caixa-nova.png",
       weight: 22,
       width: 65,
@@ -25,6 +27,8 @@ export default function Home() {
       name: "Aparelho Digital para Encarte de Canto",
       description: "Programador digital automático para treino de canto",
       price: 330,
+        mpLink: "https://link.mercadopago.com.br/seu_link_aqui",
+  whatsappLink: "https://wa.me/5511984309480"
       image: "/aparelho-novo.jpg",
       weight: 1,
       width: 15,
@@ -39,6 +43,8 @@ export default function Home() {
       name: "Pen Drive 8GB Canto Editado",
       description: "Canto personalizado conforme pedido",
       price: 150,
+        mpLink: "https://link.mercadopago.com.br/seu_link_aqui",
+  whatsappLink: "https://wa.me/5511984309480"
       image: "/pendrive-8gb.jpg",
       weight: 0.2,
       width: 10,
