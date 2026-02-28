@@ -315,14 +315,16 @@ async function finalizarCompra(product){
 >
   Compra Segura
 </button>
-           <a
+
+{/* BOTÃO WHATSAPP */}
+<a
   href={product.whatsappLink}
   target="_blank"
   style={{
     display:"block",
     background:"#25D366",
     color:"#fff",
-    margin:"15px",
+    margin:"0 15px 20px",
     padding:"12px",
     borderRadius:"8px",
     textDecoration:"none",
@@ -330,7 +332,7 @@ async function finalizarCompra(product){
   }}
 >
   Falar no WhatsApp
-</a> 
+</a>
           </div>
         ))}
       </section>
