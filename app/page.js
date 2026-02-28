@@ -6,25 +6,24 @@ export default function Home() {
  const products = [
 
   {
-    id: 1,
-    name: "Caixa Acústica Profissional para Encarte de Canto em pássaros",
-    description: "Caixa acústica para encarte de canto em pássaros nas Medidas 65x65x35 cm • Alto rendimento • Ideal para aprendizado de canto",
-    price: 1500,
+  id: 1,
+  name: "Caixa Acústica Profissional para Encarte de Canto em pássaros",
+  description: "Caixa acústica para encarte de canto em pássaros nas Medidas 65x65x35 cm • Alto rendimento • Ideal para aprendizado de canto",
+  price: 1500,
 
-    image: "/caixa-nova.png",
+  image: "/caixa-nova.png",
 
-    weight: 22,
-    width: 65,
-    height: 65,
-    length: 35,
+  weight: 22,
+  width: 65,
+  height: 65,
+  length: 35,
 
-    mpLink: "https://link.mercadopago.com.br/seu_link_caixa",
-    whatsappLink: "https://wa.me/5511984309480",
+  mpLink: "https://link.mercadopago.com.br/seu_link_caixa",
+  whatsappLink: "https://wa.me/5511984309480",
 
-    estoque: 1,
-    badge: "Mais Vendido"
-  },
-
+  estoque: 1,
+  badge: "Mais Vendido"
+},
   {
     id: 2,
     name: "Aparelho Digital para Encarte de Canto",
