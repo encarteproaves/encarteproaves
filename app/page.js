@@ -42,24 +42,24 @@ export default function Home() {
 
   estoque: 10
 },
-  {
-    id: 3,
-    name: "Pen Drive 8GB Canto Editado",
-    description: "Canto personalizado conforme pedido",
-    price: 150,
+ {
+  id: 3,
+  name: "Pen Drive 8GB Canto Editado",
+  description: "Canto personalizado conforme pedido",
+  price: 150,
 
-    image: "/pendrive-8gb.jpg",
+  image: "/pendrive-8gb.jpg",
 
-    weight: 0.2,
-    width: 10,
-    height: 10,
-    length: 10,
+  weight: 0.2,
+  width: 10,
+  height: 10,
+  length: 10,
 
-    mpLink: "https://link.mercadopago.com.br/seu_link_pendrive",
-    whatsappLink: "https://wa.me/5511984309480",
+  mpLink: "https://link.mercadopago.com.br/seu_link_pendrive",
+  whatsappLink: "https://wa.me/5511984309480",
 
-    estoque: 10
-  }
+  estoque: 10
+}
 
 ];
   const [cep, setCep] = useState({});
