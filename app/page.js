@@ -331,7 +331,7 @@ async function finalizarCompra(product){
     fontWeight:"bold"
   }}
 >
-  teste WhatsApp
+  Falar no WhatsApp
 </a>
           </div>
         ))}
