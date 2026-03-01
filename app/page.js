@@ -315,7 +315,7 @@ async function finalizarCompra(product){
 >
   Compra Segura
 </button>
-
+{console.log("WHATS:", product.whatsappLink)}
 {/* BOTÃO WHATSAPP */}
 <a
   href={product.whatsappLink}
