@@ -37,7 +37,7 @@ export default function Home() {
   height: 10,
   length: 20,
 
-  mpLink: "https://link.mercadopago.com.br/seu_link_aparelho",
+  mpLink: "https://mpago.la/1Po2ehy",
   whatsappLink: "https://wa.me/5511984309480",
 
   estoque: 10
