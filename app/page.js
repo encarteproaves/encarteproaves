@@ -160,7 +160,7 @@ async function finalizarCompra(product){
       }}>
         <img src="/logo.png" style={{width:"240px"}} />
         <h2 style={{color:"#f5d76e", marginTop:"10px"}}>
-          Tecnologia e Qualidade para o Melhor Encarte de Canto
+          TESTE HEADER 123
         </h2>
       </header>
 
