@@ -296,7 +296,7 @@ async function finalizarCompra(product){
             )}
 {/* BOTÃO COMPRA */}
 <button
-  onClick={()=>window.open(product.mpLink,"_blank")}
+  onClick={()=>finalizarCompra(product)}
   style={{
     display:"block",
     background:"#000",
