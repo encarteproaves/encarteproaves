@@ -256,8 +256,7 @@ async function finalizarCompra(product){
                 border:"1px solid #ddd"
               }}
             />
-
-            <button
+<button
   onClick={()=>calcularFrete(product)}
   style={{
     display:"block",
@@ -273,10 +272,6 @@ async function finalizarCompra(product){
 >
   Calcular Frete
 </button>
-            >
-              Calcular Frete
-            </button>
-
             {loading && <p>Calculando...</p>}
 
             {Array.isArray(frete?.[product.id]) && frete[product.id].length > 0 && (
