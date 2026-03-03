@@ -4,14 +4,12 @@ export async function POST(req){
 
     const body = await req.json();
 
-    /* ===============================
-       1. CRIAR ENVIO NO CARRINHO
-    =============================== */
+    /* 1️⃣ CRIAR ENVIO NO CARRINHO */
 
-    const criarCarrinho = await fetch(
+    const criar = await fetch(
       "https://melhorenvio.com.br/api/v2/me/cart",
       {
-        method: "POST",
+        method:"POST",
         headers:{
           "Content-Type":"application/json",
           "Accept":"application/json",
@@ -21,7 +19,7 @@ export async function POST(req){
           service: body.service,
 
           from:{
-            name:"Seu Nome",
+            name:"Romulo Silva",
             phone:"11900000000",
             email:"email@email.com",
             document:"00000000000",
@@ -33,40 +31,30 @@ export async function POST(req){
             postal_code:"08062-670"
           },
 
-          to: body.to,
+          to:{
+            postal_code: body.to.postal_code
+          },
+
           products: body.products
         })
       }
     );
 
-    const carrinho = await criarCarrinho.json();
+    const carrinho = await criar.json();
 
-    /* ===============================
-       2. GERAR ETIQUETA
-    =============================== */
-
-    const gerar = await fetch(
-      "https://melhorenvio.com.br/api/v2/me/shipment/generate",
-      {
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json",
-          "Accept":"application/json",
-          "Authorization":"Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiZmEzN2NmM2ZhMGY2YzllODdhZDI1Mjg2NDQxMzljNjk2YzE5NmU0MzI2NjVmYzA5MTAxM2NmOWI0YTUwZWE2ZjU1ZThhMWE5NDQ4NjdlYjAiLCJpYXQiOjE3NzE1MjEzODMuNDY3OTQ2LCJuYmYiOjE3NzE1MjEzODMuNDY3OTQ4LCJleHAiOjE4MDMwNTczODMuNDU1OTU2LCJzdWIiOiI2YjU1ZDBhNi0wNTg0LTQ5NWEtOWZkOS1lZWQ5ZTIwMmE4YzEiLCJzY29wZXMiOlsiY2FydC1yZWFkIiwiY2FydC13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiY29tcGFuaWVzLXdyaXRlIiwiY291cG9ucy1yZWFkIiwiY291cG9ucy13cml0ZSIsIm5vdGlmaWNhdGlvbnMtcmVhZCIsIm9yZGVycy1yZWFkIiwicHJvZHVjdHMtcmVhZCIsInByb2R1Y3RzLWRlc3Ryb3kiLCJwcm9kdWN0cy13cml0ZSIsInB1cmNoYXNlcy1yZWFkIiwic2hpcHBpbmctY2FsY3VsYXRlIiwic2hpcHBpbmctY2FuY2VsIiwic2hpcHBpbmctY2hlY2tvdXQiLCJzaGlwcGluZy1jb21wYW5pZXMiLCJzaGlwcGluZy1nZW5lcmF0ZSIsInNoaXBwaW5nLXByZXZpZXciLCJzaGlwcGluZy1wcmludCIsInNoaXBwaW5nLXNoYXJlIiwic2hpcHBpbmctdHJhY2tpbmciLCJlY29tbWVyY2Utc2hpcHBpbmciLCJ0cmFuc2FjdGlvbnMtcmVhZCIsInVzZXJzLXJlYWQiLCJ1c2Vycy13cml0ZSIsIndlYmhvb2tzLXJlYWQiLCJ3ZWJob29rcy13cml0ZSIsIndlYmhvb2tzLWRlbGV0ZSIsInRkZWFsZXItd2ViaG9vayJdfQ.1DlY8HNZSkZv7myICGb4oi25wsDiLqyMPLEyXbkUmubgGL-Lt5VGpCyFvDJ_kp18KJBICxOCPS3uM8DKBmuukWXRqV27ij4VPW93vY2jnsIybxpB5nHQaVXbUHaQymFXvhm1RsuRPqXfnvtYu98Bbyp5_VK-MuFNxFI1e-U9mYCL9cALXaSsY2ypxgYhGNqAMsQLl1xa0EsVtWnEcLDeHGBiU7y1c2X75ISb1IJBN4J82JdmQNnjB93X4ESulOKD5OD3HeK3kGtrnBNICY5dfjXrk3RK99cVkhhMIHwIyILXPM8zi7l_97KIDkxhfxBMmUQ-7PXxuIcgCMjUhWH8zLN-E_imudqawL6wmeyLvvhYD1ps1C-FGoachggJMEr3qay00TM1Q85TCWXfGGN-TMXaJzRFJKQQcLZGzPhULn7f6RaPOFyUpuvPerkYyKiK6qrDiHjtNs5lvraHaiceMK1jPW4PiYQSfa-jLNzwoi6-dw5SohXyluLCcnG0tcMBUXbojhqmgLf4NR7Ykd-PiyZjhlFRtYpcqCax-scBZksbCFlsCukmpOyltetZrzbLOZia3yAYxCZyCxy1l6Hi_T9vATuQBGZc886FFiVrtAG8oDnMqQWdw4JsgIz3nk1YEGJvSso6v-8ZAZilTGYL9LVOHc0jvuteFQTq94-Bz1Y"
-        },
-        body: JSON.stringify({
-          orders:[carrinho.id]
-        })
-      }
-    );
-
-    const etiqueta = await gerar.json();
-
-    return Response.json(etiqueta);
+    return Response.json({
+      success:true,
+      carrinho:carrinho
+    });
 
   }catch(err){
+
     console.log(err);
-    return Response.json({ error:"Erro ao gerar etiqueta" });
+
+    return Response.json({
+      error:"Erro ao criar carrinho"
+    });
+
   }
 
 }
