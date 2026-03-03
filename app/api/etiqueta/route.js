@@ -1,57 +1,68 @@
-import { pedidos } from "../pedido/route";
 export async function POST(req){
 
   try{
 
     const body = await req.json();
 
-    const response = await fetch(
+    /* ===============================
+       1. CRIAR ENVIO NO CARRINHO
+    =============================== */
+
+    const criarCarrinho = await fetch(
+      "https://melhorenvio.com.br/api/v2/me/cart",
+      {
+        method: "POST",
+        headers:{
+          "Content-Type":"application/json",
+          "Accept":"application/json",
+          "Authorization":"Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiZmEzN2NmM2ZhMGY2YzllODdhZDI1Mjg2NDQxMzljNjk2YzE5NmU0MzI2NjVmYzA5MTAxM2NmOWI0YTUwZWE2ZjU1ZThhMWE5NDQ4NjdlYjAiLCJpYXQiOjE3NzE1MjEzODMuNDY3OTQ2LCJuYmYiOjE3NzE1MjEzODMuNDY3OTQ4LCJleHAiOjE4MDMwNTczODMuNDU1OTU2LCJzdWIiOiI2YjU1ZDBhNi0wNTg0LTQ5NWEtOWZkOS1lZWQ5ZTIwMmE4YzEiLCJzY29wZXMiOlsiY2FydC1yZWFkIiwiY2FydC13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiY29tcGFuaWVzLXdyaXRlIiwiY291cG9ucy1yZWFkIiwiY291cG9ucy13cml0ZSIsIm5vdGlmaWNhdGlvbnMtcmVhZCIsIm9yZGVycy1yZWFkIiwicHJvZHVjdHMtcmVhZCIsInByb2R1Y3RzLWRlc3Ryb3kiLCJwcm9kdWN0cy13cml0ZSIsInB1cmNoYXNlcy1yZWFkIiwic2hpcHBpbmctY2FsY3VsYXRlIiwic2hpcHBpbmctY2FuY2VsIiwic2hpcHBpbmctY2hlY2tvdXQiLCJzaGlwcGluZy1jb21wYW5pZXMiLCJzaGlwcGluZy1nZW5lcmF0ZSIsInNoaXBwaW5nLXByZXZpZXciLCJzaGlwcGluZy1wcmludCIsInNoaXBwaW5nLXNoYXJlIiwic2hpcHBpbmctdHJhY2tpbmciLCJlY29tbWVyY2Utc2hpcHBpbmciLCJ0cmFuc2FjdGlvbnMtcmVhZCIsInVzZXJzLXJlYWQiLCJ1c2Vycy13cml0ZSIsIndlYmhvb2tzLXJlYWQiLCJ3ZWJob29rcy13cml0ZSIsIndlYmhvb2tzLWRlbGV0ZSIsInRkZWFsZXItd2ViaG9vayJdfQ.1DlY8HNZSkZv7myICGb4oi25wsDiLqyMPLEyXbkUmubgGL-Lt5VGpCyFvDJ_kp18KJBICxOCPS3uM8DKBmuukWXRqV27ij4VPW93vY2jnsIybxpB5nHQaVXbUHaQymFXvhm1RsuRPqXfnvtYu98Bbyp5_VK-MuFNxFI1e-U9mYCL9cALXaSsY2ypxgYhGNqAMsQLl1xa0EsVtWnEcLDeHGBiU7y1c2X75ISb1IJBN4J82JdmQNnjB93X4ESulOKD5OD3HeK3kGtrnBNICY5dfjXrk3RK99cVkhhMIHwIyILXPM8zi7l_97KIDkxhfxBMmUQ-7PXxuIcgCMjUhWH8zLN-E_imudqawL6wmeyLvvhYD1ps1C-FGoachggJMEr3qay00TM1Q85TCWXfGGN-TMXaJzRFJKQQcLZGzPhULn7f6RaPOFyUpuvPerkYyKiK6qrDiHjtNs5lvraHaiceMK1jPW4PiYQSfa-jLNzwoi6-dw5SohXyluLCcnG0tcMBUXbojhqmgLf4NR7Ykd-PiyZjhlFRtYpcqCax-scBZksbCFlsCukmpOyltetZrzbLOZia3yAYxCZyCxy1l6Hi_T9vATuQBGZc886FFiVrtAG8oDnMqQWdw4JsgIz3nk1YEGJvSso6v-8ZAZilTGYL9LVOHc0jvuteFQTq94-Bz1Y"
+        },
+        body: JSON.stringify({
+          service: body.service,
+
+          from:{
+            name:"Seu Nome",
+            phone:"11900000000",
+            email:"email@email.com",
+            document:"00000000000",
+            address:"Rua Exemplo",
+            number:"100",
+            district:"Centro",
+            city:"São Paulo",
+            country_id:"BR",
+            postal_code:"08062-670"
+          },
+
+          to: body.to,
+          products: body.products
+        })
+      }
+    );
+
+    const carrinho = await criarCarrinho.json();
+
+    /* ===============================
+       2. GERAR ETIQUETA
+    =============================== */
+
+    const gerar = await fetch(
       "https://melhorenvio.com.br/api/v2/me/shipment/generate",
       {
         method:"POST",
         headers:{
           "Content-Type":"application/json",
           "Accept":"application/json",
-          "Authorization":"Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiNDViZTI4OTU1YzlhYTk4YThiZmUwODIyMjc0ZjNkOTNkYmU4YjI2NjFlOTM1NDAxYjE1YzliNDlmMGUwODMzN2JhMmFhNzBlYmQ4YjQ2ZWQiLCJpYXQiOjE3NzE2OTcwNjYuMDIwNjM3LCJuYmYiOjE3NzE2OTcwNjYuMDIwNjM5LCJleHAiOjE4MDMyMzMwNjYuMDA5OTA0LCJzdWIiOiI2YjU1ZDBhNi0wNTg0LTQ5NWEtOWZkOS1lZWQ5ZTIwMmE4YzEiLCJzY29wZXMiOlsiY2FydC1yZWFkIiwiY2FydC13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiY29tcGFuaWVzLXdyaXRlIiwiY291cG9ucy1yZWFkIiwiY291cG9ucy13cml0ZSIsIm5vdGlmaWNhdGlvbnMtcmVhZCIsIm9yZGVycy1yZWFkIiwicHJvZHVjdHMtcmVhZCIsInByb2R1Y3RzLWRlc3Ryb3kiLCJwcm9kdWN0cy13cml0ZSIsInB1cmNoYXNlcy1yZWFkIiwic2hpcHBpbmctY2FsY3VsYXRlIiwic2hpcHBpbmctY2FuY2VsIiwic2hpcHBpbmctY2hlY2tvdXQiLCJzaGlwcGluZy1jb21wYW5pZXMiLCJzaGlwcGluZy1nZW5lcmF0ZSIsInNoaXBwaW5nLXByZXZpZXciLCJzaGlwcGluZy1wcmludCIsInNoaXBwaW5nLXNoYXJlIiwic2hpcHBpbmctdHJhY2tpbmciLCJlY29tbWVyY2Utc2hpcHBpbmciLCJ0cmFuc2FjdGlvbnMtcmVhZCIsInVzZXJzLXJlYWQiLCJ1c2Vycy13cml0ZSIsIndlYmhvb2tzLXJlYWQiLCJ3ZWJob29rcy13cml0ZSIsIndlYmhvb2tzLWRlbGV0ZSIsInRkZWFsZXItd2ViaG9vayJdfQ.ysySgswJ0RRbnTkWVYb4ejxrmJ0PQn6Cd2-RR5-PMOylcsF105bfHAT01DC1IU3rhe40sFRJYswl7MSDb1XLh51IxxW_9GxJjYrOgtATnT0xxvpEL3XYY9D6G18U-0rMf9NPrhSnHAhSdn2MqUnop9_4kdziIqfli4zgfvaEtWkf6rZ5zRlIKB2E9WsUGNeVJRZPuQqiUKDH4Gu29VyBG80h0xGXsV1TLV1uqvTasFb8y4GhyezARN-HqXOifjNHQM9YjoKNSiBkebz37pow83NU5ZouFXLAWhbHNhylGVaGsgSchOWI0jBvkZpUIFP4AmD30hVipWylnALHOeTgB9INraxH7Hn5CsPskDBENTIRxrfy9SRyRh0mr5JQ4BNlVBKL6HUEkiUX_So1_lxec8YA9Gv95ZIni1i_ldWKcM7WNSjaRu2V3aYUausWuBGb4NkydE1v0JlfNJcihu6UWPAIxmyetarw0Vt6kem4-Pd5ACzBNESkHXzlSEqCcTHuIwDKnmKpX6p6iCGx6-S3cg55wM7lSbwhslD7cXQvPA3yhWmOH9Gq2r-mt7Ack7JtSBjdAt0g8b-ta5I-Nu6_zWxRjAAS1BjC_jIwu45tKg_sip_JabCldD8VmCs-PuH06wcFrJnnKLoe6qS4BbdSOIUycb93IQEKKcL6KcImmoA"
+          "Authorization":"Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiZmEzN2NmM2ZhMGY2YzllODdhZDI1Mjg2NDQxMzljNjk2YzE5NmU0MzI2NjVmYzA5MTAxM2NmOWI0YTUwZWE2ZjU1ZThhMWE5NDQ4NjdlYjAiLCJpYXQiOjE3NzE1MjEzODMuNDY3OTQ2LCJuYmYiOjE3NzE1MjEzODMuNDY3OTQ4LCJleHAiOjE4MDMwNTczODMuNDU1OTU2LCJzdWIiOiI2YjU1ZDBhNi0wNTg0LTQ5NWEtOWZkOS1lZWQ5ZTIwMmE4YzEiLCJzY29wZXMiOlsiY2FydC1yZWFkIiwiY2FydC13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiY29tcGFuaWVzLXdyaXRlIiwiY291cG9ucy1yZWFkIiwiY291cG9ucy13cml0ZSIsIm5vdGlmaWNhdGlvbnMtcmVhZCIsIm9yZGVycy1yZWFkIiwicHJvZHVjdHMtcmVhZCIsInByb2R1Y3RzLWRlc3Ryb3kiLCJwcm9kdWN0cy13cml0ZSIsInB1cmNoYXNlcy1yZWFkIiwic2hpcHBpbmctY2FsY3VsYXRlIiwic2hpcHBpbmctY2FuY2VsIiwic2hpcHBpbmctY2hlY2tvdXQiLCJzaGlwcGluZy1jb21wYW5pZXMiLCJzaGlwcGluZy1nZW5lcmF0ZSIsInNoaXBwaW5nLXByZXZpZXciLCJzaGlwcGluZy1wcmludCIsInNoaXBwaW5nLXNoYXJlIiwic2hpcHBpbmctdHJhY2tpbmciLCJlY29tbWVyY2Utc2hpcHBpbmciLCJ0cmFuc2FjdGlvbnMtcmVhZCIsInVzZXJzLXJlYWQiLCJ1c2Vycy13cml0ZSIsIndlYmhvb2tzLXJlYWQiLCJ3ZWJob29rcy13cml0ZSIsIndlYmhvb2tzLWRlbGV0ZSIsInRkZWFsZXItd2ViaG9vayJdfQ.1DlY8HNZSkZv7myICGb4oi25wsDiLqyMPLEyXbkUmubgGL-Lt5VGpCyFvDJ_kp18KJBICxOCPS3uM8DKBmuukWXRqV27ij4VPW93vY2jnsIybxpB5nHQaVXbUHaQymFXvhm1RsuRPqXfnvtYu98Bbyp5_VK-MuFNxFI1e-U9mYCL9cALXaSsY2ypxgYhGNqAMsQLl1xa0EsVtWnEcLDeHGBiU7y1c2X75ISb1IJBN4J82JdmQNnjB93X4ESulOKD5OD3HeK3kGtrnBNICY5dfjXrk3RK99cVkhhMIHwIyILXPM8zi7l_97KIDkxhfxBMmUQ-7PXxuIcgCMjUhWH8zLN-E_imudqawL6wmeyLvvhYD1ps1C-FGoachggJMEr3qay00TM1Q85TCWXfGGN-TMXaJzRFJKQQcLZGzPhULn7f6RaPOFyUpuvPerkYyKiK6qrDiHjtNs5lvraHaiceMK1jPW4PiYQSfa-jLNzwoi6-dw5SohXyluLCcnG0tcMBUXbojhqmgLf4NR7Ykd-PiyZjhlFRtYpcqCax-scBZksbCFlsCukmpOyltetZrzbLOZia3yAYxCZyCxy1l6Hi_T9vATuQBGZc886FFiVrtAG8oDnMqQWdw4JsgIz3nk1YEGJvSso6v-8ZAZilTGYL9LVOHc0jvuteFQTq94-Bz1Y"
         },
         body: JSON.stringify({
-          orders:[body.fretesId]
+          orders:[carrinho.id]
         })
       }
     );
 
-    const data = await response.json();
-/* 🔥 BUSCAR URL DA ETIQUETA */
-const printReq = await fetch(
-  "https://melhorenvio.com.br/api/v2/me/shipment/print",
-  {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json",
-      "Authorization": "Bearer SEU_TOKEN_AQUI"
-    },
-    body: JSON.stringify({
-      orders: [body.service] // ou ID do envio
-    })
-  }
-);
+    const etiqueta = await gerar.json();
 
-const printData = await printReq.json();
-/* 🔥 ATUALIZA O PEDIDO NA MEMÓRIA */
-const index = pedidos.findIndex(p => p.id === body.pedidoId);
-
-if(index !== -1){
-  pedidos[index].status = "Etiqueta gerada";
-
-  // tenta pegar URL do Melhor Envio
-  pedidos[index].etiqueta_url =
-    data?.[0]?.url ||
-    data?.url ||
-    null;
-}
-
-return Response.json(data);
+    return Response.json(etiqueta);
 
   }catch(err){
     console.log(err);
