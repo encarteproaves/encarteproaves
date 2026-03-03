@@ -22,12 +22,17 @@ export async function POST(req){
 
     const data = await response.json();
 
-/* 🔥 ATUALIZA O PEDIDO */
+/* 🔥 ATUALIZA O PEDIDO NA MEMÓRIA */
 const index = pedidos.findIndex(p => p.id === body.pedidoId);
 
 if(index !== -1){
   pedidos[index].status = "Etiqueta gerada";
-  pedidos[index].etiqueta = data;
+
+  // tenta pegar URL do Melhor Envio
+  pedidos[index].etiqueta_url =
+    data?.[0]?.url ||
+    data?.url ||
+    null;
 }
 
 return Response.json(data);
