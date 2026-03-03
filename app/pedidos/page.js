@@ -78,25 +78,23 @@ export default function Pedidos(){
             </button>
           )}
 
-          {/* 🟢 IMPRIMIR */}
-          {p.status === "Etiqueta gerada" && (
-            <a
-              href={p.etiqueta_url}
-              target="_blank"
-              style={{
-                display:"inline-block",
-                marginTop:"10px",
-                background:"#27ae60",
-                color:"#fff",
-                padding:"8px",
-                borderRadius:"6px",
-                textDecoration:"none"
-              }}
-            >
-              Imprimir etiqueta
-            </a>
-          )}
-
+         {p.status === "Etiqueta gerada" && (
+  <a
+    href="https://melhorenvio.com.br/app/shipment"
+    target="_blank"
+    style={{
+      display:"inline-block",
+      marginTop:"10px",
+      background:"#27ae60",
+      color:"#fff",
+      padding:"8px",
+      borderRadius:"6px",
+      textDecoration:"none"
+    }}
+  >
+    Abrir no Melhor Envio
+  </a>
+)}
         </div>
 
       ))}
