@@ -1,3 +1,4 @@
+import { pedidos } from "../pedido/route";
 export async function POST(req){
 
   try{
