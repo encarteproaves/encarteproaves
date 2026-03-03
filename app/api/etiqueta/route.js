@@ -21,7 +21,23 @@ export async function POST(req){
     );
 
     const data = await response.json();
+/* 🔥 BUSCAR URL DA ETIQUETA */
+const printReq = await fetch(
+  "https://melhorenvio.com.br/api/v2/me/shipment/print",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "Authorization": "Bearer SEU_TOKEN_AQUI"
+    },
+    body: JSON.stringify({
+      orders: [body.service] // ou ID do envio
+    })
+  }
+);
 
+const printData = await printReq.json();
 /* 🔥 ATUALIZA O PEDIDO NA MEMÓRIA */
 const index = pedidos.findIndex(p => p.id === body.pedidoId);
 
