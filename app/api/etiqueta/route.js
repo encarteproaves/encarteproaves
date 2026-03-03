@@ -21,7 +21,15 @@ export async function POST(req){
 
     const data = await response.json();
 
-    return Response.json(data);
+/* 🔥 ATUALIZA O PEDIDO */
+const index = pedidos.findIndex(p => p.id === body.pedidoId);
+
+if(index !== -1){
+  pedidos[index].status = "Etiqueta gerada";
+  pedidos[index].etiqueta = data;
+}
+
+return Response.json(data);
 
   }catch(err){
     console.log(err);
