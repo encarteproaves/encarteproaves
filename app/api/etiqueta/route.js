@@ -47,7 +47,8 @@ console.log("BODY RECEBIDO:", body);
     }
   ]
 })
-
+      }
+      );
     const carrinho = await criar.json();
 
     return Response.json({
