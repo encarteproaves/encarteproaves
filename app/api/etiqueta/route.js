@@ -32,19 +32,18 @@ console.log("BODY RECEBIDO:", body);
   },
 
   to:{
-    postal_code: body.to.postal_code
-  },
-
-  products: [
-    {
-      id:"1",
-      width: body.width,
-      height: body.height,
-      length: body.length,
-      weight: body.weight,
-      insurance_value: body.valor,
-      quantity:1
-    }
+  name:"Cliente",
+  phone:"11999999999",
+  email:"cliente@email.com",
+  document:"00000000000",
+  address:"Rua do cliente",
+  number:"100",
+  district:"Centro",
+  city:"São Paulo",
+  state_abbr:"SP",
+  country_id:"BR",
+  postal_code: body.to.postal_code
+}
   ]
 })
       }
