@@ -3,7 +3,7 @@ export async function POST(req){
   try{
 
     const body = await req.json();
-
+console.log("BODY RECEBIDO:", body);
     /* 1️⃣ CRIAR ENVIO NO CARRINHO */
 
     const criar = await fetch(
