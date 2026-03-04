@@ -19,17 +19,21 @@ export default function Pedidos(){
   async function gerarEtiqueta(pedido){
 
     const res = await fetch("/api/etiqueta",{
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({
-        pedidoId: pedido.id,
-        service: pedido.frete?.id,
-        to: {
-          postal_code: pedido.cep
-        },
-        products: pedido.frete?.packages?.[0]?.products || []
-      })
-    });
+  method:"POST",
+  headers:{ "Content-Type":"application/json" },
+  body: JSON.stringify({
+    pedidoId: pedido.id,
+    service: pedido.frete?.id,
+    to:{
+      postal_code: pedido.cep
+    },
+    width: pedido.frete?.packages?.[0]?.dimensions?.width,
+    height: pedido.frete?.packages?.[0]?.dimensions?.height,
+    length: pedido.frete?.packages?.[0]?.dimensions?.length,
+    weight: pedido.frete?.packages?.[0]?.weight,
+    valor: pedido.valor
+  })
+});
 
     const data = await res.json();
 
