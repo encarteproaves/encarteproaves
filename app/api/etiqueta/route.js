@@ -59,7 +59,7 @@ export async function POST(req){
               height: body.height,
               length: body.length,
               weight: body.weight,
-              insurance_value: body.valor,
+              insurance_value:String(body.valor),
               quantity:1
             }
           ],
@@ -67,7 +67,7 @@ export async function POST(req){
           options:{
             receipt:false,
             own_hand:false,
-            insurance_value: body.valor
+            insurance_value:String(body.valor)
           }
 
         })
