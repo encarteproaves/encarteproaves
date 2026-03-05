@@ -33,13 +33,13 @@ export default function Pedidos(){
 
   if(data.etiqueta){
 
-    window.open(data.etiqueta.url,"_blank")
+  window.open("https://melhorenvio.com.br/app/shipment","_blank")
 
-  }else{
+}else{
 
-    alert("Erro ao gerar etiqueta")
+  alert("Erro ao gerar etiqueta")
 
-  }
+}
 
 }
   return(
