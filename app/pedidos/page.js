@@ -16,33 +16,32 @@ export default function Pedidos(){
   },[]);
 
   /* 🔥 GERAR ETIQUETA */
-  async function gerarEtiqueta(pedido){
+ async function gerarEtiqueta(pedido){
 
-    const res = await fetch("/api/etiqueta",{
-  method:"POST",
-  headers:{ "Content-Type":"application/json" },
-  body: JSON.stringify({
-    pedidoId: pedido.id,
-    service: pedido.frete?.id,
-    to:{
-      postal_code: pedido.cep
+  const res = await fetch("/api/etiqueta",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json"
     },
-    width: pedido.frete?.packages?.[0]?.dimensions?.width,
-    height: pedido.frete?.packages?.[0]?.dimensions?.height,
-    length: pedido.frete?.packages?.[0]?.dimensions?.length,
-    weight: pedido.frete?.packages?.[0]?.weight,
-    valor: pedido.valor
+    body: JSON.stringify({
+      cep: pedido.cep,
+      service: pedido.frete?.id
+    })
   })
-});
 
-    const data = await res.json();
+  const data = await res.json()
 
-    alert("Etiqueta solicitada");
+  if(data.etiqueta){
 
-    // recarrega lista
-    carregarPedidos();
+    window.open(data.etiqueta.url,"_blank")
+
+  }else{
+
+    alert("Erro ao gerar etiqueta")
+
   }
 
+}
   return(
 
     <div style={{padding:"40px"}}>
