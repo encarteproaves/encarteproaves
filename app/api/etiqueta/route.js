@@ -66,7 +66,7 @@ export async function POST(req){
     )
 
     const envio = await criar.json()
-
+console.log("ENVIO CRIADO:", envio)
     /* GERAR ETIQUETA */
 
     const gerar = await fetch(
