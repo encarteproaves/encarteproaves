@@ -52,7 +52,6 @@ export async function POST(req){
           products:[
             {
               id:"1",
-              name:"Produto vendido",
               quantity:1,
               width:10,
               height:10,
