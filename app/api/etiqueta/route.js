@@ -2,15 +2,11 @@ export async function POST(req){
 
   try{
 
-    const body = await req.json();
+    const body = await req.json()
 
-    console.log("PEDIDO RECEBIDO:", body);
+    const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiZmEzN2NmM2ZhMGY2YzllODdhZDI1Mjg2NDQxMzljNjk2YzE5NmU0MzI2NjVmYzA5MTAxM2NmOWI0YTUwZWE2ZjU1ZThhMWE5NDQ4NjdlYjAiLCJpYXQiOjE3NzE1MjEzODMuNDY3OTQ2LCJuYmYiOjE3NzE1MjEzODMuNDY3OTQ4LCJleHAiOjE4MDMwNTczODMuNDU1OTU2LCJzdWIiOiI2YjU1ZDBhNi0wNTg0LTQ5NWEtOWZkOS1lZWQ5ZTIwMmE4YzEiLCJzY29wZXMiOlsiY2FydC1yZWFkIiwiY2FydC13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiY29tcGFuaWVzLXdyaXRlIiwiY291cG9ucy1yZWFkIiwiY291cG9ucy13cml0ZSIsIm5vdGlmaWNhdGlvbnMtcmVhZCIsIm9yZGVycy1yZWFkIiwicHJvZHVjdHMtcmVhZCIsInByb2R1Y3RzLWRlc3Ryb3kiLCJwcm9kdWN0cy13cml0ZSIsInB1cmNoYXNlcy1yZWFkIiwic2hpcHBpbmctY2FsY3VsYXRlIiwic2hpcHBpbmctY2FuY2VsIiwic2hpcHBpbmctY2hlY2tvdXQiLCJzaGlwcGluZy1jb21wYW5pZXMiLCJzaGlwcGluZy1nZW5lcmF0ZSIsInNoaXBwaW5nLXByZXZpZXciLCJzaGlwcGluZy1wcmludCIsInNoaXBwaW5nLXNoYXJlIiwic2hpcHBpbmctdHJhY2tpbmciLCJlY29tbWVyY2Utc2hpcHBpbmciLCJ0cmFuc2FjdGlvbnMtcmVhZCIsInVzZXJzLXJlYWQiLCJ1c2Vycy13cml0ZSIsIndlYmhvb2tzLXJlYWQiLCJ3ZWJob29rcy13cml0ZSIsIndlYmhvb2tzLWRlbGV0ZSIsInRkZWFsZXItd2ViaG9vayJdfQ.1DlY8HNZSkZv7myICGb4oi25wsDiLqyMPLEyXbkUmubgGL-Lt5VGpCyFvDJ_kp18KJBICxOCPS3uM8DKBmuukWXRqV27ij4VPW93vY2jnsIybxpB5nHQaVXbUHaQymFXvhm1RsuRPqXfnvtYu98Bbyp5_VK-MuFNxFI1e-U9mYCL9cALXaSsY2ypxgYhGNqAMsQLl1xa0EsVtWnEcLDeHGBiU7y1c2X75ISb1IJBN4J82JdmQNnjB93X4ESulOKD5OD3HeK3kGtrnBNICY5dfjXrk3RK99cVkhhMIHwIyILXPM8zi7l_97KIDkxhfxBMmUQ-7PXxuIcgCMjUhWH8zLN-E_imudqawL6wmeyLvvhYD1ps1C-FGoachggJMEr3qay00TM1Q85TCWXfGGN-TMXaJzRFJKQQcLZGzPhULn7f6RaPOFyUpuvPerkYyKiK6qrDiHjtNs5lvraHaiceMK1jPW4PiYQSfa-jLNzwoi6-dw5SohXyluLCcnG0tcMBUXbojhqmgLf4NR7Ykd-PiyZjhlFRtYpcqCax-scBZksbCFlsCukmpOyltetZrzbLOZia3yAYxCZyCxy1l6Hi_T9vATuQBGZc886FFiVrtAG8oDnMqQWdw4JsgIz3nk1YEGJvSso6v-8ZAZilTGYL9LVOHc0jvuteFQTq94-Bz1Y"
 
-    const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiZmEzN2NmM2ZhMGY2YzllODdhZDI1Mjg2NDQxMzljNjk2YzE5NmU0MzI2NjVmYzA5MTAxM2NmOWI0YTUwZWE2ZjU1ZThhMWE5NDQ4NjdlYjAiLCJpYXQiOjE3NzE1MjEzODMuNDY3OTQ2LCJuYmYiOjE3NzE1MjEzODMuNDY3OTQ4LCJleHAiOjE4MDMwNTczODMuNDU1OTU2LCJzdWIiOiI2YjU1ZDBhNi0wNTg0LTQ5NWEtOWZkOS1lZWQ5ZTIwMmE4YzEiLCJzY29wZXMiOlsiY2FydC1yZWFkIiwiY2FydC13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiY29tcGFuaWVzLXdyaXRlIiwiY291cG9ucy1yZWFkIiwiY291cG9ucy13cml0ZSIsIm5vdGlmaWNhdGlvbnMtcmVhZCIsIm9yZGVycy1yZWFkIiwicHJvZHVjdHMtcmVhZCIsInByb2R1Y3RzLWRlc3Ryb3kiLCJwcm9kdWN0cy13cml0ZSIsInB1cmNoYXNlcy1yZWFkIiwic2hpcHBpbmctY2FsY3VsYXRlIiwic2hpcHBpbmctY2FuY2VsIiwic2hpcHBpbmctY2hlY2tvdXQiLCJzaGlwcGluZy1jb21wYW5pZXMiLCJzaGlwcGluZy1nZW5lcmF0ZSIsInNoaXBwaW5nLXByZXZpZXciLCJzaGlwcGluZy1wcmludCIsInNoaXBwaW5nLXNoYXJlIiwic2hpcHBpbmctdHJhY2tpbmciLCJlY29tbWVyY2Utc2hpcHBpbmciLCJ0cmFuc2FjdGlvbnMtcmVhZCIsInVzZXJzLXJlYWQiLCJ1c2Vycy13cml0ZSIsIndlYmhvb2tzLXJlYWQiLCJ3ZWJob29rcy13cml0ZSIsIndlYmhvb2tzLWRlbGV0ZSIsInRkZWFsZXItd2ViaG9vayJdfQ.1DlY8HNZSkZv7myICGb4oi25wsDiLqyMPLEyXbkUmubgGL-Lt5VGpCyFvDJ_kp18KJBICxOCPS3uM8DKBmuukWXRqV27ij4VPW93vY2jnsIybxpB5nHQaVXbUHaQymFXvhm1RsuRPqXfnvtYu98Bbyp5_VK-MuFNxFI1e-U9mYCL9cALXaSsY2ypxgYhGNqAMsQLl1xa0EsVtWnEcLDeHGBiU7y1c2X75ISb1IJBN4J82JdmQNnjB93X4ESulOKD5OD3HeK3kGtrnBNICY5dfjXrk3RK99cVkhhMIHwIyILXPM8zi7l_97KIDkxhfxBMmUQ-7PXxuIcgCMjUhWH8zLN-E_imudqawL6wmeyLvvhYD1ps1C-FGoachggJMEr3qay00TM1Q85TCWXfGGN-TMXaJzRFJKQQcLZGzPhULn7f6RaPOFyUpuvPerkYyKiK6qrDiHjtNs5lvraHaiceMK1jPW4PiYQSfa-jLNzwoi6-dw5SohXyluLCcnG0tcMBUXbojhqmgLf4NR7Ykd-PiyZjhlFRtYpcqCax-scBZksbCFlsCukmpOyltetZrzbLOZia3yAYxCZyCxy1l6Hi_T9vATuQBGZc886FFiVrtAG8oDnMqQWdw4JsgIz3nk1YEGJvSso6v-8ZAZilTGYL9LVOHc0jvuteFQTq94-Bz1Y";
-
-    /* 1️⃣ CRIAR ENVIO NO MELHOR ENVIO */
-
-    const criar = await fetch(
+    const response = await fetch(
       "https://melhorenvio.com.br/api/v2/me/cart",
       {
         method:"POST",
@@ -21,7 +17,7 @@ export async function POST(req){
         },
         body: JSON.stringify({
 
-          service_ID: body.service,
+          service: body.service,
 
           from:{
             name:"Romulo Silva",
@@ -34,7 +30,7 @@ export async function POST(req){
             city:"São Paulo",
             state_abbr:"SP",
             country_id:"BR",
-            postal_code:"08062-670"
+            postal_code:"08062670"
           },
 
           to:{
@@ -42,7 +38,7 @@ export async function POST(req){
             phone:"11999999999",
             email:"cliente@email.com",
             document:"00000000000",
-            address:"Rua do cliente",
+            address:"Rua Cliente",
             number:"100",
             district:"Centro",
             city:"Natal",
@@ -54,64 +50,34 @@ export async function POST(req){
           products:[
             {
               id:"1",
-              name:"Produto vendido",
-              width: body.width,
-              height: body.height,
-              length: body.length,
-              weight: body.weight,
-              insurance_value:String(body.valor),
-              quantity:1
+              name:"Produto",
+              quantity:1,
+              width:10,
+              height:10,
+              length:10,
+              weight:0.3,
+              insurance_value:"150.00"
             }
-          ],
-
-          options:{
-            receipt:false,
-            own_hand:false,
-            insurance_value:String(body.valor)
-          }
+          ]
 
         })
       }
-    );
+    )
 
-    const envio = await criar.json();
+    const data = await response.json()
 
-    console.log("ENVIO CRIADO:", envio);
+    console.log("RESPOSTA MELHOR ENVIO:", data)
 
-    /* 2️⃣ GERAR ETIQUETA */
+    return Response.json(data)
 
-    const gerar = await fetch(
-      "https://melhorenvio.com.br/api/v2/me/shipment/generate",
-      {
-        method:"POST",
-        headers:{
-          "Accept":"application/json",
-          "Content-Type":"application/json",
-          "Authorization":"Bearer " + token
-        },
-        body: JSON.stringify({
-          orders:[envio.id]
-        })
-      }
-    );
+  }
+  catch(error){
 
-    const etiqueta = await gerar.json();
-
-    console.log("ETIQUETA:", etiqueta);
+    console.log(error)
 
     return Response.json({
-      success:true,
-      envio:envio,
-      etiqueta:etiqueta
-    });
-
-  }catch(err){
-
-    console.log("ERRO:", err);
-
-    return Response.json({
-      error:"Erro ao gerar etiqueta"
-    });
+      error:"Erro ao criar envio"
+    })
 
   }
 
