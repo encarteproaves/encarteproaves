@@ -23,10 +23,18 @@ export default function Pedidos(){
     headers:{
       "Content-Type":"application/json"
     },
-    body: JSON.stringify({
-      cep: pedido.cep,
-      service: pedido.frete?.id
-    })
+    products:[
+{
+id:"1",
+name:"Produto vendido",
+quantity:1,
+width: body.width,
+height: body.height,
+length: body.length,
+weight: body.weight,
+insurance_value: body.valor
+}
+]
   })
 
   const data = await res.json()
