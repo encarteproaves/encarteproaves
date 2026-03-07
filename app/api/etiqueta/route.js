@@ -121,11 +121,10 @@ orders:[envio.id]
 }
 )
 
-const etiqueta = await pdf.json()
+await pdf.json()
 
 return Response.json({
-sucesso:true,
-etiqueta:etiqueta
+  sucesso:true
 })
 
 }
