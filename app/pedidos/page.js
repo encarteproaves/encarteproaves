@@ -33,7 +33,7 @@ export default function Pedidos(){
 
   if(data.etiqueta){
 
-  window.open("https://melhorenvio.com.br/app/envios","_blank")
+  window.open(data.etiqueta.url,"_blank")
 
 }else{
 
