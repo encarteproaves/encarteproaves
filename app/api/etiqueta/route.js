@@ -54,11 +54,11 @@ products:[
 id:"1",
 name:"Produto vendido",
 quantity:1,
-width:10,
-height:10,
-length:10,
-weight:0.3,
-insurance_value:150
+width: body.width,
+height: body.height,
+length: body.length,
+weight: body.weight,
+insurance_value: body.valor
 }
 ]
 
