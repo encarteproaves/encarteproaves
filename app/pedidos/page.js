@@ -54,13 +54,13 @@ export default function Pedidos(){
 
       if(data.sucesso){
 
-        window.open("https://melhorenvio.com.br/app/envios","_blank");
+  window.location.href = "https://melhorenvio.com.br/app/envios";
 
-      }else{
+}else{
 
-        alert("Erro ao gerar etiqueta");
+  alert("Erro ao gerar etiqueta")
 
-      }
+}
 
     }catch(err){
 
