@@ -6,50 +6,72 @@ export default function Pedidos(){
   const [pedidos,setPedidos] = useState([]);
 
   async function carregarPedidos(){
+
     const res = await fetch("/api/pedido");
     const data = await res.json();
+
     setPedidos(data);
+
   }
 
   useEffect(()=>{
+
     carregarPedidos();
+
   },[]);
 
-  /* 🔥 GERAR ETIQUETA */
- async function gerarEtiqueta(pedido){
 
-  const res = await fetch("/api/etiqueta",{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json"
-    },
-    products:[
-{
-id:"1",
-name:"Produto vendido",
-quantity:1,
-width: body.width,
-height: body.height,
-length: body.length,
-weight: body.weight,
-insurance_value: body.valor
-}
-]
-  })
+  /* GERAR ETIQUETA */
 
-  const data = await res.json()
+  async function gerarEtiqueta(pedido){
 
-  if(data.etiqueta){
+    try{
 
-  window.open("https://melhorenvio.com.br/app/envios","_blank")
+      const res = await fetch("/api/etiqueta",{
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body: JSON.stringify({
 
-}else{
+          cep: pedido.cep,
+          service: pedido.frete?.id,
 
-  alert("Erro ao gerar etiqueta")
+          width: pedido.frete?.packages?.[0]?.dimensions?.width,
+          height: pedido.frete?.packages?.[0]?.dimensions?.height,
+          length: pedido.frete?.packages?.[0]?.dimensions?.length,
 
-}
+          weight: pedido.frete?.packages?.[0]?.weight,
 
-}
+          valor: pedido.valor
+
+        })
+      });
+
+      const data = await res.json();
+
+      console.log("RESPOSTA API:",data);
+
+      if(data.sucesso){
+
+        window.open("https://melhorenvio.com.br/app/envios","_blank");
+
+      }else{
+
+        alert("Erro ao gerar etiqueta");
+
+      }
+
+    }catch(err){
+
+      console.log(err);
+      alert("Erro ao gerar etiqueta");
+
+    }
+
+  }
+
+
   return(
 
     <div style={{padding:"40px"}}>
@@ -71,9 +93,10 @@ insurance_value: body.valor
           Frete: {p.frete?.name}<br/>
           Status: {p.status}<br/>
 
-          {/* 🟡 GERAR */}
           {p.status === "Aguardando etiqueta" && (
+
             <button
+              type="button"
               onClick={()=>gerarEtiqueta(p)}
               style={{
                 marginTop:"10px",
@@ -87,29 +110,35 @@ insurance_value: body.valor
             >
               Gerar etiqueta
             </button>
+
           )}
 
-         {p.status === "Etiqueta gerada" && (
-  <a
-    href="https://melhorenvio.com.br/app/shipment"
-    target="_blank"
-    style={{
-      display:"inline-block",
-      marginTop:"10px",
-      background:"#27ae60",
-      color:"#fff",
-      padding:"8px",
-      borderRadius:"6px",
-      textDecoration:"none"
-    }}
-  >
-    Abrir no Melhor Envio
-  </a>
-)}
+          {p.status === "Etiqueta gerada" && (
+
+            <a
+              href="https://melhorenvio.com.br/app/envios"
+              target="_blank"
+              style={{
+                display:"inline-block",
+                marginTop:"10px",
+                background:"#27ae60",
+                color:"#fff",
+                padding:"8px",
+                borderRadius:"6px",
+                textDecoration:"none"
+              }}
+            >
+              Abrir no Melhor Envio
+            </a>
+
+          )}
+
         </div>
 
       ))}
 
     </div>
+
   );
+
 }
