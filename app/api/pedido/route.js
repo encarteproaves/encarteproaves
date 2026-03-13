@@ -10,8 +10,8 @@ export async function POST(req){
     valor: body.valor,
     cep: body.cep,
     frete: body.frete,
-    canto: body.canto || "",
-    status: "Aguardando pagamento",
+    canto: body.canto,
+    status:"Aguardando pagamento",
     data: new Date()
   };
 
