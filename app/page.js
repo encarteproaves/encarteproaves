@@ -74,7 +74,29 @@ export default function Home() {
     alert("Digite um CEP válido");
     return;
   }
+/* FINALIZAR COMPRA */
+async function finalizarCompra(product){
 
+  const envio = frete?.[product.id]?.[0];
+
+  const pedido = await fetch("/api/pedido",{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({
+      produto: product.name,
+      valor: product.price,
+      cep: cep?.[product.id],
+      frete: envio,
+      canto: canto?.[product.id]
+    })
+  });
+
+  const data = await pedido.json();
+
+  /* abre o pagamento */
+  window.open(product.mpLink,"_blank");
+
+}
   setLoading(true);
 
   try{
