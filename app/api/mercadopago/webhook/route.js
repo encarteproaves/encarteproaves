@@ -1,4 +1,4 @@
-import { pedidos } from "../pedido/route";
+import { pedidos } from "../../pedido/route"
 
 export async function POST(req){
 
@@ -29,13 +29,17 @@ export async function POST(req){
 
       if(data.status === "approved"){
 
-        const pedidoId = data.external_reference
+        const valorPago = data.transaction_amount
 
-        const pedido = pedidos.find(p => p.id == pedidoId)
+        const pedido = pedidos.find(
+          p => p.valor == valorPago && p.status === "Aguardando pagamento"
+        )
 
         if(pedido){
 
-          pedido.status = "Pago"
+          pedido.status = "Aguardando etiqueta"
+
+          console.log("Pedido atualizado:", pedido)
 
         }
 
