@@ -1,3 +1,5 @@
+import { pedidos } from "../pedido/route";
+
 export async function POST(req){
 
   try{
@@ -23,10 +25,20 @@ export async function POST(req){
 
       const data = await pagamento.json()
 
-      console.log("Status do pagamento:", data.status)
+      console.log("Pagamento:", data)
 
       if(data.status === "approved"){
-        console.log("Pagamento aprovado")
+
+        const pedidoId = data.external_reference
+
+        const pedido = pedidos.find(p => p.id == pedidoId)
+
+        if(pedido){
+
+          pedido.status = "Pago"
+
+        }
+
       }
 
     }
@@ -42,4 +54,3 @@ export async function POST(req){
   }
 
 }
-
