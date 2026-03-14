@@ -69,7 +69,30 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
 
   async function calcularFrete(product){
+async function finalizarCompra(product){
 
+  const envio = frete?.[product.id]?.[0];
+
+  const res = await fetch("/api/pedido",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body: JSON.stringify({
+      produto: product.name,
+      valor: product.price,
+      cep: cep?.[product.id],
+      frete: envio,
+      canto: canto?.[product.id]
+    })
+  });
+
+  const pedido = await res.json();
+
+  /* abre o pagamento */
+  window.open(product.mpLink,"_blank");
+
+}
   if (!cep?.[product.id] || cep[product.id].length < 8){
     alert("Digite um CEP válido");
     return;
