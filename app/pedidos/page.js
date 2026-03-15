@@ -1,3 +1,19 @@
+async function atualizarStatus(id,status){
+
+  await fetch("/api/pedido",{
+    method:"PUT",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body: JSON.stringify({
+      id,
+      status
+    })
+  });
+
+  carregarPedidos()
+
+}
 "use client";
 import { useEffect, useState } from "react";
 
