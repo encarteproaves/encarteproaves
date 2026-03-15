@@ -21,21 +21,18 @@ export default function Pedidos(){
 
   const [pedidos,setPedidos] = useState([]);
 
-  async function carregarPedidos(){
-
+ async function carregarPedidos(){
+  try{
     const res = await fetch("/api/pedido");
     const data = await res.json();
-
     setPedidos(data);
-
+  }catch(err){
+    console.log("Erro ao carregar pedidos",err);
   }
-
+}
   useEffect(()=>{
-
     carregarPedidos();
-
   },[]);
-
 
   /* GERAR ETIQUETA */
 
