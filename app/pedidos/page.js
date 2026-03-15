@@ -130,7 +130,40 @@ export default function Pedidos(){
           )}
 
           {p.status === "Etiqueta gerada" && (
+<button
+onClick={()=>atualizarStatus(p.id,"Enviado")}
+style={{
+marginTop:"10px",
+background:"#3498db",
+color:"#fff",
+padding:"8px",
+borderRadius:"6px",
+border:"none",
+cursor:"pointer"
+}}
+>
+Marcar como enviado
+</button>
 
+)}
+  {p.status === "Enviado" && (
+
+<button
+onClick={()=>atualizarStatus(p.id,"Entregue")}
+style={{
+marginTop:"10px",
+background:"#2ecc71",
+color:"#fff",
+padding:"8px",
+borderRadius:"6px",
+border:"none",
+cursor:"pointer"
+}}
+>
+Marcar como entregue
+</button>
+
+)}
             <a
               href="https://melhorenvio.com.br/app/envios"
               target="_blank"
