@@ -37,54 +37,35 @@ export default function Pedidos(){
   /* GERAR ETIQUETA */
 
   async function gerarEtiqueta(pedido){
-
     try{
-
       const res = await fetch("/api/etiqueta",{
         method:"POST",
         headers:{
           "Content-Type":"application/json"
         },
         body: JSON.stringify({
-
           cep: pedido.cep,
           service: pedido.frete?.id,
-
           width: pedido.frete?.packages?.[0]?.dimensions?.width,
           height: pedido.frete?.packages?.[0]?.dimensions?.height,
           length: pedido.frete?.packages?.[0]?.dimensions?.length,
-
           weight: pedido.frete?.packages?.[0]?.weight,
-
           valor: pedido.valor
-
         })
       });
 
       const data = await res.json();
-
       console.log("RESPOSTA API:",data);
-
       if(data.sucesso){
-
   window.location.href = "https://melhorenvio.com.br/app/envios";
-
 }else{
-
   alert("Erro ao gerar etiqueta")
-
 }
-
     }catch(err){
-
       console.log(err);
       alert("Erro ao gerar etiqueta");
-
     }
-
   }
-
-
   return(
 
     <div style={{padding:"40px"}}>
