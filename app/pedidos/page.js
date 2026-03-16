@@ -37,35 +37,34 @@ export default function Pedidos(){
   /* GERAR ETIQUETA */
 
   async function gerarEtiqueta(pedido){
-    try{
-      const res = await fetch("/api/etiqueta",{
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json"
-        },
-        body: JSON.stringify({
-          cep: pedido.cep,
-          service: pedido.frete?.id,
-          width: pedido.frete?.packages?.[0]?.dimensions?.width,
-          height: pedido.frete?.packages?.[0]?.dimensions?.height,
-          length: pedido.frete?.packages?.[0]?.dimensions?.length,
-          weight: pedido.frete?.packages?.[0]?.weight,
-          valor: pedido.valor
-        })
-      });
-
-      const data = await res.json();
-      console.log("RESPOSTA API:",data);
-      if(data.sucesso){
-  window.location.href = "https://melhorenvio.com.br/app/envios";
-}else{
-  alert("Erro ao gerar etiqueta")
-}
-    }catch(err){
-      console.log(err);
+  try{
+    const res = await fetch("/api/etiqueta",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body: JSON.stringify({
+        cep: pedido.cep,
+        service: pedido.frete?.id,
+        width: pedido.frete?.packages?.[0]?.dimensions?.width || 65,
+        height: pedido.frete?.packages?.[0]?.dimensions?.height || 65,
+        length: pedido.frete?.packages?.[0]?.dimensions?.length || 35,
+        weight: pedido.frete?.packages?.[0]?.weight || 8,
+        valor: pedido.valor
+      })
+    });
+    const data = await res.json();
+    if(data.sucesso){
+      window.open("https://melhorenvio.com.br/app/envios","_blank");
+      carregarPedidos();
+    }else{
       alert("Erro ao gerar etiqueta");
     }
+  }catch(err){
+    console.log("Erro etiqueta:",err);
+    alert("Erro ao comunicar com servidor");
   }
+}
   return(
 
     <div style={{padding:"40px"}}>
