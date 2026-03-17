@@ -1,3 +1,10 @@
-export default function Admin(){
-  return <h1>ADMIN OK</h1>
+"use client";
+
+export default function AdminPage() {
+  return (
+    <div>
+      <h1>Painel Administrativo</h1>
+      <p>Admin funcionando ✅</p>
+    </div>
+  );
 }
