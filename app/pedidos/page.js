@@ -1,3 +1,36 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+export default function Pedidos(){
+
+  const [pedidos,setPedidos] = useState([]);
+
+  async function carregarPedidos(){
+    try{
+      const res = await fetch("/api/pedido");
+      const data = await res.json();
+      setPedidos(data);
+    }catch(err){
+      console.log("Erro ao carregar pedidos",err);
+    }
+  }
+
+  async function atualizarStatus(id,status){
+    await fetch("/api/pedido",{
+      method:"PUT",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body: JSON.stringify({ id, status })
+    });
+
+    carregarPedidos();
+  }
+
+  useEffect(()=>{
+    carregarPedidos();
+  },[]);
 async function atualizarStatus(id,status){
 
   await fetch("/api/pedido",{
@@ -14,25 +47,6 @@ async function atualizarStatus(id,status){
   carregarPedidos()
 
 }
-"use client";
-import { useEffect, useState } from "react";
-
-export default function Pedidos(){
-
-  const [pedidos,setPedidos] = useState([]);
-
- async function carregarPedidos(){
-  try{
-    const res = await fetch("/api/pedido");
-    const data = await res.json();
-    setPedidos(data);
-  }catch(err){
-    console.log("Erro ao carregar pedidos",err);
-  }
-}
-  useEffect(()=>{
-    carregarPedidos();
-  },[]);
 
   /* GERAR ETIQUETA */
 
