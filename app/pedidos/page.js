@@ -157,8 +157,6 @@ Marcar como entregue
               Abrir no Melhor Envio
             </a>
 
-          )}
-
         </div>
 
       ))}
