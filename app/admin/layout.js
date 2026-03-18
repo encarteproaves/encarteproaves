@@ -1,27 +1,47 @@
 export default function AdminLayout({ children }) {
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
+    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "Arial" }}>
       
-      {/* Sidebar */}
+      {/* SIDEBAR */}
       <aside style={{
-        width: "220px",
-        background: "#111",
+        width: "240px",
+        background: "#0f172a",
         color: "#fff",
         padding: "20px"
       }}>
-        <h2>Admin</h2>
+        <h2 style={{ marginBottom: "30px" }}>⚙ Admin</h2>
 
-        <ul style={{ listStyle: "none", padding: 0 }}>
-          <li><a href="/admin" style={{ color: "#fff" }}>Dashboard</a></li>
-          <li><a href="/pedidos" style={{ color: "#fff" }}>Pedidos</a></li>
-        </ul>
+        <nav>
+          <a href="/admin" style={link}>Dashboard</a>
+          <a href="/pedidos" style={link}>Pedidos</a>
+          <a href="/admin/produtos" style={link}>Produtos</a>
+        </nav>
       </aside>
 
-      {/* Conteúdo */}
-      <main style={{ flex: 1, padding: "20px" }}>
-        {children}
-      </main>
+      {/* CONTEÚDO */}
+      <div style={{ flex: 1 }}>
 
+        {/* TOPBAR */}
+        <header style={{
+          background: "#fff",
+          padding: "15px",
+          borderBottom: "1px solid #ddd"
+        }}>
+          <strong>Painel Administrativo</strong>
+        </header>
+
+        <main style={{ padding: "20px" }}>
+          {children}
+        </main>
+
+      </div>
     </div>
   );
 }
+
+const link = {
+  display: "block",
+  color: "#fff",
+  marginBottom: "15px",
+  textDecoration: "none"
+};
