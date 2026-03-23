@@ -358,7 +358,9 @@ async function finalizarCompra(product){
 
 {/* BOTÃO WHATSAPP */}
 <a
-  href={product.whatsappLink}
+  href={`https://wa.me/5511984309480?text=${encodeURIComponent(
+  `Olá, quero comprar ${product.nome} - R$ ${product.preco}`
+)}`}
   target="_blank"
   style={{
     display:"block",
