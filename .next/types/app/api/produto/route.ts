@@ -1,4 +1,4 @@
-// File: C:\Users\User\Downloads\encarteproaves-main (1)\encarteproaves-main\app\api\produto\route.js
+// File: C:\Users\User\Downloads\encarteproaves\app\api\produto\route.js
 import * as entry from '../../../../../app/api/produto/route.js'
 import type { NextRequest } from 'next/server.js'
 

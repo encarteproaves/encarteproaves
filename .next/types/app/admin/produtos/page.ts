@@ -1,4 +1,4 @@
-// File: C:\Users\User\Downloads\encarteproaves-main (1)\encarteproaves-main\app\admin\produtos\page.js
+// File: C:\Users\User\Downloads\encarteproaves\app\admin\produtos\page.js
 import * as entry from '../../../../../app/admin/produtos/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
