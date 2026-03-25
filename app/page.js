@@ -255,7 +255,7 @@ async function finalizarCompra(product){
             </p>
 
             <h2 style={{color:"#27ae60"}}>
-              R$ {Number(product.price).toFixed(2)}
+              R$ {Number(product.price).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
             </h2>
 
             <p style={{color:"#e67e22"}}>

@@ -1,4 +1,7 @@
 {
-  "/page": "app/page.js",
+  "/pedidos/page": "app/pedidos/page.js",
+  "/api/pedido/route": "app/api/pedido/route.js",
+  "/api/produto/route": "app/api/produto/route.js",
+  "/admin/page": "app/admin/page.js",
   "/admin/produtos/page": "app/admin/produtos/page.js"
 }
