@@ -17,21 +17,43 @@ export default function Footer() {
           flexWrap: "wrap",
         }}
       >
+        {/* LOGO / TEXTO */}
         <div>
           <h2>Encarteproaves</h2>
           <p>Tecnologia e Qualidade no Encarte de Canto de pássaros.</p>
         </div>
 
+        {/* LINKS */}
         <div>
           <h3>Links</h3>
-          <p>Início</p>
-          <p>Admin</p>
+
+          <a href="/" style={{ display: "block", color: "#fff" }}>
+            Início
+          </a>
+
+          <a href="/admin" style={{ display: "block", color: "#fff" }}>
+            Admin
+          </a>
         </div>
 
+        {/* CONTATO */}
         <div>
           <h3>Contato</h3>
-          <p>📱 Falar no WhatsApp</p>
-          <p>✉️ contato@encarteproaves.com.br</p>
+
+          <a
+            href="https://wa.me/5511984309480"
+            target="_blank"
+            style={{ display: "block", color: "#fff" }}
+          >
+            📱 Falar no WhatsApp
+          </a>
+
+          <a
+            href="mailto:contato@encarteproaves.com.br"
+            style={{ display: "block", color: "#fff" }}
+          >
+            ✉️ contato@encarteproaves.com.br
+          </a>
         </div>
       </div>
 
