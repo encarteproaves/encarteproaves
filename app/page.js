@@ -69,56 +69,12 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
 
   async function calcularFrete(product){
-async function finalizarCompra(product){
 
-  const envio = frete?.[product.id]?.[0];
-
-  const res = await fetch("/api/pedido",{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json"
-    },
-    body: JSON.stringify({
-      produto: product.name,
-      valor: product.price,
-      cep: cep?.[product.id],
-      frete: envio,
-      canto: canto?.[product.id]
-    })
-  });
-
-  const pedido = await res.json();
-
-  /* abre o pagamento */
-  window.open(product.mpLink,"_blank");
-
-}
   if (!cep?.[product.id] || cep[product.id].length < 8){
     alert("Digite um CEP válido");
     return;
   }
-async function registrarPedido(product){
 
-  const envio = frete?.[product.id]?.[0];
-
-  const res = await fetch("/api/pedido",{
-    method:"POST",
-    headers:{ "Content-Type":"application/json"},
-    body: JSON.stringify({
-      produto: product.name,
-      valor: product.price,
-      cep: cep?.[product.id],
-      frete: envio,
-      canto: canto?.[product.id]
-    })
-  });
-
-  const pedido = await res.json();
-
-  /* abre pagamento */
-  window.open(product.mpLink,"_blank");
-
-}
   setLoading(true);
 
   try{
@@ -138,15 +94,12 @@ async function registrarPedido(product){
 
     const data = await res.json();
 
-    /* garante array */
     const lista = Array.isArray(data) ? data : [];
 
-    /* remove transportadoras inválidas */
     const filtrado = lista.filter(item=>{
       return item?.price && Number(item.price) > 0;
     });
 
-    /* remove duplicadas */
     const unicas = Object.values(
       filtrado.reduce((acc,item)=>{
         acc[item.name] = item;
@@ -154,7 +107,6 @@ async function registrarPedido(product){
       },{})
     );
 
-    /* ordena pelo frete mais barato */
     unicas.sort((a,b)=>{
       return Number(a.price) - Number(b.price);
     });
@@ -171,6 +123,8 @@ async function registrarPedido(product){
 
   setLoading(false);
 }
+
+
 async function finalizarCompra(product){
 
   if(!frete?.[product.id]?.length){
@@ -332,7 +286,10 @@ async function finalizarCompra(product){
                     fontSize:"14px"
                   }}>
                     <b>{item.name}</b><br/>
-                    💰 R$ {item.price}<br/>
+                    💰 R$ {Number(item.price || 0).toLocaleString("pt-BR", {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
+})}
                     ⏱ {item.delivery_time} dias
                   </div>
                 ))}
