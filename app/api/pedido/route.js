@@ -1,7 +1,6 @@
-export let pedidos = [];
+let pedidos = [];
 
-export async function POST(req){
-
+export async function POST(req) {
   const body = await req.json();
 
   const novoPedido = {
@@ -11,7 +10,7 @@ export async function POST(req){
     cep: body.cep,
     frete: body.frete,
     canto: body.canto,
-    status:"Aguardando pagamento",
+    status: "Aguardando pagamento",
     data: new Date()
   };
 
@@ -20,6 +19,6 @@ export async function POST(req){
   return Response.json(novoPedido);
 }
 
-export async function GET(){
+export async function GET() {
   return Response.json(pedidos);
 }
