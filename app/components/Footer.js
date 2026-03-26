@@ -49,11 +49,11 @@ export default function Footer() {
           </a>
 
           <a
-            href="mailto:contato@encarteproaves.com.br"
-            style={{ display: "block", color: "#fff" }}
-          >
-            ✉️ contato@encarteproaves.com.br
-          </a>
+  href="mailto:encarteproaves@gmail.com?subject=Contato%20pelo%20site&body=Olá,%20vim%20pelo%20site%20EncarteProAves."
+  style={{ display: "block", color: "#fff" }}
+>
+  ✉️ encarteproaves@gmail.com
+</a>
         </div>
       </div>
 
