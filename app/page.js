@@ -8,10 +8,8 @@ export default function Home() {
   useEffect(() => {
     async function carregar() {
       try {
-        // ✅ CORREÇÃO PRINCIPAL AQUI
         const res = await fetch("/api/public/produto");
 
-        // ✅ valida resposta
         if (!res.ok) {
           console.log("Erro HTTP:", res.status);
           return;
@@ -35,9 +33,10 @@ export default function Home() {
     carregar();
   }, []);
 
+  // 🔁 PRODUTOS FIXOS (fallback)
   const produtosFixos = [
     {
-      id: 1,
+      id: "fixo-1",
       name: "Caixa Acústica Profissional para Encarte de Canto em pássaros",
       description: "Caixa acústica para encarte de canto em pássaros nas Medidas 65x65x35 cm",
       price: 1500,
@@ -47,7 +46,7 @@ export default function Home() {
       whatsappLink: "https://wa.me/5511984309480"
     },
     {
-      id: 2,
+      id: "fixo-2",
       name: "Aparelho Digital para Encarte de Canto",
       description: "Programador digital automático para treino de canto",
       price: 330,
@@ -56,7 +55,7 @@ export default function Home() {
       whatsappLink: "https://wa.me/5511984309480"
     },
     {
-      id: 3,
+      id: "fixo-3",
       name: "Pen Drive 8GB Canto Editado",
       description: "Canto personalizado conforme pedido",
       price: 150,
@@ -66,7 +65,8 @@ export default function Home() {
     }
   ];
 
-  const lista = [...produtosFixos, ...products];
+  // ✅ REGRA CORRETA
+  const lista = products.length > 0 ? products : produtosFixos;
 
   return (
     <main style={{ background: "#f5f5f5", fontFamily: "Arial" }}>
@@ -90,17 +90,20 @@ export default function Home() {
         padding: "50px"
       }}>
 
-        {lista.map(product => (
+        {lista.map((product, index) => (
 
-          <div key={product.id} style={{
-            width: "320px",
-            background: "#fff",
-            borderRadius: "15px",
-            boxShadow: "0 10px 25px rgba(0,0,0,.08)",
-            overflow: "hidden",
-            textAlign: "center",
-            paddingBottom: "20px"
-          }}>
+          <div
+            key={product.id || index}
+            style={{
+              width: "320px",
+              background: "#fff",
+              borderRadius: "15px",
+              boxShadow: "0 10px 25px rgba(0,0,0,.08)",
+              overflow: "hidden",
+              textAlign: "center",
+              paddingBottom: "20px"
+            }}
+          >
 
             {product.badge && (
               <div style={{
@@ -116,6 +119,7 @@ export default function Home() {
             <div style={{ height: "280px" }}>
               <img
                 src={product.imagem || product.image || "/placeholder.png"}
+                alt={product.nome || product.name}
                 style={{
                   width: "100%",
                   height: "100%",
@@ -131,7 +135,7 @@ export default function Home() {
             </p>
 
             <h2 style={{ color: "#27ae60" }}>
-              R$ {Number(product.preco || product.price).toLocaleString("pt-BR", {
+              R$ {Number(product.preco || product.price || 0).toLocaleString("pt-BR", {
                 minimumFractionDigits: 2
               })}
             </h2>
@@ -143,6 +147,7 @@ export default function Home() {
             <a
               href={product.whatsappLink || "https://wa.me/5511984309480"}
               target="_blank"
+              rel="noopener noreferrer"
               style={{
                 display: "block",
                 background: "#25D366",
