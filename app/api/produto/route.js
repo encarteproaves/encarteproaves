@@ -1,39 +1,55 @@
-let produtos = [
-  {
-    id: 1,
-    nome: "Caixa Acústica Profissional",
-    preco: 1500,
-    descricao: "Caixa acústica para encarte de canto",
-  },
-  {
-    id: 2,
-    nome: "Aparelho Digital",
-    preco: 330,
-    descricao: "Programador automático de canto",
-  },
-  {
-    id: 3,
-    nome: "Pen Drive 8GB",
-    preco: 150,
-    descricao: "Canto personalizado",
-  },
-];
+import { prisma } from '../../../lib/prisma'
 
-export async function GET() {
-  return Response.json(produtos);
+// 🔐 função de proteção
+function verificarAuth(request) {
+  const cookie = request.headers.get('cookie') || ''
+  return cookie.includes('admin-auth=true')
 }
 
-export async function POST(req) {
-  const body = await req.json();
+// 📦 GET → listar produtos
+export async function GET(request) {
+  if (!verificarAuth(request)) {
+    return Response.json({ error: 'Não autorizado' }, { status: 401 })
+  }
 
-  const novoProduto = {
-    id: Date.now(),
-    nome: body.nome,
-    preco: Number(body.preco),
-    descricao: body.descricao,
-  };
+  const produtos = await prisma.produto.findMany({
+    orderBy: { id: 'desc' },
+  })
 
-  produtos.push(novoProduto);
+  return Response.json(produtos)
+}
 
-  return Response.json(novoProduto);
+// ➕ POST → criar produto
+export async function POST(request) {
+  if (!verificarAuth(request)) {
+    return Response.json({ error: 'Não autorizado' }, { status: 401 })
+  }
+
+  const body = await request.json()
+
+  const produto = await prisma.produto.create({
+    data: {
+      nome: body.nome,
+      preco: body.preco,
+      descricao: body.descricao,
+      imagem: body.imagem,
+    },
+  })
+
+  return Response.json(produto)
+}
+
+// ❌ DELETE → excluir produto
+export async function DELETE(request) {
+  if (!verificarAuth(request)) {
+    return Response.json({ error: 'Não autorizado' }, { status: 401 })
+  }
+
+  const body = await request.json()
+
+  await prisma.produto.delete({
+    where: { id: body.id },
+  })
+
+  return Response.json({ ok: true })
 }

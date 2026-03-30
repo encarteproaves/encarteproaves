@@ -12,4 +12,5 @@ model Produto {
   nome      String
   preco     Float?
   descricao String?
+  imagem    String?
 }

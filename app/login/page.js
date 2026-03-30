@@ -1,16 +1,21 @@
-"use client";
+'use client'
 
-import { useState } from "react";
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
-export default function Login() {
-  const [senha, setSenha] = useState("");
+export default function LoginPage() {
+  const [senha, setSenha] = useState('')
+  const router = useRouter()
 
-  function entrar() {
-    if (senha === "123456") {
-      document.cookie = "admin=true";
-      window.location.href = "/admin";
+  function handleLogin() {
+    if (senha === '123') { // você pode mudar a senha depois
+      // ✅ cria o cookie
+      document.cookie = "admin-auth=true; path=/; max-age=86400"
+
+      // ✅ redireciona para admin
+      router.push('/admin')
     } else {
-      alert("Senha incorreta");
+      alert('Senha incorreta')
     }
   }
 
@@ -20,10 +25,14 @@ export default function Login() {
 
       <input
         type="password"
+        value={senha}
         onChange={(e) => setSenha(e.target.value)}
+        placeholder="Digite a senha"
       />
 
-      <button onClick={entrar}>Entrar</button>
+      <button onClick={handleLogin}>
+        Entrar
+      </button>
     </div>
-  );
+  )
 }

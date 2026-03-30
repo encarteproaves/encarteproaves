@@ -1,62 +1,93 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from 'react'
 
-export default function Produtos() {
-  const [nome, setNome] = useState("");
-  const [preco, setPreco] = useState("");
-  const [descricao, setDescricao] = useState("");
-  const [lista, setLista] = useState([]);
+export default function ProdutosPage() {
+  const [produtos, setProdutos] = useState([])
+  const [nome, setNome] = useState('')
+  const [preco, setPreco] = useState('')
+  const [descricao, setDescricao] = useState('')
+  const [imagem, setImagem] = useState('')
 
-  async function carregar() {
-    const res = await fetch("/api/produto");
-    const dados = await res.json();
-    setLista(dados);
+  // 🔄 buscar produtos
+  async function carregarProdutos() {
+    try {
+      const res = await fetch('/api/produto', {
+        credentials: 'include',
+      })
+
+      const data = await res.json()
+
+      if (Array.isArray(data)) {
+        setProdutos(data)
+      } else {
+        console.error('Erro na API:', data)
+        setProdutos([])
+      }
+    } catch (error) {
+      console.error('Erro ao carregar produtos:', error)
+      setProdutos([])
+    }
   }
 
   useEffect(() => {
-    carregar();
-  }, []);
+    carregarProdutos()
+  }, [])
 
-  async function salvar(e) {
-    e.preventDefault();
+  // ➕ adicionar produto
+  async function adicionarProduto() {
+    if (!nome || !preco) {
+      alert('Preencha nome e preço')
+      return
+    }
 
-    await fetch("/api/produto", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        nome,
-        preco,
-        descricao,
-      }),
-    });
+    try {
+      await fetch('/api/produto', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          nome,
+          preco: Number(preco),
+          descricao,
+          imagem,
+        }),
+      })
 
-    setNome("");
-    setPreco("");
-    setDescricao("");
+      // limpar campos
+      setNome('')
+      setPreco('')
+      setDescricao('')
+      setImagem('')
 
-    carregar();
+      carregarProdutos()
+    } catch (error) {
+      console.error('Erro ao adicionar produto:', error)
+    }
   }
 
-  async function excluir(id) {
-    await fetch("/api/produto", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id }),
-    });
+  // ❌ excluir produto
+  async function excluirProduto(id) {
+    try {
+      await fetch('/api/produto', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ id }),
+      })
 
-    carregar();
+      carregarProdutos()
+    } catch (error) {
+      console.error('Erro ao excluir produto:', error)
+    }
   }
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div style={{ padding: '20px' }}>
       <h1>Cadastro de Produtos</h1>
 
-      <form onSubmit={salvar} style={{ marginBottom: "20px" }}>
+      {/* FORMULÁRIO */}
+      <div style={{ marginBottom: '20px' }}>
         <input
           placeholder="Nome do produto"
           value={nome}
@@ -65,6 +96,7 @@ export default function Produtos() {
 
         <input
           placeholder="Preço"
+          type="number"
           value={preco}
           onChange={(e) => setPreco(e.target.value)}
         />
@@ -75,60 +107,61 @@ export default function Produtos() {
           onChange={(e) => setDescricao(e.target.value)}
         />
 
-        <button type="submit">Salvar</button>
-      </form>
+        <input
+          placeholder="URL da imagem"
+          value={imagem}
+          onChange={(e) => setImagem(e.target.value)}
+        />
+
+        <button onClick={adicionarProduto}>
+          Salvar
+        </button>
+      </div>
 
       <h2>Lista de Produtos</h2>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
-          gap: "20px",
-          marginTop: "20px",
-        }}
-      >
-        {lista.map((p) => (
-          <div
-            key={p.id}
-            style={{
-              border: "1px solid #ddd",
-              borderRadius: "10px",
-              padding: "15px",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-              background: "#fff",
-            }}
-          >
-            <h3 style={{ marginBottom: "10px" }}>{p.nome}</h3>
-
-            <p style={{ fontWeight: "bold", color: "green" }}>
-              {Number(p.preco).toLocaleString("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-              })}
-            </p>
-
-            <p style={{ color: "#555", fontSize: "14px" }}>
-              {p.descricao}
-            </p>
-
-            <button
-              onClick={() => excluir(p.id)}
+      {/* LISTA */}
+      <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+        {Array.isArray(produtos) &&
+          produtos.map((produto) => (
+            <div
+              key={produto.id}
               style={{
-                marginTop: "10px",
-                background: "#dc2626",
-                color: "#fff",
-                border: "none",
-                padding: "8px 12px",
-                borderRadius: "5px",
-                cursor: "pointer",
+                border: '1px solid #ccc',
+                padding: '10px',
+                width: '250px',
+                borderRadius: '8px',
               }}
             >
-              Excluir
-            </button>
-          </div>
-        ))}
+              {/* IMAGEM */}
+              {produto.imagem && (
+                
+              )}
+
+              <h3>{produto.nome}</h3>
+
+              {/* PREÇO FORMATADO */}
+              <p style={{ color: 'green', fontWeight: 'bold' }}>
+                R$ {Number(produto.preco).toFixed(2).replace('.', ',')}
+              </p>
+
+              <p>{produto.descricao}</p>
+
+              <button
+                onClick={() => excluirProduto(produto.id)}
+                style={{
+                  backgroundColor: 'red',
+                  color: 'white',
+                  border: 'none',
+                  padding: '5px 10px',
+                  cursor: 'pointer',
+                }}
+              >
+                Excluir
+              </button>
+            </div>
+          ))}
       </div>
     </div>
-  );
+  )
 }
