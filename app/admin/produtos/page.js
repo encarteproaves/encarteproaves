@@ -135,9 +135,17 @@ export default function ProdutosPage() {
             >
               {/* IMAGEM */}
               {produto.imagem && (
+  <img
+    src={produto.imagem}
+    alt={produto.nome}
+    style={{
+      width: '100%',
+      height: '150px',
+      objectFit: 'cover',
+    }}
+  />
+)}
                 
-              )}
-
               <h3>{produto.nome}</h3>
 
               {/* PREÇO FORMATADO */}
