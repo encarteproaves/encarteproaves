@@ -12,7 +12,7 @@ export default function ProdutosPage() {
   // 🔄 buscar produtos
   async function carregarProdutos() {
     try {
-      const res = await fetch('/api/produto', {
+      const res = await fetch('/api/admin/produto', {
         credentials: 'include',
       })
 
@@ -42,7 +42,7 @@ export default function ProdutosPage() {
     }
 
     try {
-      await fetch('/api/produto', {
+      await fetch('/api/admin/produto', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -69,7 +69,7 @@ export default function ProdutosPage() {
   // ❌ excluir produto
   async function excluirProduto(id) {
     try {
-      await fetch('/api/produto', {
+      await fetch('/api/admin/produto', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
