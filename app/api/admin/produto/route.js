@@ -1,7 +1,8 @@
 export const dynamic = "force-dynamic";
 
-import { prisma } from '@/lib/prisma'
+import { prisma } from '../../../../lib/prisma'
 
+// ✅ GET (listar produtos)
 export async function GET() {
   try {
     const produtos = await prisma.produto.findMany({
@@ -15,6 +16,7 @@ export async function GET() {
   }
 }
 
+// ✅ POST (criar produto)
 export async function POST(req) {
   try {
     const body = await req.json()
