@@ -1,11 +1,20 @@
 export const dynamic = "force-dynamic";
-import { prisma } from '../../../../lib/prisma'
+import { PrismaClient } from '@prisma/client'
 
-// 🌐 API pública (SEM PROTEÇÃO)
+const prisma = new PrismaClient()
+
 export async function GET() {
-  const produtos = await prisma.produto.findMany({
-    orderBy: { id: 'desc' },
-  })
+  try {
+    const produtos = await prisma.produto.findMany({
+      orderBy: { id: 'desc' },
+    })
 
-  return Response.json(produtos)
+    return Response.json(produtos)
+  } catch (error) {
+    console.error("ERRO REAL:", error)
+
+    return Response.json({
+      error: error.message
+    })
+  }
 }
