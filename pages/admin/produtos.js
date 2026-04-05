@@ -21,10 +21,6 @@ export default function AdminProdutos() {
     })
 
     alert('Produto cadastrado!')
-    setNome('')
-    setPreco('')
-    setDescricao('')
-    setImagem('')
   }
 
   return (
@@ -34,28 +30,24 @@ export default function AdminProdutos() {
       <form onSubmit={cadastrar}>
         <input
           placeholder="Nome"
-          value={nome}
           onChange={(e) => setNome(e.target.value)}
         />
         <br /><br />
 
         <input
           placeholder="Preço"
-          value={preco}
           onChange={(e) => setPreco(e.target.value)}
         />
         <br /><br />
 
         <input
           placeholder="Descrição"
-          value={descricao}
           onChange={(e) => setDescricao(e.target.value)}
         />
         <br /><br />
 
         <input
           placeholder="URL da imagem"
-          value={imagem}
           onChange={(e) => setImagem(e.target.value)}
         />
         <br /><br />
