@@ -19,7 +19,7 @@ export default function Home() {
         textAlign: "center",
         padding: "20px 10px"
       }}>
-        <h2 style={{ margin: 0 }}>ENCARTEPROAVES TESTE 999</h2>
+        <h2 style={{ margin: 0 }}>ENCARTEPROAVES</h2>
         <p style={{ margin: 0, fontSize: "14px" }}>
           Tecnologia e Qualidade Para o Melhor Encarte de Canto
         </p>
