@@ -1,0 +1,11 @@
+[
+  {
+    "id": "1",
+    "nome": "Tenébrios Molitor (vivos) 100 unidades",
+    "preco": 30,
+    "descricao": "Alimento para ser servido no dia a dia como fonte de proteína para seus pássaros, répteis e peixes.",
+    "imagem": "/tenebrios.png",
+    "estoque": 10,
+    "ativo": true
+  }
+]

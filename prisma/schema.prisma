@@ -4,13 +4,13 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
+  url      = env("DATABASE_URL")
 }
 
 model Produto {
   id        Int     @id @default(autoincrement())
   nome      String
-  preco     Float?
-  descricao String?
+  preco     Float
+  descricao String
   imagem    String?
 }
