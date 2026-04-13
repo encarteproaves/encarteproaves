@@ -21,10 +21,17 @@ export default function Home() {
     setCantos((prev) => ({ ...prev, [id]: value }));
   };
 
+  const formatarMoeda = (valor) => {
+    return Number(valor).toLocaleString("pt-BR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  };
+
   const calcularFrete = async (produto) => {
     const cep = ceps[produto.id];
 
-    if (!cep) {
+    if (!cep || cep.length < 8) {
       alert("Digite um CEP válido");
       return;
     }
@@ -42,19 +49,25 @@ export default function Home() {
         },
         body: JSON.stringify({
           cep,
-          width: 20,
-          height: 10,
-          length: 20,
-          weight: 1,
+          width: produto.width || 20,
+          height: produto.height || 10,
+          length: produto.length || 20,
+          weight: produto.weight || 1,
           price: produto.preco
         })
       });
 
       const data = await res.json();
 
-      const fretesOrdenados = data
-        .filter((item) => !item.error)
-        .sort((a, b) => Number(a.price) - Number(b.price));
+      const fretesOrdenados = Array.isArray(data)
+        ? data
+            .filter((item) => !item.error)
+            .sort((a, b) => Number(a.price) - Number(b.price))
+        : [];
+
+      if (!fretesOrdenados.length) {
+        alert("Nenhuma opção de frete encontrada");
+      }
 
       setFretes((prev) => ({
         ...prev,
@@ -92,36 +105,43 @@ export default function Home() {
 
   return (
     <div style={{ background: "#f1f1f1", minHeight: "100vh" }}>
-      <header style={{
-        background: "#000",
-        color: "#FFD700",
-        textAlign: "center",
-        padding: "20px 10px"
-      }}>
+      <header
+        style={{
+          background: "#000",
+          color: "#FFD700",
+          textAlign: "center",
+          padding: "20px 10px"
+        }}
+      >
         <h2 style={{ margin: 0 }}>ENCARTEPROAVES</h2>
         <p style={{ margin: 0, fontSize: "14px" }}>
           Tecnologia e Qualidade Para o Melhor Encarte de Canto
         </p>
       </header>
 
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-        gap: "25px",
-        padding: "30px",
-        maxWidth: "1200px",
-        margin: "0 auto"
-      }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+          gap: "25px",
+          padding: "30px",
+          maxWidth: "1200px",
+          margin: "0 auto"
+        }}
+      >
         {produtos.map((p) => (
-          <div key={p.id} style={{
-            background: "#fff",
-            borderRadius: "10px",
-            padding: "15px",
-            boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-            textAlign: "center",
-            maxWidth: "320px",
-            margin: "0 auto"
-          }}>
+          <div
+            key={p.id}
+            style={{
+              background: "#fff",
+              borderRadius: "10px",
+              padding: "15px",
+              boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+              textAlign: "center",
+              maxWidth: "320px",
+              margin: "0 auto"
+            }}
+          >
             <img
               src={p.imagem}
               alt={p.nome}
@@ -134,11 +154,13 @@ export default function Home() {
 
             <h3>{p.nome}</h3>
 
-            <p style={{
-              color: "green",
-              fontWeight: "bold"
-            }}>
-              R$ {Number(p.preco).toFixed(2)}
+            <p
+              style={{
+                color: "green",
+                fontWeight: "bold"
+              }}
+            >
+              R$ {formatarMoeda(p.preco)}
             </p>
 
             <p>{p.descricao}</p>
@@ -191,20 +213,27 @@ export default function Home() {
             )}
 
             {fretes[p.id]?.length > 0 && (
-              <div style={{
-                marginTop: "10px",
-                textAlign: "left",
-                fontSize: "13px",
-                background: "#f8f8f8",
-                padding: "10px",
-                borderRadius: "6px"
-              }}>
+              <div
+                style={{
+                  marginTop: "10px",
+                  textAlign: "left",
+                  fontSize: "13px",
+                  background: "#f8f8f8",
+                  padding: "10px",
+                  borderRadius: "6px"
+                }}
+              >
                 {fretes[p.id].map((frete, index) => (
-                  <div key={index} style={{
-                    marginBottom: "8px"
-                  }}>
-                    <strong>{frete.name}</strong><br />
-                    R$ {Number(frete.price).toFixed(2)}<br />
+                  <div
+                    key={index}
+                    style={{
+                      marginBottom: "8px"
+                    }}
+                  >
+                    <strong>{frete.name}</strong>
+                    <br />
+                    R$ {formatarMoeda(frete.price)}
+                    <br />
                     Prazo: {frete.delivery_time} dias
                   </div>
                 ))}
@@ -227,7 +256,10 @@ export default function Home() {
                 width: "100%",
                 marginTop: "8px",
                 background: "#25D366",
-                color: "#fff"
+                color: "#fff",
+                border: "none",
+                padding: "10px",
+                cursor: "pointer"
               }}
             >
               Falar no WhatsApp
@@ -236,19 +268,23 @@ export default function Home() {
         ))}
       </div>
 
-      <footer style={{
-        background: "#0b1a2c",
-        color: "#fff",
-        padding: "30px",
-        marginTop: "40px"
-      }}>
-        <div style={{
-          maxWidth: "1200px",
-          margin: "0 auto",
-          display: "flex",
-          justifyContent: "space-between",
-          flexWrap: "wrap"
-        }}>
+      <footer
+        style={{
+          background: "#0b1a2c",
+          color: "#fff",
+          padding: "30px",
+          marginTop: "40px"
+        }}
+      >
+        <div
+          style={{
+            maxWidth: "1200px",
+            margin: "0 auto",
+            display: "flex",
+            justifyContent: "space-between",
+            flexWrap: "wrap"
+          }}
+        >
           <div>
             <h3>Encarteproaves</h3>
             <p>Tecnologia e Qualidade no Encarte de Canto de pássaros.</p>
@@ -268,6 +304,7 @@ export default function Home() {
               <a
                 href="https://wa.me/5511984309480"
                 target="_blank"
+                rel="noreferrer"
                 style={{ color: "#fff" }}
               >
                 Falar no WhatsApp
@@ -285,10 +322,12 @@ export default function Home() {
           </div>
         </div>
 
-        <p style={{
-          textAlign: "center",
-          marginTop: "20px"
-        }}>
+        <p
+          style={{
+            textAlign: "center",
+            marginTop: "20px"
+          }}
+        >
           © 2026 Encarteproaves
         </p>
       </footer>
