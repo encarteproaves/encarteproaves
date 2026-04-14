@@ -6,9 +6,7 @@ const client = new MercadoPagoConfig({
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({
-      error: "Método não permitido",
-    });
+    return res.status(405).json({ error: "Método não permitido" });
   }
 
   try {
@@ -26,11 +24,19 @@ export default async function handler(req, res) {
             currency_id: "BRL",
           },
         ],
+
+        payer: {
+          name: "Cliente",
+        },
+
+        external_reference: `pedido-${Date.now()}`,
+
         back_urls: {
           success: "https://www.encarteproaves.com.br",
           failure: "https://www.encarteproaves.com.br",
           pending: "https://www.encarteproaves.com.br",
         },
+
         auto_return: "approved",
       },
     });
@@ -40,7 +46,7 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error("ERRO CHECKOUT:", error);
+    console.error("ERRO CHECKOUT DETALHADO:", JSON.stringify(error, null, 2));
 
     return res.status(500).json({
       error: "Erro ao gerar checkout",
