@@ -85,32 +85,38 @@ export default function Home() {
   };
 
   const compraSegura = async (produto) => {
-  try {
-    const res = await fetch("/api/checkout", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        produto,
-        canto: cantos[produto.id] || "",
-        cep: ceps[produto.id] || "",
-      }),
-    });
+    try {
+      if (!fretes[produto.id]?.length) {
+        alert("Calcule o frete antes de continuar");
+        return;
+      }
 
-    const data = await res.json();
+      await fetch("/api/pedido", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          produto: produto.nome,
+          valor: produto.preco,
+          cep: ceps[produto.id] || "",
+          frete: fretes[produto.id][0],
+          canto: cantos[produto.id] || "",
+        }),
+      });
 
-    if (!data.init_point) {
-      throw new Error("Checkout não retornou link");
+      if (!produto.mpLink) {
+        alert("Link de pagamento não configurado para este produto");
+        return;
+      }
+
+      window.open(produto.mpLink, "_blank");
+
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao iniciar checkout");
     }
-
-    window.location.href = data.init_point;
-
-  } catch (error) {
-    console.error(error);
-    alert("Erro ao iniciar checkout");
-  }
-};
+  };
 
   const falarWhatsapp = (produto) => {
     const cep = ceps[produto.id] || "";
