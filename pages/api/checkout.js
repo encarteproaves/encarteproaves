@@ -12,14 +12,27 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { nome, preco } = req.body;
+    const { produto, canto, cep } = req.body;
+
+    if (!produto) {
+      return res.status(400).json({
+        error: "Produto não enviado",
+      });
+    }
+
+    const descricaoExtra = `
+Produto: ${produto.nome}
+${canto ? `Canto: ${canto}` : ""}
+${cep ? `CEP: ${cep}` : ""}
+    `;
 
     const preference = {
       items: [
         {
-          title: nome,
+          title: produto.nome,
+          description: descricaoExtra,
           quantity: 1,
-          unit_price: Number(preco),
+          unit_price: Number(produto.preco),
           currency_id: "BRL",
         },
       ],
@@ -38,7 +51,7 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error(error);
+    console.error("ERRO CHECKOUT:", error);
 
     return res.status(500).json({
       error: "Erro ao gerar checkout",

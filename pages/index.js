@@ -84,9 +84,33 @@ export default function Home() {
     }));
   };
 
-  const compraSegura = (produto) => {
-    alert(`Configurar checkout para ${produto.nome}`);
-  };
+  const compraSegura = async (produto) => {
+  try {
+    const res = await fetch("/api/checkout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        produto,
+        canto: cantos[produto.id] || "",
+        cep: ceps[produto.id] || "",
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!data.init_point) {
+      throw new Error("Checkout não retornou link");
+    }
+
+    window.location.href = data.init_point;
+
+  } catch (error) {
+    console.error(error);
+    alert("Erro ao iniciar checkout");
+  }
+};
 
   const falarWhatsapp = (produto) => {
     const cep = ceps[produto.id] || "";
