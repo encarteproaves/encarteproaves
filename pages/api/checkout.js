@@ -1,7 +1,7 @@
-import mercadopago from "mercadopago";
+import { MercadoPagoConfig, Preference } from "mercadopago";
 
-mercadopago.configure({
-  access_token: process.env.MERCADO_PAGO_ACCESS_TOKEN,
+const client = new MercadoPagoConfig({
+  accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN,
 });
 
 export default async function handler(req, res) {
@@ -12,42 +12,31 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { produto, canto, cep } = req.body;
+    const { nome, preco } = req.body;
 
-    if (!produto) {
-      return res.status(400).json({
-        error: "Produto não enviado",
-      });
-    }
+    const preference = new Preference(client);
 
-    const descricaoExtra = `
-Produto: ${produto.nome}
-${canto ? `Canto: ${canto}` : ""}
-${cep ? `CEP: ${cep}` : ""}
-    `;
-
-    const preference = {
-      items: [
-        {
-          title: produto.nome,
-          description: descricaoExtra,
-          quantity: 1,
-          unit_price: Number(produto.preco),
-          currency_id: "BRL",
+    const response = await preference.create({
+      body: {
+        items: [
+          {
+            title: nome,
+            quantity: 1,
+            unit_price: Number(preco),
+            currency_id: "BRL",
+          },
+        ],
+        back_urls: {
+          success: "https://www.encarteproaves.com.br",
+          failure: "https://www.encarteproaves.com.br",
+          pending: "https://www.encarteproaves.com.br",
         },
-      ],
-      back_urls: {
-        success: "https://www.encarteproaves.com.br",
-        failure: "https://www.encarteproaves.com.br",
-        pending: "https://www.encarteproaves.com.br",
+        auto_return: "approved",
       },
-      auto_return: "approved",
-    };
-
-    const response = await mercadopago.preferences.create(preference);
+    });
 
     return res.status(200).json({
-      init_point: response.body.init_point,
+      init_point: response.init_point,
     });
 
   } catch (error) {
