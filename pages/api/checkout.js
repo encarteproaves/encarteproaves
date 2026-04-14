@@ -1,67 +1,68 @@
-import { MercadoPagoConfig, Preference } from "mercadopago";
-
-const client = new MercadoPagoConfig({
-  accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN,
-});
+import { supabase } from "../../lib/supabase";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Método não permitido" });
+    return res.status(405).json({
+      error: "Método não permitido",
+    });
   }
 
   try {
-    const { nome, preco } = req.body;
+    const {
+      nome,
+      preco,
+      cep,
+      frete,
+      canto,
+    } = req.body;
 
-    const preference = new Preference(client);
+    // BUSCA PRODUTO NO BANCO
+    const { data: produto, error: produtoError } = await supabase
+      .from("produtos")
+      .select("mpLink")
+      .eq("nome", nome)
+      .single();
 
-    const response = await preference.create({
-      body: {
-        items: [
-          {
-            id: "produto-1",
-            title: nome,
-            description: nome,
-            quantity: 1,
-            unit_price: Number(preco),
-            currency_id: "BRL",
-            category_id: "others",
-          },
-        ],
+    if (produtoError || !produto?.mpLink) {
+      console.error("Produto sem link Mercado Pago:", produtoError);
 
-        payer: {
-          name: "Cliente",
-          email: "cliente@email.com",
+      return res.status(400).json({
+        error: "Link de pagamento não encontrado para este produto",
+      });
+    }
+
+    // SALVA PEDIDO NO BANCO
+    const { error: pedidoError } = await supabase
+      .from("pedidos")
+      .insert([
+        {
+          produto: nome,
+          valor: preco,
+          cep,
+          frete,
+          canto,
+          status: "Aguardando pagamento",
         },
+      ]);
 
-        external_reference: `pedido-${Date.now()}`,
+    if (pedidoError) {
+      console.error("Erro ao salvar pedido:", pedidoError);
 
-        notification_url:
-          "https://www.encarteproaves.com.br/api/webhook",
+      return res.status(500).json({
+        error: "Erro ao salvar pedido",
+      });
+    }
 
-        statement_descriptor: "ENCARTEPROAVES",
-
-        back_urls: {
-          success: "https://www.encarteproaves.com.br",
-          failure: "https://www.encarteproaves.com.br",
-          pending: "https://www.encarteproaves.com.br",
-        },
-
-        auto_return: "approved",
-      },
-    });
-
+    // RETORNA LINK DE PAGAMENTO
     return res.status(200).json({
-      init_point: response.init_point,
+      init_point: produto.mpLink,
     });
 
   } catch (error) {
-    console.error(
-      "ERRO CHECKOUT DETALHADO:",
-      JSON.stringify(error, null, 2)
-    );
+    console.error("ERRO CHECKOUT:", error);
 
     return res.status(500).json({
-      error: "Erro ao gerar checkout",
+      error: "Erro interno no checkout",
     });
   }
 }
