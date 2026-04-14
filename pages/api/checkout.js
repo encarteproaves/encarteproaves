@@ -18,18 +18,27 @@ export default async function handler(req, res) {
       body: {
         items: [
           {
+            id: "produto-1",
             title: nome,
+            description: nome,
             quantity: 1,
             unit_price: Number(preco),
             currency_id: "BRL",
+            category_id: "others",
           },
         ],
 
         payer: {
           name: "Cliente",
+          email: "cliente@email.com",
         },
 
         external_reference: `pedido-${Date.now()}`,
+
+        notification_url:
+          "https://www.encarteproaves.com.br/api/webhook",
+
+        statement_descriptor: "ENCARTEPROAVES",
 
         back_urls: {
           success: "https://www.encarteproaves.com.br",
@@ -46,7 +55,10 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error("ERRO CHECKOUT DETALHADO:", JSON.stringify(error, null, 2));
+    console.error(
+      "ERRO CHECKOUT DETALHADO:",
+      JSON.stringify(error, null, 2)
+    );
 
     return res.status(500).json({
       error: "Erro ao gerar checkout",
