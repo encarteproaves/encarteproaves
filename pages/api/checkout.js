@@ -1,4 +1,9 @@
+import { MercadoPagoConfig, Preference } from "mercadopago";
 import { supabase } from "../../lib/supabase";
+
+const client = new MercadoPagoConfig({
+  accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN,
+});
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -16,65 +21,92 @@ export default async function handler(req, res) {
       canto,
     } = req.body;
 
-    console.log("DADOS RECEBIDOS CHECKOUT:", {
-      nome,
-      preco,
-      cep,
-      frete,
-      canto,
-    });
+    const externalReference = `pedido-${Date.now()}`;
 
-    // BUSCA PRODUTO NO BANCO
-    const { data: produto, error: produtoError } = await supabase
-      .from("produtos")
-      .select("mpLink")
-      .eq("nome", nome)
-      .single();
+    // EXTRAI PREÇO DO FRETE
+    let valorFrete = 0;
 
-    if (produtoError || !produto?.mpLink) {
-      console.error("PRODUTO SEM LINK MP:");
-      console.error(JSON.stringify(produtoError, null, 2));
-
-      return res.status(400).json({
-        error: "Link de pagamento não encontrado para este produto",
-      });
+    if (typeof frete === "object" && frete?.price) {
+      valorFrete = Number(frete.price);
+    } else if (!isNaN(Number(frete))) {
+      valorFrete = Number(frete);
     }
 
-    // SALVA PEDIDO NO BANCO
-    const { data: pedidoSalvo, error: pedidoError } = await supabase
+    const valorProduto = Number(preco);
+    const valorTotal = valorProduto + valorFrete;
+
+    console.log("CHECKOUT:", {
+      nome,
+      valorProduto,
+      valorFrete,
+      valorTotal,
+      cep,
+      canto,
+      externalReference,
+    });
+
+    // CRIA CHECKOUT DINÂMICO NO MERCADO PAGO
+    const preference = new Preference(client);
+
+    const response = await preference.create({
+      body: {
+        items: [
+          {
+            id: externalReference,
+            title: nome,
+            description: canto || nome,
+            quantity: 1,
+            unit_price: valorTotal,
+            currency_id: "BRL",
+          },
+        ],
+
+        external_reference: externalReference,
+
+        notification_url:
+          "https://www.encarteproaves.com.br/api/webhook",
+
+        back_urls: {
+          success: "https://www.encarteproaves.com.br",
+          failure: "https://www.encarteproaves.com.br",
+          pending: "https://www.encarteproaves.com.br",
+        },
+
+        auto_return: "approved",
+      },
+    });
+
+    // SALVA PEDIDO
+    const { error: pedidoError } = await supabase
       .from("pedidos")
       .insert([
         {
           produto: nome,
-          valor: preco,
+          valor: valorTotal,
           cep,
-          frete,
+          frete: valorFrete,
           canto,
           status: "Aguardando pagamento",
+          external_reference: externalReference,
         },
-      ])
-      .select()
-      .single();
+      ]);
 
     if (pedidoError) {
-      console.error("ERRO COMPLETO AO SALVAR PEDIDO:");
+      console.error("ERRO AO SALVAR PEDIDO:");
       console.error(JSON.stringify(pedidoError, null, 2));
 
       return res.status(500).json({
         error: "Erro ao salvar pedido",
-        details: pedidoError,
       });
     }
 
-    console.log("PEDIDO SALVO COM SUCESSO:");
-    console.log(JSON.stringify(pedidoSalvo, null, 2));
-
     return res.status(200).json({
-      init_point: produto.mpLink,
+      init_point: response.init_point,
+      external_reference: externalReference,
     });
 
   } catch (error) {
-    console.error("ERRO GERAL CHECKOUT:");
+    console.error("ERRO CHECKOUT:");
     console.error(JSON.stringify(error, null, 2));
 
     return res.status(500).json({
