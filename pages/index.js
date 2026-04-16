@@ -24,7 +24,7 @@ export default function Home() {
   const formatarMoeda = (valor) => {
     return Number(valor).toLocaleString("pt-BR", {
       minimumFractionDigits: 2,
-      maximumFractionDigits: 2
+      maximumFractionDigits: 2,
     });
   };
 
@@ -38,14 +38,14 @@ export default function Home() {
 
     setLoadingFrete((prev) => ({
       ...prev,
-      [produto.id]: true
+      [produto.id]: true,
     }));
 
     try {
       const res = await fetch("/api/frete", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           cep,
@@ -53,8 +53,8 @@ export default function Home() {
           height: produto.height || 10,
           length: produto.length || 20,
           weight: produto.weight || 1,
-          price: produto.preco
-        })
+          price: produto.preco,
+        }),
       });
 
       const data = await res.json();
@@ -71,16 +71,15 @@ export default function Home() {
 
       setFretes((prev) => ({
         ...prev,
-        [produto.id]: fretesOrdenados
+        [produto.id]: fretesOrdenados,
       }));
-
     } catch (error) {
       alert("Erro ao calcular frete");
     }
 
     setLoadingFrete((prev) => ({
       ...prev,
-      [produto.id]: false
+      [produto.id]: false,
     }));
   };
 
@@ -91,30 +90,37 @@ export default function Home() {
         return;
       }
 
-      await fetch("/api/pedido", {
+      const freteSelecionado = fretes[produto.id][0];
+
+      const res = await fetch("/api/checkout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          produto: produto.nome,
-          valor: produto.preco,
+          nome: produto.nome,
+          preco: produto.preco,
           cep: ceps[produto.id] || "",
-          frete: fretes[produto.id][0],
+          frete: freteSelecionado,
           canto: cantos[produto.id] || "",
         }),
       });
 
-      if (!produto.mpLink) {
-        alert("Link de pagamento não configurado para este produto");
-        return;
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Erro no checkout");
       }
 
-      window.open(produto.mpLink, "_blank");
+      if (!data.init_point) {
+        throw new Error("Checkout não retornou link de pagamento");
+      }
+
+      window.open(data.init_point, "_blank");
 
     } catch (error) {
       console.error(error);
-      alert("Erro ao iniciar checkout");
+      alert(error.message || "Erro ao iniciar checkout");
     }
   };
 
@@ -140,7 +146,7 @@ export default function Home() {
           background: "#000",
           color: "#FFD700",
           textAlign: "center",
-          padding: "20px 10px"
+          padding: "20px 10px",
         }}
       >
         <h2 style={{ margin: 0 }}>ENCARTEPROAVES</h2>
@@ -156,7 +162,7 @@ export default function Home() {
           gap: "25px",
           padding: "30px",
           maxWidth: "1200px",
-          margin: "0 auto"
+          margin: "0 auto",
         }}
       >
         {produtos.map((p) => (
@@ -169,7 +175,7 @@ export default function Home() {
               boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
               textAlign: "center",
               maxWidth: "320px",
-              margin: "0 auto"
+              margin: "0 auto",
             }}
           >
             <img
@@ -178,18 +184,13 @@ export default function Home() {
               style={{
                 width: "100%",
                 height: "180px",
-                objectFit: "contain"
+                objectFit: "contain",
               }}
             />
 
             <h3>{p.nome}</h3>
 
-            <p
-              style={{
-                color: "green",
-                fontWeight: "bold"
-              }}
-            >
+            <p style={{ color: "green", fontWeight: "bold" }}>
               R$ {formatarMoeda(p.preco)}
             </p>
 
@@ -209,7 +210,7 @@ export default function Home() {
                 style={{
                   width: "100%",
                   padding: "8px",
-                  marginBottom: "8px"
+                  marginBottom: "8px",
                 }}
               />
             )}
@@ -222,7 +223,7 @@ export default function Home() {
               }
               style={{
                 width: "100%",
-                padding: "8px"
+                padding: "8px",
               }}
             />
 
@@ -230,7 +231,7 @@ export default function Home() {
               onClick={() => calcularFrete(p)}
               style={{
                 width: "100%",
-                marginTop: "8px"
+                marginTop: "8px",
               }}
             >
               Calcular Frete
@@ -250,16 +251,11 @@ export default function Home() {
                   fontSize: "13px",
                   background: "#f8f8f8",
                   padding: "10px",
-                  borderRadius: "6px"
+                  borderRadius: "6px",
                 }}
               >
                 {fretes[p.id].map((frete, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      marginBottom: "8px"
-                    }}
-                  >
+                  <div key={index} style={{ marginBottom: "8px" }}>
                     <strong>{frete.name}</strong>
                     <br />
                     R$ {formatarMoeda(frete.price)}
@@ -274,7 +270,7 @@ export default function Home() {
               onClick={() => compraSegura(p)}
               style={{
                 width: "100%",
-                marginTop: "8px"
+                marginTop: "8px",
               }}
             >
               Compra segura
@@ -289,7 +285,7 @@ export default function Home() {
                 color: "#fff",
                 border: "none",
                 padding: "10px",
-                cursor: "pointer"
+                cursor: "pointer",
               }}
             >
               Falar no WhatsApp
@@ -297,70 +293,6 @@ export default function Home() {
           </div>
         ))}
       </div>
-
-      <footer
-        style={{
-          background: "#0b1a2c",
-          color: "#fff",
-          padding: "30px",
-          marginTop: "40px"
-        }}
-      >
-        <div
-          style={{
-            maxWidth: "1200px",
-            margin: "0 auto",
-            display: "flex",
-            justifyContent: "space-between",
-            flexWrap: "wrap"
-          }}
-        >
-          <div>
-            <h3>Encarteproaves</h3>
-            <p>Tecnologia e Qualidade no Encarte de Canto de pássaros.</p>
-          </div>
-
-          <div>
-            <h4>Links</h4>
-            <a href="/admin/produtos" style={{ color: "#fff" }}>
-              Admin
-            </a>
-          </div>
-
-          <div>
-            <h4>Contato</h4>
-
-            <p>
-              <a
-                href="https://wa.me/5511984309480"
-                target="_blank"
-                rel="noreferrer"
-                style={{ color: "#fff" }}
-              >
-                Falar no WhatsApp
-              </a>
-            </p>
-
-            <p>
-              <a
-                href="mailto:encarteproaves@gmail.com"
-                style={{ color: "#fff" }}
-              >
-                encarteproaves@gmail.com
-              </a>
-            </p>
-          </div>
-        </div>
-
-        <p
-          style={{
-            textAlign: "center",
-            marginTop: "20px"
-          }}
-        >
-          © 2026 Encarteproaves
-        </p>
-      </footer>
     </div>
   );
 }
