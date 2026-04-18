@@ -65,16 +65,12 @@ export default function Home() {
             .sort((a, b) => Number(a.price) - Number(b.price))
         : [];
 
-      if (!fretesOrdenados.length) {
-        alert("Nenhuma opção de frete encontrada");
-      }
-
       setFretes((prev) => ({
         ...prev,
         [produto.id]: fretesOrdenados,
       }));
 
-    } catch (error) {
+    } catch {
       alert("Erro ao calcular frete");
     }
 
@@ -85,51 +81,33 @@ export default function Home() {
   };
 
   const compraSegura = async (produto) => {
-    try {
-      if (!fretes[produto.id]?.length) {
-        alert("Calcule o frete antes de continuar");
-        return;
-      }
-
-      const freteSelecionado = fretes[produto.id][0];
-
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          nome: produto.nome,
-          preco: produto.preco,
-          cep: ceps[produto.id] || "",
-          frete: freteSelecionado,
-          canto: cantos[produto.id] || "",
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Erro no checkout");
-      }
-
-      window.open(data.init_point, "_blank");
-
-    } catch (error) {
-      console.error(error);
-      alert(error.message || "Erro ao iniciar checkout");
+    if (!fretes[produto.id]?.length) {
+      alert("Calcule o frete primeiro");
+      return;
     }
+
+    const freteSelecionado = fretes[produto.id][0];
+
+    const res = await fetch("/api/checkout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        nome: produto.nome,
+        preco: produto.preco,
+        cep: ceps[produto.id] || "",
+        frete: freteSelecionado,
+        canto: cantos[produto.id] || "",
+      }),
+    });
+
+    const data = await res.json();
+    window.open(data.init_point, "_blank");
   };
 
   const falarWhatsapp = (produto) => {
-    const cep = ceps[produto.id] || "";
-    const canto = cantos[produto.id] || "";
-
-    let mensagem = `Olá! Tenho interesse no produto: ${produto.nome}`;
-
-    if (cep) mensagem += ` | CEP: ${cep}`;
-    if (canto) mensagem += ` | Canto desejado: ${canto}`;
-
+    const mensagem = `Olá! Tenho interesse no produto: ${produto.nome}`;
     window.open(
       `https://wa.me/5511984309480?text=${encodeURIComponent(mensagem)}`,
       "_blank"
@@ -137,39 +115,32 @@ export default function Home() {
   };
 
   return (
-    <div
-      style={{
-        background: "#f1f1f1",
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      {/* HEADER */}
+    <div style={{ background: "#f1f1f1", minHeight: "100vh" }}>
+
+      {/* HEADER RESPONSIVO */}
       <header
         style={{
           background: "#000",
           color: "#FFD700",
           textAlign: "center",
-          padding: "20px 10px",
+          padding: "15px 10px",
         }}
       >
-        <h2 style={{ margin: 0 }}>ENCARTEPROAVES</h2>
-        <p style={{ margin: 0, fontSize: "14px" }}>
+        <h2 style={{ margin: 0, fontSize: "20px" }}>ENCARTEPROAVES</h2>
+        <p style={{ margin: 0, fontSize: "12px" }}>
           Tecnologia e Qualidade Para o Melhor Encarte de Canto
         </p>
       </header>
 
-      {/* PRODUTOS */}
+      {/* GRID RESPONSIVO */}
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-          gap: "25px",
-          padding: "30px",
+          gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+          gap: "20px",
+          padding: "15px",
           maxWidth: "1200px",
           margin: "0 auto",
-          flex: 1,
         }}
       >
         {produtos.map((p) => (
@@ -181,90 +152,64 @@ export default function Home() {
               padding: "15px",
               boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
               textAlign: "center",
-              maxWidth: "320px",
-              margin: "0 auto",
             }}
           >
             <img
               src={p.imagem}
-              alt={p.nome}
               style={{
                 width: "100%",
-                height: "180px",
+                height: "150px",
                 objectFit: "contain",
               }}
             />
 
-            <h3>{p.nome}</h3>
+            <h3 style={{ fontSize: "16px" }}>{p.nome}</h3>
 
             <p style={{ color: "green", fontWeight: "bold" }}>
               R$ {formatarMoeda(p.preco)}
             </p>
 
-            <p>{p.descricao}</p>
-
-            <p style={{ color: "red" }}>
-              Restam apenas {p.estoque} unidades
-            </p>
-
             {p.nome.includes("Pen Drive") && (
               <input
                 placeholder="Digite o nome do canto"
-                value={cantos[p.id] || ""}
                 onChange={(e) =>
                   handleCantoChange(p.id, e.target.value)
                 }
-                style={{
-                  width: "100%",
-                  padding: "8px",
-                  marginBottom: "8px",
-                }}
+                style={{ width: "100%", marginBottom: "5px" }}
               />
             )}
 
             <input
               placeholder="Digite seu CEP"
-              value={ceps[p.id] || ""}
               onChange={(e) =>
                 handleCepChange(p.id, e.target.value)
               }
-              style={{
-                width: "100%",
-                padding: "8px",
-              }}
+              style={{ width: "100%" }}
             />
 
-            <button onClick={() => calcularFrete(p)} style={{ width: "100%", marginTop: "8px" }}>
+            <button onClick={() => calcularFrete(p)}>
               Calcular Frete
             </button>
 
-            {loadingFrete[p.id] && <p>Calculando frete...</p>}
+            {loadingFrete[p.id] && <p>Calculando...</p>}
 
-            {fretes[p.id]?.length > 0 && (
-              <div style={{ marginTop: "10px", textAlign: "left", fontSize: "13px" }}>
-                {fretes[p.id].map((frete, index) => (
-                  <div key={index}>
-                    <strong>{frete.name}</strong><br />
-                    R$ {formatarMoeda(frete.price)}<br />
-                    Prazo: {frete.delivery_time} dias
-                  </div>
-                ))}
-              </div>
-            )}
+            {fretes[p.id]?.map((f, i) => (
+              <p key={i}>
+                {f.name} - R$ {formatarMoeda(f.price)}
+              </p>
+            ))}
 
-            <button onClick={() => compraSegura(p)} style={{ width: "100%", marginTop: "8px" }}>
+            <button onClick={() => compraSegura(p)}>
               Compra segura
             </button>
 
             <button
               onClick={() => falarWhatsapp(p)}
               style={{
-                width: "100%",
-                marginTop: "8px",
                 background: "#25D366",
                 color: "#fff",
-                border: "none",
-                padding: "10px",
+                width: "100%",
+                marginTop: "5px",
               }}
             >
               Falar no WhatsApp
@@ -273,52 +218,20 @@ export default function Home() {
         ))}
       </div>
 
-      {/* ✅ RODAPÉ PROFISSIONAL RESTAURADO */}
+      {/* FOOTER RESPONSIVO */}
       <footer
         style={{
           background: "#000",
           color: "#FFD700",
-          padding: "30px 20px",
-          marginTop: "40px",
+          padding: "20px 10px",
+          textAlign: "center",
         }}
       >
-        <div
-          style={{
-            maxWidth: "1200px",
-            margin: "0 auto",
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-            gap: "20px",
-            textAlign: "center",
-          }}
-        >
-          <div>
-            <h3>ENCARTEPROAVES</h3>
-            <p>Tecnologia e qualidade para o melhor encarte de canto.</p>
-          </div>
-
-          <div>
-            <h4>Contato</h4>
-            <p>WhatsApp: (11) 98430-9480</p>
-          </div>
-
-          <div>
-            <h4>Atendimento</h4>
-            <p>Segunda a Sábado<br />08h às 18h</p>
-          </div>
-        </div>
-
-        <div
-          style={{
-            borderTop: "1px solid #444",
-            marginTop: "20px",
-            paddingTop: "15px",
-            textAlign: "center",
-            fontSize: "13px",
-          }}
-        >
-          © {new Date().getFullYear()} ENCARTEPROAVES - Todos os direitos reservados
-        </div>
+        <p>ENCARTEPROAVES</p>
+        <p>WhatsApp: (11) 98430-9480</p>
+        <p style={{ fontSize: "12px" }}>
+          © {new Date().getFullYear()}
+        </p>
       </footer>
     </div>
   );
