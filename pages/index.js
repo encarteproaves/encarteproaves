@@ -73,6 +73,7 @@ export default function Home() {
         ...prev,
         [produto.id]: fretesOrdenados,
       }));
+
     } catch (error) {
       alert("Erro ao calcular frete");
     }
@@ -112,10 +113,6 @@ export default function Home() {
         throw new Error(data.error || "Erro no checkout");
       }
 
-      if (!data.init_point) {
-        throw new Error("Checkout não retornou link de pagamento");
-      }
-
       window.open(data.init_point, "_blank");
 
     } catch (error) {
@@ -140,7 +137,15 @@ export default function Home() {
   };
 
   return (
-    <div style={{ background: "#f1f1f1", minHeight: "100vh" }}>
+    <div
+      style={{
+        background: "#f1f1f1",
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      {/* HEADER ORIGINAL */}
       <header
         style={{
           background: "#000",
@@ -155,6 +160,7 @@ export default function Home() {
         </p>
       </header>
 
+      {/* CONTEÚDO */}
       <div
         style={{
           display: "grid",
@@ -163,6 +169,7 @@ export default function Home() {
           padding: "30px",
           maxWidth: "1200px",
           margin: "0 auto",
+          flex: 1,
         }}
       >
         {produtos.map((p) => (
@@ -227,52 +234,25 @@ export default function Home() {
               }}
             />
 
-            <button
-              onClick={() => calcularFrete(p)}
-              style={{
-                width: "100%",
-                marginTop: "8px",
-              }}
-            >
+            <button onClick={() => calcularFrete(p)} style={{ width: "100%", marginTop: "8px" }}>
               Calcular Frete
             </button>
 
-            {loadingFrete[p.id] && (
-              <p style={{ marginTop: "8px" }}>
-                Calculando frete...
-              </p>
-            )}
+            {loadingFrete[p.id] && <p>Calculando frete...</p>}
 
             {fretes[p.id]?.length > 0 && (
-              <div
-                style={{
-                  marginTop: "10px",
-                  textAlign: "left",
-                  fontSize: "13px",
-                  background: "#f8f8f8",
-                  padding: "10px",
-                  borderRadius: "6px",
-                }}
-              >
+              <div style={{ marginTop: "10px", textAlign: "left", fontSize: "13px" }}>
                 {fretes[p.id].map((frete, index) => (
-                  <div key={index} style={{ marginBottom: "8px" }}>
-                    <strong>{frete.name}</strong>
-                    <br />
-                    R$ {formatarMoeda(frete.price)}
-                    <br />
+                  <div key={index}>
+                    <strong>{frete.name}</strong><br />
+                    R$ {formatarMoeda(frete.price)}<br />
                     Prazo: {frete.delivery_time} dias
                   </div>
                 ))}
               </div>
             )}
 
-            <button
-              onClick={() => compraSegura(p)}
-              style={{
-                width: "100%",
-                marginTop: "8px",
-              }}
-            >
+            <button onClick={() => compraSegura(p)} style={{ width: "100%", marginTop: "8px" }}>
               Compra segura
             </button>
 
@@ -285,7 +265,6 @@ export default function Home() {
                 color: "#fff",
                 border: "none",
                 padding: "10px",
-                cursor: "pointer",
               }}
             >
               Falar no WhatsApp
@@ -293,6 +272,20 @@ export default function Home() {
           </div>
         ))}
       </div>
+
+      {/* ✅ RODAPÉ RESTAURADO */}
+      <footer
+        style={{
+          background: "#000",
+          color: "#FFD700",
+          textAlign: "center",
+          padding: "20px",
+        }}
+      >
+        <p style={{ margin: 0 }}>
+          ENCARTEPROAVES © {new Date().getFullYear()}
+        </p>
+      </footer>
     </div>
   );
 }
