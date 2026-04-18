@@ -145,7 +145,7 @@ export default function Home() {
         flexDirection: "column",
       }}
     >
-      {/* HEADER ORIGINAL */}
+      {/* HEADER */}
       <header
         style={{
           background: "#000",
@@ -160,7 +160,7 @@ export default function Home() {
         </p>
       </header>
 
-      {/* CONTEÚDO */}
+      {/* PRODUTOS */}
       <div
         style={{
           display: "grid",
@@ -273,18 +273,52 @@ export default function Home() {
         ))}
       </div>
 
-      {/* ✅ RODAPÉ RESTAURADO */}
+      {/* ✅ RODAPÉ PROFISSIONAL RESTAURADO */}
       <footer
         style={{
           background: "#000",
           color: "#FFD700",
-          textAlign: "center",
-          padding: "20px",
+          padding: "30px 20px",
+          marginTop: "40px",
         }}
       >
-        <p style={{ margin: 0 }}>
-          ENCARTEPROAVES © {new Date().getFullYear()}
-        </p>
+        <div
+          style={{
+            maxWidth: "1200px",
+            margin: "0 auto",
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+            gap: "20px",
+            textAlign: "center",
+          }}
+        >
+          <div>
+            <h3>ENCARTEPROAVES</h3>
+            <p>Tecnologia e qualidade para o melhor encarte de canto.</p>
+          </div>
+
+          <div>
+            <h4>Contato</h4>
+            <p>WhatsApp: (11) 98430-9480</p>
+          </div>
+
+          <div>
+            <h4>Atendimento</h4>
+            <p>Segunda a Sábado<br />08h às 18h</p>
+          </div>
+        </div>
+
+        <div
+          style={{
+            borderTop: "1px solid #444",
+            marginTop: "20px",
+            paddingTop: "15px",
+            textAlign: "center",
+            fontSize: "13px",
+          }}
+        >
+          © {new Date().getFullYear()} ENCARTEPROAVES - Todos os direitos reservados
+        </div>
       </footer>
     </div>
   );
