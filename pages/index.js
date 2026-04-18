@@ -5,6 +5,7 @@ export default function Home() {
   const [ceps, setCeps] = useState({});
   const [cantos, setCantos] = useState({});
   const [fretes, setFretes] = useState({});
+  const [freteSelecionado, setFreteSelecionado] = useState({});
   const [loadingFrete, setLoadingFrete] = useState({});
 
   useEffect(() => {
@@ -19,6 +20,13 @@ export default function Home() {
 
   const handleCantoChange = (id, value) => {
     setCantos((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const selecionarFrete = (produtoId, frete) => {
+    setFreteSelecionado((prev) => ({
+      ...prev,
+      [produtoId]: frete,
+    }));
   };
 
   const formatarMoeda = (valor) => {
@@ -80,71 +88,60 @@ export default function Home() {
   };
 
   const compraSegura = async (produto) => {
-    if (!fretes[produto.id]?.length) {
-      alert("Calcule o frete primeiro");
-      return;
+    try {
+      const frete = freteSelecionado[produto.id];
+
+      if (!frete) {
+        alert("Selecione um frete");
+        return;
+      }
+
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nome: produto.nome,
+          preco: produto.preco,
+          cep: ceps[produto.id] || "",
+          frete: frete,
+          canto: cantos[produto.id] || "",
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!data.init_point) {
+        throw new Error("Erro ao gerar pagamento");
+      }
+
+      window.open(data.init_point, "_blank");
+
+    } catch (error) {
+      alert(error.message);
     }
-
-    const freteSelecionado = fretes[produto.id][0];
-
-    const res = await fetch("/api/checkout", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        nome: produto.nome,
-        preco: produto.preco,
-        cep: ceps[produto.id] || "",
-        frete: freteSelecionado,
-        canto: cantos[produto.id] || "",
-      }),
-    });
-
-    const data = await res.json();
-    window.open(data.init_point, "_blank");
   };
 
   const falarWhatsapp = (produto) => {
-    window.open(
-      `https://wa.me/5511984309480?text=Olá! Tenho interesse no produto: ${produto.nome}`,
-      "_blank"
-    );
+    const texto = `Olá, tenho interesse no produto: ${produto.nome}`;
+    const url = `https://wa.me/5511984309480?text=${encodeURIComponent(texto)}`;
+    window.open(url, "_blank");
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        background: "#f1f1f1",
-      }}
-    >
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "#f1f1f1" }}>
 
       {/* HEADER */}
-      <header
-        style={{
-          background: "#000",
-          color: "#FFD700",
-          textAlign: "center",
-          padding: "20px",
-        }}
-      >
+      <header style={{ background: "#000", color: "#FFD700", textAlign: "center", padding: "20px" }}>
         <h2 style={{ margin: 0 }}>ENCARTEPROAVES</h2>
         <p style={{ margin: 0 }}>
           Tecnologia e Qualidade Para o Melhor Encarte de Canto
         </p>
       </header>
 
-      {/* CONTEÚDO */}
-      <main
-        style={{
-          flex: 1,
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
+      {/* PRODUTOS */}
+      <div style={{ flex: 1, display: "flex", justifyContent: "center" }}>
         <div
           style={{
             display: "grid",
@@ -168,11 +165,7 @@ export default function Home() {
             >
               <img
                 src={p.imagem}
-                style={{
-                  width: "100%",
-                  height: "180px",
-                  objectFit: "contain",
-                }}
+                style={{ width: "100%", height: "180px", objectFit: "contain" }}
               />
 
               <h3>{p.nome}</h3>
@@ -190,31 +183,32 @@ export default function Home() {
               {p.nome.includes("Pen Drive") && (
                 <input
                   placeholder="Digite o nome do canto"
-                  onChange={(e) =>
-                    handleCantoChange(p.id, e.target.value)
-                  }
+                  onChange={(e) => handleCantoChange(p.id, e.target.value)}
                   style={{ width: "100%", marginBottom: "8px" }}
                 />
               )}
 
               <input
                 placeholder="Digite seu CEP"
-                onChange={(e) =>
-                  handleCepChange(p.id, e.target.value)
-                }
+                onChange={(e) => handleCepChange(p.id, e.target.value)}
                 style={{ width: "100%" }}
               />
 
-              <button onClick={() => calcularFrete(p)}>
-                Calcular Frete
-              </button>
+              <button onClick={() => calcularFrete(p)}>Calcular Frete</button>
 
               {loadingFrete[p.id] && <p>Calculando...</p>}
 
               {fretes[p.id]?.map((f, i) => (
-                <p key={i}>
-                  {f.name} - R$ {formatarMoeda(f.price)}
-                </p>
+                <div key={i}>
+                  <label>
+                    <input
+                      type="radio"
+                      name={`frete-${p.id}`}
+                      onChange={() => selecionarFrete(p.id, f)}
+                    />
+                    {f.name} - R$ {formatarMoeda(f.price)} ({f.delivery_time} dias)
+                  </label>
+                </div>
               ))}
 
               <button onClick={() => compraSegura(p)}>
@@ -235,16 +229,10 @@ export default function Home() {
             </div>
           ))}
         </div>
-      </main>
+      </div>
 
-      {/* FOOTER FIXADO CORRETAMENTE */}
-      <footer
-        style={{
-          background: "#000",
-          color: "#FFD700",
-          padding: "30px 20px",
-        }}
-      >
+      {/* FOOTER */}
+      <footer style={{ background: "#000", color: "#FFD700", padding: "30px 20px", marginTop: "auto" }}>
         <div
           style={{
             maxWidth: "1200px",
