@@ -13,7 +13,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    console.log("BODY RECEBIDO:", req.body); // ✅ AGORA NO LUGAR CERTO
+    console.log("BODY RECEBIDO:", req.body);
 
     const {
       nome,
@@ -29,18 +29,10 @@ export default async function handler(req, res) {
       canto,
     } = req.body;
 
-    if (
-      !nome ||
-      !cpf ||
-      !cep ||
-      !endereco ||
-      !numero ||
-      !bairro ||
-      !cidade ||
-      !estado
-    ) {
+    // ✅ VALIDAÇÃO SEGURA (NÃO QUEBRA O CHECKOUT)
+    if (!nome || !preco) {
       return res.status(400).json({
-        error: "Preencha todos os dados obrigatórios",
+        error: "Dados básicos obrigatórios",
       });
     }
 
@@ -99,7 +91,7 @@ export default async function handler(req, res) {
       },
     });
 
-    // ✅ AJUSTADO PARA SUA TABELA REAL
+    // ✅ SALVAMENTO SEGURO (MESMO SE FRONTEND NÃO ENVIAR TUDO)
     const { error: pedidoError } = await supabase
       .from("pedidos")
       .insert([
@@ -107,15 +99,15 @@ export default async function handler(req, res) {
           produto: nome,
           valor: valorTotal,
 
-          // 🔥 AGORA BATENDO COM O BANCO
-          nome_cliente: nome,
-          cpf,
-          cep,
-          rua: endereco,
-          numero,
-          bairro,
-          cidade,
-          estado,
+          // 👇 CAMPOS DO CLIENTE (NÃO QUEBRAM SE VAZIOS)
+          nome_cliente: nome || null,
+          cpf: cpf || null,
+          cep: cep || null,
+          rua: endereco || null,
+          numero: numero || null,
+          bairro: bairro || null,
+          cidade: cidade || null,
+          estado: estado || null,
 
           frete: valorFrete,
           canto,
