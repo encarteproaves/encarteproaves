@@ -13,17 +13,39 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.log("BODY RECEBIDO:", req.body); // ✅ AGORA NO LUGAR CERTO
+
     const {
       nome,
-      preco,
+      cpf,
       cep,
+      endereco,
+      numero,
+      bairro,
+      cidade,
+      estado,
+      preco,
       frete,
       canto,
     } = req.body;
 
+    if (
+      !nome ||
+      !cpf ||
+      !cep ||
+      !endereco ||
+      !numero ||
+      !bairro ||
+      !cidade ||
+      !estado
+    ) {
+      return res.status(400).json({
+        error: "Preencha todos os dados obrigatórios",
+      });
+    }
+
     const externalReference = `pedido-${Date.now()}`;
 
-    // EXTRAI PREÇO DO FRETE
     let valorFrete = 0;
 
     if (typeof frete === "object" && frete?.price) {
@@ -37,15 +59,20 @@ export default async function handler(req, res) {
 
     console.log("CHECKOUT:", {
       nome,
+      cpf,
       valorProduto,
       valorFrete,
       valorTotal,
       cep,
+      endereco,
+      numero,
+      bairro,
+      cidade,
+      estado,
       canto,
       externalReference,
     });
 
-    // CRIA CHECKOUT DINÂMICO NO MERCADO PAGO
     const preference = new Preference(client);
 
     const response = await preference.create({
@@ -60,32 +87,39 @@ export default async function handler(req, res) {
             currency_id: "BRL",
           },
         ],
-
         external_reference: externalReference,
-
         notification_url:
           "https://www.encarteproaves.com.br/api/webhook",
-
         back_urls: {
           success: "https://www.encarteproaves.com.br",
           failure: "https://www.encarteproaves.com.br",
           pending: "https://www.encarteproaves.com.br",
         },
-
         auto_return: "approved",
       },
     });
 
-    // SALVA PEDIDO
+    // ✅ AJUSTADO PARA SUA TABELA REAL
     const { error: pedidoError } = await supabase
       .from("pedidos")
       .insert([
         {
           produto: nome,
           valor: valorTotal,
+
+          // 🔥 AGORA BATENDO COM O BANCO
+          nome_cliente: nome,
+          cpf,
           cep,
+          rua: endereco,
+          numero,
+          bairro,
+          cidade,
+          estado,
+
           frete: valorFrete,
           canto,
+
           status: "Aguardando pagamento",
           external_reference: externalReference,
         },
