@@ -16,9 +16,9 @@ export default async function handler(req, res) {
     console.log("BODY RECEBIDO:", req.body);
 
     const {
-      nome, // ⚠️ hoje vem como produto
-      nome_cliente, // 👈 novo (quando frontend enviar)
+      nome,
       cpf,
+      telefone,
       cep,
       endereco,
       numero,
@@ -30,7 +30,7 @@ export default async function handler(req, res) {
       canto,
     } = req.body;
 
-    // ✅ VALIDAÇÃO MÍNIMA (não quebra fluxo atual)
+    // ✅ VALIDAÇÃO MÍNIMA (não quebra fluxo)
     if (!nome || preco === undefined || preco === null) {
       return res.status(400).json({
         error: "Dados básicos obrigatórios",
@@ -39,6 +39,7 @@ export default async function handler(req, res) {
 
     const externalReference = `pedido-${Date.now()}`;
 
+    // ✅ TRATAMENTO DO FRETE
     let valorFrete = 0;
 
     if (typeof frete === "object" && frete?.price) {
@@ -57,19 +58,10 @@ export default async function handler(req, res) {
 
     const valorTotal = valorProduto + valorFrete;
 
-    if (isNaN(valorTotal)) {
-      return res.status(400).json({
-        error: "Erro no cálculo do total",
-      });
-    }
-
-    // 👇 separação inteligente
-    const produto = nome;
-    const clienteNome = nome_cliente || null;
-
     console.log("CHECKOUT:", {
-      produto,
-      clienteNome,
+      nome,
+      cpf,
+      telefone,
       valorProduto,
       valorFrete,
       valorTotal,
@@ -83,6 +75,7 @@ export default async function handler(req, res) {
       externalReference,
     });
 
+    // ✅ MERCADO PAGO
     const preference = new Preference(client);
 
     const response = await preference.create({
@@ -90,10 +83,8 @@ export default async function handler(req, res) {
         items: [
           {
             id: externalReference,
-            title: produto || "Produto",
-            description: canto
-              ? `Canto: ${canto}`
-              : produto || "Produto",
+            title: nome || "Produto",
+            description: canto ? `Canto: ${canto}` : nome,
             quantity: 1,
             unit_price: valorTotal,
             currency_id: "BRL",
@@ -111,17 +102,19 @@ export default async function handler(req, res) {
       },
     });
 
-    // ✅ SALVAMENTO CORRETO
+    // ✅ SALVA NO SUPABASE (AGORA COM TELEFONE E CPF)
     const { error: pedidoError } = await supabase
       .from("pedidos")
       .insert([
         {
-          produto: produto,
+          produto: nome,
           valor: valorTotal,
 
-          // 👇 agora correto
-          nome_cliente: clienteNome,
+          // 👇 DADOS DO CLIENTE
+          nome_cliente: nome || null,
+          telefone: telefone || null,
           cpf: cpf || null,
+
           cep: cep || null,
           rua: endereco || null,
           numero: numero || null,
@@ -129,6 +122,7 @@ export default async function handler(req, res) {
           cidade: cidade || null,
           estado: estado || null,
 
+          // 👇 OUTROS
           frete: valorFrete,
           canto,
 
