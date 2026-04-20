@@ -7,7 +7,7 @@ export default function Home() {
   const [fretes, setFretes] = useState({});
   const [freteSelecionado, setFreteSelecionado] = useState({});
   const [loadingFrete, setLoadingFrete] = useState({});
-  const [clientes, setClientes] = useState({}); // 👈 NOVO
+  const [clientes, setClientes] = useState({});
 
   useEffect(() => {
     fetch("/api/produto")
@@ -78,8 +78,7 @@ export default function Home() {
       const data = await res.json();
 
       const fretesOrdenados = Array.isArray(data)
-        ? data
-            .filter((item) => !item.error)
+        ? data.filter((item) => !item.error)
             .sort((a, b) => Number(a.price) - Number(b.price))
         : [];
 
@@ -115,15 +114,12 @@ export default function Home() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          nome: produto.nome, // produto
-
-          // 👇 AGORA ENVIA DADOS DO CLIENTE
+          nome: produto.nome,
           nome_cliente: cliente.nome_cliente || "",
           endereco: cliente.endereco || "",
           numero: cliente.numero || "",
           cidade: cliente.cidade || "",
           estado: cliente.estado || "",
-
           cep: ceps[produto.id] || "",
           preco: produto.preco,
           frete: frete,
@@ -151,7 +147,14 @@ export default function Home() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "#f1f1f1" }}>
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        background: "#f1f1f1",
+      }}
+    >
 
       <header style={{ background: "#000", color: "#FFD700", textAlign: "center", padding: "20px" }}>
         <h2 style={{ margin: 0 }}>ENCARTEPROAVES</h2>
@@ -160,7 +163,9 @@ export default function Home() {
         </p>
       </header>
 
-      <div style={{ flex: 1 }}>
+      {/* 👇 AQUI ESTÁ A CORREÇÃO REAL */}
+      <main style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+
         <div
           style={{
             display: "grid",
@@ -169,6 +174,7 @@ export default function Home() {
             padding: "30px",
             maxWidth: "1200px",
             width: "100%",
+            margin: "0 auto",
           }}
         >
           {produtos.map((p) => (
@@ -196,13 +202,8 @@ export default function Home() {
                 />
               )}
 
-              <input
-                placeholder="Digite seu CEP"
-                onChange={(e) => handleCepChange(p.id, e.target.value)}
-                style={{ width: "100%" }}
-              />
+              <input placeholder="Digite seu CEP" onChange={(e) => handleCepChange(p.id, e.target.value)} style={{ width: "100%" }} />
 
-              {/* 👇 NOVOS CAMPOS */}
               <input placeholder="Seu nome" onChange={(e) => handleClienteChange(p.id, "nome_cliente", e.target.value)} style={{ width: "100%", marginTop: "5px" }} />
               <input placeholder="Endereço" onChange={(e) => handleClienteChange(p.id, "endereco", e.target.value)} style={{ width: "100%", marginTop: "5px" }} />
               <input placeholder="Número" onChange={(e) => handleClienteChange(p.id, "numero", e.target.value)} style={{ width: "100%", marginTop: "5px" }} />
@@ -216,37 +217,24 @@ export default function Home() {
               {fretes[p.id]?.map((f, i) => (
                 <div key={i}>
                   <label>
-                    <input
-                      type="radio"
-                      name={`frete-${p.id}`}
-                      onChange={() => selecionarFrete(p.id, f)}
-                    />
+                    <input type="radio" name={`frete-${p.id}`} onChange={() => selecionarFrete(p.id, f)} />
                     {f.name} - R$ {formatarMoeda(f.price)} ({f.delivery_time} dias)
                   </label>
                 </div>
               ))}
 
-              <button onClick={() => compraSegura(p)}>
-                Compra segura
-              </button>
+              <button onClick={() => compraSegura(p)}>Compra segura</button>
 
-              <button
-                onClick={() => falarWhatsapp(p)}
-                style={{
-                  background: "#25D366",
-                  color: "#fff",
-                  width: "100%",
-                  marginTop: "5px",
-                }}
-              >
+              <button onClick={() => falarWhatsapp(p)} style={{ background: "#25D366", color: "#fff", width: "100%", marginTop: "5px" }}>
                 Falar no WhatsApp
               </button>
             </div>
           ))}
         </div>
-      </div>
 
-      <footer style={{ background: "#000", color: "#FFD700", padding: "30px 20px", marginTop: "auto" }}>
+      </main>
+
+      <footer style={{ background: "#000", color: "#FFD700", padding: "30px 20px" }}>
         <div style={{ textAlign: "center" }}>
           © {new Date().getFullYear()} ENCARTEPROAVES
         </div>
