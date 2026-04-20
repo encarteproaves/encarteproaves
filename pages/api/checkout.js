@@ -16,19 +16,20 @@ export default async function handler(req, res) {
     console.log("BODY RECEBIDO:", req.body);
 
     const {
-      nome,
-      cpf,
-      telefone,
-      cep,
-      endereco,
-      numero,
-      bairro,
-      cidade,
-      estado,
-      preco,
-      frete,
-      canto,
-    } = req.body;
+  nome,
+  nome_cliente,
+  cpf,
+  telefone,
+  cep,
+  endereco,
+  numero,
+  bairro,
+  cidade,
+  estado,
+  preco,
+  frete,
+  canto,
+} = req.body;
 
     // ✅ VALIDAÇÃO MÍNIMA (não quebra fluxo)
     if (!nome || preco === undefined || preco === null) {
@@ -111,7 +112,7 @@ export default async function handler(req, res) {
           valor: valorTotal,
 
           // 👇 DADOS DO CLIENTE
-          nome_cliente: nome || null,
+          nome_cliente: nome_cliente || null,
           telefone: telefone || null,
           cpf: cpf || null,
 
