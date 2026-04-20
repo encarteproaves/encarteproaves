@@ -160,7 +160,7 @@ export default function Home() {
         </p>
       </header>
 
-      <div style={{ flex: 1, display: "flex", justifyContent: "center" }}>
+      <div style={{ flex: 1 }}>
         <div
           style={{
             display: "grid",
