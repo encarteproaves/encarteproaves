@@ -78,7 +78,8 @@ export default function Home() {
       const data = await res.json();
 
       const fretesOrdenados = Array.isArray(data)
-        ? data.filter((item) => !item.error)
+        ? data
+            .filter((item) => !item.error)
             .sort((a, b) => Number(a.price) - Number(b.price))
         : [];
 
@@ -101,8 +102,9 @@ export default function Home() {
     try {
       const frete = freteSelecionado[produto.id];
 
-      if (!frete) {
-        alert("Selecione um frete");
+      // ✅ PROTEÇÃO IMPORTANTE
+      if (!frete || !frete.price) {
+        alert("Selecione um frete válido");
         return;
       }
 
@@ -115,14 +117,19 @@ export default function Home() {
         },
         body: JSON.stringify({
           nome: produto.nome,
+
           nome_cliente: cliente.nome_cliente || "",
           endereco: cliente.endereco || "",
           numero: cliente.numero || "",
           cidade: cliente.cidade || "",
           estado: cliente.estado || "",
+
           cep: ceps[produto.id] || "",
           preco: produto.preco,
-          frete: frete,
+
+          // ✅ CORREÇÃO DO FRETE
+          frete: frete.price,
+
           canto: cantos[produto.id] || "",
         }),
       });
@@ -133,7 +140,8 @@ export default function Home() {
         throw new Error("Erro ao gerar pagamento");
       }
 
-      window.open(data.init_point, "_blank");
+      // ✅ MELHOR PARA MOBILE
+      window.location.href = data.init_point;
 
     } catch (error) {
       alert(error.message);
@@ -163,7 +171,6 @@ export default function Home() {
         </p>
       </header>
 
-      {/* 👇 AQUI ESTÁ A CORREÇÃO REAL */}
       <main style={{ flex: 1, display: "flex", flexDirection: "column" }}>
 
         <div
