@@ -7,6 +7,7 @@ export default function Home() {
   const [fretes, setFretes] = useState({});
   const [freteSelecionado, setFreteSelecionado] = useState({});
   const [loadingFrete, setLoadingFrete] = useState({});
+  const [clientes, setClientes] = useState({}); // 👈 NOVO
 
   useEffect(() => {
     fetch("/api/produto")
@@ -20,6 +21,16 @@ export default function Home() {
 
   const handleCantoChange = (id, value) => {
     setCantos((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const handleClienteChange = (id, campo, valor) => {
+    setClientes((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        [campo]: valor,
+      },
+    }));
   };
 
   const selecionarFrete = (produtoId, frete) => {
@@ -96,15 +107,25 @@ export default function Home() {
         return;
       }
 
+      const cliente = clientes[produto.id] || {};
+
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          nome: produto.nome,
-          preco: produto.preco,
+          nome: produto.nome, // produto
+
+          // 👇 AGORA ENVIA DADOS DO CLIENTE
+          nome_cliente: cliente.nome_cliente || "",
+          endereco: cliente.endereco || "",
+          numero: cliente.numero || "",
+          cidade: cliente.cidade || "",
+          estado: cliente.estado || "",
+
           cep: ceps[produto.id] || "",
+          preco: produto.preco,
           frete: frete,
           canto: cantos[produto.id] || "",
         }),
@@ -132,7 +153,6 @@ export default function Home() {
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "#f1f1f1" }}>
 
-      {/* HEADER */}
       <header style={{ background: "#000", color: "#FFD700", textAlign: "center", padding: "20px" }}>
         <h2 style={{ margin: 0 }}>ENCARTEPROAVES</h2>
         <p style={{ margin: 0 }}>
@@ -140,7 +160,6 @@ export default function Home() {
         </p>
       </header>
 
-      {/* PRODUTOS */}
       <div style={{ flex: 1, display: "flex", justifyContent: "center" }}>
         <div
           style={{
@@ -153,20 +172,9 @@ export default function Home() {
           }}
         >
           {produtos.map((p) => (
-            <div
-              key={p.id}
-              style={{
-                background: "#fff",
-                borderRadius: "10px",
-                padding: "15px",
-                boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-                textAlign: "center",
-              }}
-            >
-              <img
-                src={p.imagem}
-                style={{ width: "100%", height: "180px", objectFit: "contain" }}
-              />
+            <div key={p.id} style={{ background: "#fff", borderRadius: "10px", padding: "15px", boxShadow: "0 2px 10px rgba(0,0,0,0.1)", textAlign: "center" }}>
+
+              <img src={p.imagem} style={{ width: "100%", height: "180px", objectFit: "contain" }} />
 
               <h3>{p.nome}</h3>
 
@@ -193,6 +201,13 @@ export default function Home() {
                 onChange={(e) => handleCepChange(p.id, e.target.value)}
                 style={{ width: "100%" }}
               />
+
+              {/* 👇 NOVOS CAMPOS */}
+              <input placeholder="Seu nome" onChange={(e) => handleClienteChange(p.id, "nome_cliente", e.target.value)} style={{ width: "100%", marginTop: "5px" }} />
+              <input placeholder="Endereço" onChange={(e) => handleClienteChange(p.id, "endereco", e.target.value)} style={{ width: "100%", marginTop: "5px" }} />
+              <input placeholder="Número" onChange={(e) => handleClienteChange(p.id, "numero", e.target.value)} style={{ width: "100%", marginTop: "5px" }} />
+              <input placeholder="Cidade" onChange={(e) => handleClienteChange(p.id, "cidade", e.target.value)} style={{ width: "100%", marginTop: "5px" }} />
+              <input placeholder="Estado" onChange={(e) => handleClienteChange(p.id, "estado", e.target.value)} style={{ width: "100%", marginTop: "5px" }} />
 
               <button onClick={() => calcularFrete(p)}>Calcular Frete</button>
 
@@ -231,43 +246,8 @@ export default function Home() {
         </div>
       </div>
 
-      {/* FOOTER */}
       <footer style={{ background: "#000", color: "#FFD700", padding: "30px 20px", marginTop: "auto" }}>
-        <div
-          style={{
-            maxWidth: "1200px",
-            margin: "0 auto",
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-            gap: "20px",
-            textAlign: "center",
-          }}
-        >
-          <div>
-            <h3>ENCARTEPROAVES</h3>
-            <p>Tecnologia e qualidade para o melhor encarte de canto.</p>
-          </div>
-
-          <div>
-            <h4>Contato</h4>
-            <p>WhatsApp: (11) 98430-9480</p>
-          </div>
-
-          <div>
-            <h4>Atendimento</h4>
-            <p>Segunda a Sábado<br />08h às 18h</p>
-          </div>
-        </div>
-
-        <div
-          style={{
-            borderTop: "1px solid #444",
-            marginTop: "20px",
-            paddingTop: "15px",
-            textAlign: "center",
-            fontSize: "13px",
-          }}
-        >
+        <div style={{ textAlign: "center" }}>
           © {new Date().getFullYear()} ENCARTEPROAVES
         </div>
       </footer>

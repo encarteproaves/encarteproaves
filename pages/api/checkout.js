@@ -16,7 +16,8 @@ export default async function handler(req, res) {
     console.log("BODY RECEBIDO:", req.body);
 
     const {
-      nome,
+      nome, // ⚠️ hoje vem como produto
+      nome_cliente, // 👈 novo (quando frontend enviar)
       cpf,
       cep,
       endereco,
@@ -29,8 +30,8 @@ export default async function handler(req, res) {
       canto,
     } = req.body;
 
-    // ✅ VALIDAÇÃO SEGURA (NÃO QUEBRA O CHECKOUT)
-    if (!nome || !preco) {
+    // ✅ VALIDAÇÃO MÍNIMA (não quebra fluxo atual)
+    if (!nome || preco === undefined || preco === null) {
       return res.status(400).json({
         error: "Dados básicos obrigatórios",
       });
@@ -47,11 +48,28 @@ export default async function handler(req, res) {
     }
 
     const valorProduto = Number(preco);
+
+    if (isNaN(valorProduto)) {
+      return res.status(400).json({
+        error: "Preço inválido",
+      });
+    }
+
     const valorTotal = valorProduto + valorFrete;
 
+    if (isNaN(valorTotal)) {
+      return res.status(400).json({
+        error: "Erro no cálculo do total",
+      });
+    }
+
+    // 👇 separação inteligente
+    const produto = nome;
+    const clienteNome = nome_cliente || null;
+
     console.log("CHECKOUT:", {
-      nome,
-      cpf,
+      produto,
+      clienteNome,
       valorProduto,
       valorFrete,
       valorTotal,
@@ -72,8 +90,10 @@ export default async function handler(req, res) {
         items: [
           {
             id: externalReference,
-            title: nome,
-            description: canto || nome,
+            title: produto || "Produto",
+            description: canto
+              ? `Canto: ${canto}`
+              : produto || "Produto",
             quantity: 1,
             unit_price: valorTotal,
             currency_id: "BRL",
@@ -91,16 +111,16 @@ export default async function handler(req, res) {
       },
     });
 
-    // ✅ SALVAMENTO SEGURO (MESMO SE FRONTEND NÃO ENVIAR TUDO)
+    // ✅ SALVAMENTO CORRETO
     const { error: pedidoError } = await supabase
       .from("pedidos")
       .insert([
         {
-          produto: nome,
+          produto: produto,
           valor: valorTotal,
 
-          // 👇 CAMPOS DO CLIENTE (NÃO QUEBRAM SE VAZIOS)
-          nome_cliente: nome || null,
+          // 👇 agora correto
+          nome_cliente: clienteNome,
           cpf: cpf || null,
           cep: cep || null,
           rua: endereco || null,
