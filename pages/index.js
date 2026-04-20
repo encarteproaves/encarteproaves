@@ -102,7 +102,6 @@ export default function Home() {
     try {
       const frete = freteSelecionado[produto.id];
 
-      // ✅ PROTEÇÃO IMPORTANTE
       if (!frete || !frete.price) {
         alert("Selecione um frete válido");
         return;
@@ -119,17 +118,17 @@ export default function Home() {
           nome: produto.nome,
 
           nome_cliente: cliente.nome_cliente || "",
+          telefone: cliente.telefone || "",
+          cpf: cliente.cpf || "",
           endereco: cliente.endereco || "",
           numero: cliente.numero || "",
+          bairro: cliente.bairro || "",
           cidade: cliente.cidade || "",
           estado: cliente.estado || "",
 
           cep: ceps[produto.id] || "",
           preco: produto.preco,
-
-          // ✅ CORREÇÃO DO FRETE
           frete: frete.price,
-
           canto: cantos[produto.id] || "",
         }),
       });
@@ -140,7 +139,6 @@ export default function Home() {
         throw new Error("Erro ao gerar pagamento");
       }
 
-      // ✅ MELHOR PARA MOBILE
       window.location.href = data.init_point;
 
     } catch (error) {
@@ -155,14 +153,7 @@ export default function Home() {
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        background: "#f1f1f1",
-      }}
-    >
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "#f1f1f1" }}>
 
       <header style={{ background: "#000", color: "#FFD700", textAlign: "center", padding: "20px" }}>
         <h2 style={{ margin: 0 }}>ENCARTEPROAVES</h2>
@@ -173,17 +164,15 @@ export default function Home() {
 
       <main style={{ flex: 1, display: "flex", flexDirection: "column" }}>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-            gap: "25px",
-            padding: "30px",
-            maxWidth: "1200px",
-            width: "100%",
-            margin: "0 auto",
-          }}
-        >
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+          gap: "25px",
+          padding: "30px",
+          maxWidth: "1200px",
+          width: "100%",
+          margin: "0 auto",
+        }}>
           {produtos.map((p) => (
             <div key={p.id} style={{ background: "#fff", borderRadius: "10px", padding: "15px", boxShadow: "0 2px 10px rgba(0,0,0,0.1)", textAlign: "center" }}>
 
@@ -212,8 +201,11 @@ export default function Home() {
               <input placeholder="Digite seu CEP" onChange={(e) => handleCepChange(p.id, e.target.value)} style={{ width: "100%" }} />
 
               <input placeholder="Seu nome" onChange={(e) => handleClienteChange(p.id, "nome_cliente", e.target.value)} style={{ width: "100%", marginTop: "5px" }} />
+              <input placeholder="Telefone" onChange={(e) => handleClienteChange(p.id, "telefone", e.target.value)} style={{ width: "100%", marginTop: "5px" }} />
+              <input placeholder="CPF" onChange={(e) => handleClienteChange(p.id, "cpf", e.target.value)} style={{ width: "100%", marginTop: "5px" }} />
               <input placeholder="Endereço" onChange={(e) => handleClienteChange(p.id, "endereco", e.target.value)} style={{ width: "100%", marginTop: "5px" }} />
               <input placeholder="Número" onChange={(e) => handleClienteChange(p.id, "numero", e.target.value)} style={{ width: "100%", marginTop: "5px" }} />
+              <input placeholder="Bairro" onChange={(e) => handleClienteChange(p.id, "bairro", e.target.value)} style={{ width: "100%", marginTop: "5px" }} />
               <input placeholder="Cidade" onChange={(e) => handleClienteChange(p.id, "cidade", e.target.value)} style={{ width: "100%", marginTop: "5px" }} />
               <input placeholder="Estado" onChange={(e) => handleClienteChange(p.id, "estado", e.target.value)} style={{ width: "100%", marginTop: "5px" }} />
 
