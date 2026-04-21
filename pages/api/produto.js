@@ -43,13 +43,19 @@ export default async function handler(req, res) {
     return res.status(200).json(data)
   }
 
-  // ✏️ ATUALIZAR ESTOQUE
+  // ✏️ ATUALIZAR PRODUTO (CORRIGIDO)
   if (method === 'PUT') {
-    const { id, estoque } = req.body
+    const { id, nome, preco, descricao, imagem, estoque } = req.body
 
     const { data, error } = await supabase
       .from('produtos')
-      .update({ estoque })
+      .update({
+        ...(nome !== undefined && { nome }),
+        ...(preco !== undefined && { preco }),
+        ...(descricao !== undefined && { descricao }),
+        ...(imagem !== undefined && { imagem }),
+        ...(estoque !== undefined && { estoque }),
+      })
       .eq('id', id)
 
     if (error) return res.status(500).json({ error })
