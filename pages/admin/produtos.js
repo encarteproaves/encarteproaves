@@ -11,10 +11,8 @@ export default function AdminProdutos() {
   const [estoque, setEstoque] = useState("");
 
   const [editandoId, setEditandoId] = useState(null);
-
   const [token, setToken] = useState("");
 
-  // 🔐 LOGIN
   useEffect(() => {
     const senha = prompt("Digite a senha do admin:");
 
@@ -62,22 +60,6 @@ export default function AdminProdutos() {
     carregarProdutos(token);
   }
 
-  async function excluirProduto(id) {
-    const confirmar = confirm("Excluir produto?");
-    if (!confirmar) return;
-
-    await fetch("/api/produto", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: token,
-      },
-      body: JSON.stringify({ id }),
-    });
-
-    carregarProdutos(token);
-  }
-
   async function atualizarProduto(id) {
     await fetch("/api/produto", {
       method: "PUT",
@@ -97,6 +79,22 @@ export default function AdminProdutos() {
 
     setEditandoId(null);
     limpar();
+    carregarProdutos(token);
+  }
+
+  async function excluirProduto(id) {
+    const confirmar = confirm("Excluir produto?");
+    if (!confirmar) return;
+
+    await fetch("/api/produto", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: token,
+      },
+      body: JSON.stringify({ id }),
+    });
+
     carregarProdutos(token);
   }
 
@@ -120,59 +118,102 @@ export default function AdminProdutos() {
   if (!autorizado) return null;
 
   return (
-    <div style={{ padding: 20 }}>
-      <h1>Cadastro de Produtos</h1>
-
-      <button onClick={() => window.location.href = "/"}>Sair</button>
+    <div style={{ padding: 30, maxWidth: 1200, margin: "0 auto" }}>
+      
+      <h1 style={{ marginBottom: 20 }}>📦 Painel de Produtos</h1>
 
       {/* FORM */}
-      <div style={{ marginTop: 20 }}>
-        <input placeholder="Nome" value={nome} onChange={(e) => setNome(e.target.value)} /><br />
-        <input placeholder="Preço" value={preco} onChange={(e) => setPreco(e.target.value)} /><br />
-        <input placeholder="Descrição" value={descricao} onChange={(e) => setDescricao(e.target.value)} /><br />
-        <input placeholder="Imagem" value={imagem} onChange={(e) => setImagem(e.target.value)} /><br />
-        <input placeholder="Estoque" value={estoque} onChange={(e) => setEstoque(e.target.value)} /><br />
+      <div
+        style={{
+          background: "#f9f9f9",
+          padding: 20,
+          borderRadius: 10,
+          marginBottom: 30,
+        }}
+      >
+        <h2>{editandoId ? "✏️ Editar Produto" : "➕ Novo Produto"}</h2>
 
-        {editandoId ? (
-          <button onClick={() => atualizarProduto(editandoId)}>Atualizar Produto</button>
-        ) : (
-          <button onClick={cadastrarProduto}>Salvar</button>
-        )}
-      </div>
+        <div style={{ display: "grid", gap: 10 }}>
+          <input placeholder="Nome" value={nome} onChange={(e) => setNome(e.target.value)} />
+          <input placeholder="Preço" value={preco} onChange={(e) => setPreco(e.target.value)} />
+          <input placeholder="Descrição" value={descricao} onChange={(e) => setDescricao(e.target.value)} />
+          <input placeholder="URL da imagem" value={imagem} onChange={(e) => setImagem(e.target.value)} />
+          <input placeholder="Estoque" value={estoque} onChange={(e) => setEstoque(e.target.value)} />
+        </div>
 
-      <h2>Lista</h2>
-
-      {produtos.map((p) => (
-        <div
-          key={p.id}
+        <button
+          onClick={() => editandoId ? atualizarProduto(editandoId) : cadastrarProduto()}
           style={{
-            border: "1px solid #ccc",
-            padding: 15,
-            marginBottom: 15,
-            width: 300,
+            marginTop: 15,
+            padding: 10,
+            background: editandoId ? "#f59e0b" : "#16a34a",
+            color: "#fff",
+            border: "none",
+            borderRadius: 5,
+            cursor: "pointer",
           }}
         >
-          <img src={p.imagem} width="100%" />
-          <h3>{p.nome}</h3>
-          <p>R$ {p.preco}</p>
-          <p>{p.descricao}</p>
+          {editandoId ? "Atualizar Produto" : "Salvar Produto"}
+        </button>
+      </div>
 
-          <p>Estoque: {p.estoque}</p>
-
-          <button onClick={() => iniciarEdicao(p)}>
-            Editar
-          </button>
-
-          <br />
-
-          <button
-            onClick={() => excluirProduto(p.id)}
-            style={{ background: "red", color: "#fff" }}
+      {/* LISTA */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
+          gap: 20,
+        }}
+      >
+        {produtos.map((p) => (
+          <div
+            key={p.id}
+            style={{
+              border: "1px solid #ddd",
+              borderRadius: 10,
+              padding: 15,
+              background: "#fff",
+            }}
           >
-            Excluir
-          </button>
-        </div>
-      ))}
+            <img src={p.imagem} style={{ width: "100%", borderRadius: 5 }} />
+
+            <h3>{p.nome}</h3>
+            <p><strong>R$ {p.preco}</strong></p>
+            <p style={{ fontSize: 14 }}>{p.descricao}</p>
+            <p>Estoque: {p.estoque}</p>
+
+            <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
+              <button
+                onClick={() => iniciarEdicao(p)}
+                style={{
+                  flex: 1,
+                  background: "#2563eb",
+                  color: "#fff",
+                  border: "none",
+                  padding: 8,
+                  borderRadius: 5,
+                }}
+              >
+                Editar
+              </button>
+
+              <button
+                onClick={() => excluirProduto(p.id)}
+                style={{
+                  flex: 1,
+                  background: "red",
+                  color: "#fff",
+                  border: "none",
+                  padding: 8,
+                  borderRadius: 5,
+                }}
+              >
+                Excluir
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
