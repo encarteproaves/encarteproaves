@@ -11,7 +11,6 @@ export default function AdminProdutos() {
   const [estoque, setEstoque] = useState("");
 
   const [editandoId, setEditandoId] = useState(null);
-  const [novoEstoque, setNovoEstoque] = useState("");
 
   const [token, setToken] = useState("");
 
@@ -31,9 +30,7 @@ export default function AdminProdutos() {
 
   async function carregarProdutos(tk) {
     const res = await fetch("/api/produto", {
-      headers: {
-        authorization: tk
-      }
+      headers: { authorization: tk },
     });
 
     const data = await res.json();
@@ -41,11 +38,16 @@ export default function AdminProdutos() {
   }
 
   async function cadastrarProduto() {
+    if (!nome || !preco) {
+      alert("Preencha nome e preço");
+      return;
+    }
+
     await fetch("/api/produto", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        authorization: token
+        authorization: token,
       },
       body: JSON.stringify({
         nome,
@@ -61,11 +63,14 @@ export default function AdminProdutos() {
   }
 
   async function excluirProduto(id) {
+    const confirmar = confirm("Excluir produto?");
+    if (!confirmar) return;
+
     await fetch("/api/produto", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        authorization: token
+        authorization: token,
       },
       body: JSON.stringify({ id }),
     });
@@ -73,22 +78,35 @@ export default function AdminProdutos() {
     carregarProdutos(token);
   }
 
-  async function atualizarEstoque(id) {
+  async function atualizarProduto(id) {
     await fetch("/api/produto", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        authorization: token
+        authorization: token,
       },
       body: JSON.stringify({
         id,
-        estoque: Number(novoEstoque),
+        nome,
+        preco: Number(preco),
+        descricao,
+        imagem,
+        estoque: Number(estoque),
       }),
     });
 
     setEditandoId(null);
-    setNovoEstoque("");
+    limpar();
     carregarProdutos(token);
+  }
+
+  function iniciarEdicao(p) {
+    setEditandoId(p.id);
+    setNome(p.nome);
+    setPreco(p.preco);
+    setDescricao(p.descricao);
+    setImagem(p.imagem);
+    setEstoque(p.estoque);
   }
 
   function limpar() {
@@ -107,19 +125,33 @@ export default function AdminProdutos() {
 
       <button onClick={() => window.location.href = "/"}>Sair</button>
 
+      {/* FORM */}
       <div style={{ marginTop: 20 }}>
         <input placeholder="Nome" value={nome} onChange={(e) => setNome(e.target.value)} /><br />
         <input placeholder="Preço" value={preco} onChange={(e) => setPreco(e.target.value)} /><br />
         <input placeholder="Descrição" value={descricao} onChange={(e) => setDescricao(e.target.value)} /><br />
         <input placeholder="Imagem" value={imagem} onChange={(e) => setImagem(e.target.value)} /><br />
         <input placeholder="Estoque" value={estoque} onChange={(e) => setEstoque(e.target.value)} /><br />
-        <button onClick={cadastrarProduto}>Salvar</button>
+
+        {editandoId ? (
+          <button onClick={() => atualizarProduto(editandoId)}>Atualizar Produto</button>
+        ) : (
+          <button onClick={cadastrarProduto}>Salvar</button>
+        )}
       </div>
 
       <h2>Lista</h2>
 
       {produtos.map((p) => (
-        <div key={p.id} style={{ border: "1px solid #ccc", padding: 15, marginBottom: 15, width: 300 }}>
+        <div
+          key={p.id}
+          style={{
+            border: "1px solid #ccc",
+            padding: 15,
+            marginBottom: 15,
+            width: 300,
+          }}
+        >
           <img src={p.imagem} width="100%" />
           <h3>{p.nome}</h3>
           <p>R$ {p.preco}</p>
@@ -127,18 +159,16 @@ export default function AdminProdutos() {
 
           <p>Estoque: {p.estoque}</p>
 
-          {editandoId === p.id ? (
-            <>
-              <input value={novoEstoque} onChange={(e) => setNovoEstoque(e.target.value)} />
-              <button onClick={() => atualizarEstoque(p.id)}>Salvar</button>
-            </>
-          ) : (
-            <button onClick={() => setEditandoId(p.id)}>Editar Estoque</button>
-          )}
+          <button onClick={() => iniciarEdicao(p)}>
+            Editar
+          </button>
 
           <br />
 
-          <button onClick={() => excluirProduto(p.id)} style={{ background: "red", color: "#fff" }}>
+          <button
+            onClick={() => excluirProduto(p.id)}
+            style={{ background: "red", color: "#fff" }}
+          >
             Excluir
           </button>
         </div>
