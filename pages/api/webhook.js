@@ -1,30 +1,20 @@
 import { supabase } from "../../lib/supabase";
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({
-      error: "Método não permitido",
-    });
-  }
-
   try {
-    console.log("WEBHOOK RAW:", JSON.stringify(req.body, null, 2));
+    console.log("WEBHOOK RECEBIDO:", req.body);
 
-    const paymentId =
-      req.body?.data?.id ||
-      req.body?.id;
+    const payment = req.body;
 
-    if (!paymentId) {
-      console.log("Webhook sem paymentId");
-
-      return res.status(200).json({
-        ok: true,
-        message: "Sem paymentId",
-      });
+    // 🔒 valida se veio pagamento aprovado
+    if (payment.type !== "payment") {
+      return res.status(200).json({ ok: true });
     }
 
-    // CONSULTA DETALHES DO PAGAMENTO NO MP
-    const pagamentoResponse = await fetch(
+    const paymentId = payment.data.id;
+
+    // 🔥 BUSCAR DADOS DO PAGAMENTO NO MERCADO PAGO
+    const response = await fetch(
       `https://api.mercadopago.com/v1/payments/${paymentId}`,
       {
         headers: {
@@ -33,51 +23,60 @@ export default async function handler(req, res) {
       }
     );
 
-    const pagamento = await pagamentoResponse.json();
+    const data = await response.json();
 
-    console.log("DADOS PAGAMENTO:", pagamento);
+    console.log("PAGAMENTO DETALHES:", data);
 
-    const externalReference = pagamento.external_reference;
-    const statusPagamento = pagamento.status;
+    const status = data.status;
+    const referencia = data.external_reference;
 
-    if (!externalReference) {
-      console.log("Pagamento sem external_reference");
-
-      return res.status(200).json({
-        ok: true,
-        message: "Sem external_reference",
-      });
+    // 🚫 só continua se pagamento aprovado
+    if (status !== "approved") {
+      return res.status(200).json({ ok: true });
     }
 
-    // ATUALIZA SOMENTE SE APROVADO
-    if (statusPagamento === "approved") {
-      const { error } = await supabase
-        .from("pedidos")
-        .update({
-          status: "Aguardando etiqueta",
-        })
-        .eq("external_reference", externalReference);
+    // 🔎 BUSCAR PEDIDO NO BANCO
+    const { data: pedido, error: erroPedido } = await supabase
+      .from("pedidos")
+      .select("*")
+      .eq("external_reference", referencia)
+      .single();
 
-      if (error) {
-        console.error("Erro Supabase:", error);
-
-        return res.status(500).json({
-          error: "Erro ao atualizar pedido",
-        });
-      }
-
-      console.log("Pedido atualizado com sucesso");
+    if (erroPedido || !pedido) {
+      console.error("Pedido não encontrado");
+      return res.status(200).json({ ok: true });
     }
 
-    return res.status(200).json({
-      ok: true,
-    });
+    // ✅ ATUALIZAR STATUS PARA PAGO
+    await supabase
+      .from("pedidos")
+      .update({ status: "Pago" })
+      .eq("external_reference", referencia);
+
+    // 🔥 DIMINUIR ESTOQUE (USANDO NOME DO PRODUTO)
+    const { data: produto, error: erroProduto } = await supabase
+      .from("produtos")
+      .select("*")
+      .eq("nome", pedido.produto)
+      .single();
+
+    if (!erroProduto && produto) {
+      const novoEstoque = Math.max((produto.estoque || 0) - 1, 0);
+
+      await supabase
+        .from("produtos")
+        .update({ estoque: novoEstoque })
+        .eq("id", produto.id);
+
+      console.log("ESTOQUE ATUALIZADO:", novoEstoque);
+    } else {
+      console.error("Produto não encontrado para baixar estoque");
+    }
+
+    return res.status(200).json({ ok: true });
 
   } catch (error) {
-    console.error("ERRO WEBHOOK:", error);
-
-    return res.status(500).json({
-      error: "Erro interno",
-    });
+    console.error("ERRO NO WEBHOOK:", error);
+    return res.status(500).json({ error: "Erro no webhook" });
   }
 }
