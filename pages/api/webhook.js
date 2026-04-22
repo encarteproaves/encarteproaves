@@ -6,14 +6,13 @@ export default async function handler(req, res) {
 
     const payment = req.body;
 
-    // 🔒 valida se veio pagamento aprovado
     if (payment.type !== "payment") {
       return res.status(200).json({ ok: true });
     }
 
     const paymentId = payment.data.id;
 
-    // 🔥 BUSCAR DADOS DO PAGAMENTO NO MERCADO PAGO
+    // 🔥 BUSCAR NO MERCADO PAGO
     const response = await fetch(
       `https://api.mercadopago.com/v1/payments/${paymentId}`,
       {
@@ -25,65 +24,51 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    console.log("PAGAMENTO DETALHES:", data);
+    console.log("DETALHES PAGAMENTO:", data);
 
     const status = data.status;
     const referencia = data.external_reference;
 
-    // 🚫 só continua se pagamento aprovado
     if (status !== "approved") {
-await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/notificar`, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-    pedido: {
-      nome_cliente,
-      telefone,
-      cpf,
-      produto,
-      valor,
-      frete,
-      rua,
-      numero,
-      bairro,
-      cidade,
-      estado,
-      cep,
-      status,
-    },
-  }),
-});
       return res.status(200).json({ ok: true });
     }
 
-    // 🔎 BUSCAR PEDIDO NO BANCO
-    const { data: pedido, error: erroPedido } = await supabase
+    // 🔥 BUSCAR PEDIDO
+    const { data: pedido } = await supabase
       .from("pedidos")
       .select("*")
       .eq("external_reference", referencia)
       .single();
 
-    if (erroPedido || !pedido) {
-      console.error("Pedido não encontrado");
+    if (!pedido) {
+      console.log("Pedido não encontrado, criando novo...");
+
+      await supabase.from("pedidos").insert([
+        {
+          produto: "Produto",
+          valor: data.transaction_amount,
+          status: "Pago",
+          external_reference: referencia,
+        },
+      ]);
+
       return res.status(200).json({ ok: true });
     }
 
-    // ✅ ATUALIZAR STATUS PARA PAGO
+    // ✅ ATUALIZA STATUS
     await supabase
       .from("pedidos")
       .update({ status: "Pago" })
       .eq("external_reference", referencia);
 
-    // 🔥 DIMINUIR ESTOQUE (USANDO NOME DO PRODUTO)
-    const { data: produto, error: erroProduto } = await supabase
+    // 🔥 BAIXAR ESTOQUE
+    const { data: produto } = await supabase
       .from("produtos")
       .select("*")
       .eq("nome", pedido.produto)
       .single();
 
-    if (!erroProduto && produto) {
+    if (produto) {
       const novoEstoque = Math.max((produto.estoque || 0) - 1, 0);
 
       await supabase
@@ -91,15 +76,13 @@ await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/notificar`, {
         .update({ estoque: novoEstoque })
         .eq("id", produto.id);
 
-      console.log("ESTOQUE ATUALIZADO:", novoEstoque);
-    } else {
-      console.error("Produto não encontrado para baixar estoque");
+      console.log("ESTOQUE ATUALIZADO");
     }
 
     return res.status(200).json({ ok: true });
 
   } catch (error) {
-    console.error("ERRO NO WEBHOOK:", error);
+    console.error("ERRO WEBHOOK:", error);
     return res.status(500).json({ error: "Erro no webhook" });
   }
 }
