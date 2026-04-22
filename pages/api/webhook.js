@@ -32,6 +32,29 @@ export default async function handler(req, res) {
 
     // 🚫 só continua se pagamento aprovado
     if (status !== "approved") {
+await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/notificar`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    pedido: {
+      nome_cliente,
+      telefone,
+      cpf,
+      produto,
+      valor,
+      frete,
+      rua,
+      numero,
+      bairro,
+      cidade,
+      estado,
+      cep,
+      status,
+    },
+  }),
+});
       return res.status(200).json({ ok: true });
     }
 
