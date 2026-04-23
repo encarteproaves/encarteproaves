@@ -31,8 +31,8 @@ export default async function handler(req, res) {
       canto,
     } = req.body;
 
-    // ✅ VALIDAÇÃO BÁSICA
     if (!nome || preco === undefined || preco === null) {
+      console.error("DADOS INVÁLIDOS");
       return res.status(400).json({
         error: "Dados básicos obrigatórios",
       });
@@ -40,9 +40,8 @@ export default async function handler(req, res) {
 
     const externalReference = `pedido-${Date.now()}`;
 
-    // ✅ TRATAMENTO DO FRETE (mantido igual ao seu)
+    // 🔥 FRETE SEGURO
     let valorFrete = 0;
-
     if (typeof frete === "object" && frete?.price) {
       valorFrete = Number(frete.price);
     } else if (!isNaN(Number(frete))) {
@@ -52,6 +51,7 @@ export default async function handler(req, res) {
     const valorProduto = Number(preco);
 
     if (isNaN(valorProduto)) {
+      console.error("PREÇO INVÁLIDO");
       return res.status(400).json({
         error: "Preço inválido",
       });
@@ -59,26 +59,24 @@ export default async function handler(req, res) {
 
     const valorTotal = valorProduto + valorFrete;
 
-    console.log("DADOS CHECKOUT:", {
-      nome,
+    console.log("VALORES:", {
       valorProduto,
       valorFrete,
       valorTotal,
-      externalReference,
     });
 
-    // ✅ CRIA PREFERÊNCIA (SEM ALTERAR SUA LÓGICA)
+    // 🔥 CRIA PAGAMENTO
     const preference = new Preference(client);
 
-    const mpResponse = await preference.create({
+    const response = await preference.create({
       body: {
         items: [
           {
             id: externalReference,
-            title: nome || "Produto",
-            description: canto ? `Canto: ${canto}` : nome,
+            title: String(nome),
+            description: canto ? `Canto: ${canto}` : String(nome),
             quantity: 1,
-            unit_price: valorTotal, // 🔒 MANTIDO COMO ESTAVA (funcionava antes)
+            unit_price: valorTotal,
             currency_id: "BRL",
           },
         ],
@@ -94,51 +92,59 @@ export default async function handler(req, res) {
       },
     });
 
-    console.log("RESPOSTA MERCADO PAGO:", mpResponse);
+    console.log("PREFERENCE CRIADA:", response.id);
 
-    // ✅ SALVA NO SUPABASE (mantido igual)
-    const { error: pedidoError } = await supabase
+    // 🔥 INSERT SUPER SEGURO
+    const { data, error: pedidoError } = await supabase
       .from("pedidos")
       .insert([
         {
-          produto: nome,
-          valor: valorTotal,
+          produto: String(nome),
+          valor: Number(valorTotal),
 
-          nome_cliente: nome_cliente || null,
-          telefone: telefone || null,
-          cpf: cpf || null,
+          nome_cliente: nome_cliente || "",
+          telefone: telefone || "",
+          cpf: cpf || "",
 
-          cep: cep || null,
-          rua: endereco || null,
-          numero: numero || null,
-          bairro: bairro || null,
-          cidade: cidade || null,
-          estado: estado || null,
+          cep: cep || "",
+          rua: endereco || "",
+          numero: numero ? String(numero) : "",
+          bairro: bairro || "",
+          cidade: cidade || "",
+          estado: estado || "",
 
-          frete: valorFrete,
-          canto,
+          frete: Number(valorFrete) || 0,
+          canto: canto || "",
 
           status: "Aguardando pagamento",
           external_reference: externalReference,
         },
-      ]);
+      ])
+      .select();
 
     if (pedidoError) {
-      console.error("ERRO AO SALVAR PEDIDO:");
+      console.error("ERRO SUPABASE COMPLETO:");
       console.error(JSON.stringify(pedidoError, null, 2));
+
+      return res.status(500).json({
+        error: "Erro ao salvar pedido",
+        detalhes: pedidoError,
+      });
     }
 
+    console.log("PEDIDO SALVO:", data);
+
     return res.status(200).json({
-      init_point: mpResponse.init_point,
+      init_point: response.init_point,
       external_reference: externalReference,
     });
 
   } catch (error) {
-    console.error("ERRO REAL DO CHECKOUT:");
+    console.error("ERRO GERAL:");
     console.error(error);
 
     return res.status(500).json({
-      error: error?.message || "Erro interno no checkout",
+      error: "Erro interno no checkout",
     });
   }
 }
