@@ -2,24 +2,24 @@ import { supabase } from "../../lib/supabase";
 
 export default async function handler(req, res) {
   try {
-    console.log("🔔 WEBHOOK RECEBIDO:", JSON.stringify(req.body, null, 2));
+    console.log("🔔 WEBHOOK RECEBIDO:", req.body);
 
-    const payment = req.body;
+    const body = req.body;
 
-    // ✅ Garante que é notificação de pagamento
-    if (!payment || payment.type !== "payment") {
+    // ⚠️ Mercado Pago envia vários tipos de evento
+    if (body.type !== "payment") {
       console.log("⚠️ Evento ignorado (não é pagamento)");
       return res.status(200).json({ ok: true });
     }
 
-    const paymentId = payment?.data?.id;
+    const paymentId = body.data?.id;
 
     if (!paymentId) {
-      console.log("❌ paymentId não encontrado");
+      console.error("❌ paymentId não recebido");
       return res.status(200).json({ ok: true });
     }
 
-    // 🔥 BUSCAR DADOS DO PAGAMENTO NO MERCADO PAGO
+    // 🔥 BUSCAR PAGAMENTO NO MERCADO PAGO
     const response = await fetch(
       `https://api.mercadopago.com/v1/payments/${paymentId}`,
       {
@@ -31,74 +31,135 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    console.log("💰 DETALHES PAGAMENTO:", JSON.stringify(data, null, 2));
+    console.log("💰 DETALHES PAGAMENTO:", data);
 
     const status = data.status;
     const referencia = data.external_reference;
 
+    // 🚨 VALIDA REFERÊNCIA
     if (!referencia) {
-      console.log("❌ external_reference não encontrada");
+      console.error("❌ external_reference NÃO VEIO DO MERCADO PAGO");
       return res.status(200).json({ ok: true });
     }
 
-    // 🚫 Só processa pagamento aprovado
+    console.log("🔎 REFERENCIA RECEBIDA:", referencia);
+
+    // 🔎 BUSCAR PEDIDO NO BANCO
+    const { data: pedido, error: erroPedido } = await supabase
+      .from("pedidos")
+      .select("*")
+      .eq("external_reference", referencia)
+      .maybeSingle();
+
+    if (erroPedido) {
+      console.error("❌ ERRO AO BUSCAR PEDIDO:", erroPedido);
+      return res.status(200).json({ ok: true });
+    }
+
+    if (!pedido) {
+      console.error("❌ Pedido NÃO encontrado para referencia:", referencia);
+      return res.status(200).json({ ok: true });
+    }
+
+    console.log("📦 PEDIDO ENCONTRADO:", pedido.id);
+
+    // 🚫 SE NÃO FOI APROVADO AINDA
     if (status !== "approved") {
       console.log("⏳ Pagamento ainda não aprovado:", status);
       return res.status(200).json({ ok: true });
     }
 
-    // 🔎 BUSCAR PEDIDO
-    const { data: pedido, error: erroPedido } = await supabase
-      .from("pedidos")
-      .select("*")
-      .eq("external_reference", referencia)
-      .single();
-
-    if (erroPedido || !pedido) {
-      console.log("❌ Pedido não encontrado:", referencia);
-      return res.status(200).json({ ok: true });
-    }
-
-    // ✅ ATUALIZA STATUS
-    const { error: erroUpdate } = await supabase
+    // ✅ ATUALIZAR STATUS DO PEDIDO
+    const { error: erroUpdatePedido } = await supabase
       .from("pedidos")
       .update({ status: "Pago" })
-      .eq("external_reference", referencia);
+      .eq("id", pedido.id);
 
-    if (erroUpdate) {
-      console.error("❌ Erro ao atualizar pedido:", erroUpdate);
+    if (erroUpdatePedido) {
+      console.error("❌ ERRO AO ATUALIZAR PEDIDO:", erroUpdatePedido);
     } else {
       console.log("✅ Pedido atualizado para PAGO");
     }
 
-    // 🔥 ATUALIZA ESTOQUE
+    // 🔥 BUSCAR PRODUTO
     const { data: produto, error: erroProduto } = await supabase
       .from("produtos")
       .select("*")
       .eq("nome", pedido.produto)
-      .single();
+      .maybeSingle();
 
-    if (!erroProduto && produto) {
-      const novoEstoque = Math.max((produto.estoque || 0) - 1, 0);
+    if (erroProduto) {
+      console.error("❌ ERRO AO BUSCAR PRODUTO:", erroProduto);
+      return res.status(200).json({ ok: true });
+    }
 
-      const { error: erroEstoque } = await supabase
-        .from("produtos")
-        .update({ estoque: novoEstoque })
-        .eq("id", produto.id);
+    if (!produto) {
+      console.error("❌ Produto NÃO encontrado:", pedido.produto);
+      return res.status(200).json({ ok: true });
+    }
 
-      if (erroEstoque) {
-        console.error("❌ Erro ao atualizar estoque:", erroEstoque);
-      } else {
-        console.log("📦 Estoque atualizado:", novoEstoque);
-      }
+    // 🔻 DIMINUIR ESTOQUE
+    const estoqueAtual = Number(produto.estoque) || 0;
+    const novoEstoque = Math.max(estoqueAtual - 1, 0);
+
+    const { error: erroEstoque } = await supabase
+      .from("produtos")
+      .update({ estoque: novoEstoque })
+      .eq("id", produto.id);
+
+    if (erroEstoque) {
+      console.error("❌ ERRO AO ATUALIZAR ESTOQUE:", erroEstoque);
     } else {
-      console.log("⚠️ Produto não encontrado para estoque:", pedido.produto);
+      console.log("📉 Estoque atualizado:", novoEstoque);
+    }
+
+    // ==============================
+    // 📲 ENVIO WHATSAPP (NOVO)
+    // ==============================
+    try {
+      console.log("📲 Enviando WhatsApp...");
+
+      const mensagem = `
+🛒 *NOVO PEDIDO PAGO*
+
+👤 Cliente: ${pedido.nome_cliente}
+📞 Telefone: ${pedido.telefone}
+📦 Produto: ${pedido.produto}
+💰 Valor: R$ ${pedido.valor}
+🚚 Frete: R$ ${pedido.frete}
+
+📍 Endereço:
+${pedido.rua}, ${pedido.numero}
+${pedido.bairro} - ${pedido.cidade}/${pedido.estado}
+CEP: ${pedido.cep}
+`;
+
+      const zapResponse = await fetch(
+        `https://api.z-api.io/instances/${process.env.ZAPI_INSTANCE_ID}/token/${process.env.ZAPI_TOKEN}/send-text`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            phone: process.env.ZAPI_PHONE,
+            message: mensagem,
+          }),
+        }
+      );
+
+      const zapData = await zapResponse.json();
+
+      console.log("✅ WhatsApp enviado:", zapData);
+
+    } catch (err) {
+      console.error("❌ ERRO AO ENVIAR WHATSAPP:", err);
     }
 
     return res.status(200).json({ ok: true });
 
   } catch (error) {
-    console.error("🔥 ERRO NO WEBHOOK:", error);
+    console.error("❌ ERRO NO WEBHOOK:", error);
     return res.status(500).json({ error: "Erro no webhook" });
   }
 }
