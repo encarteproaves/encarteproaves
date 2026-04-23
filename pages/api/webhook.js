@@ -2,17 +2,24 @@ import { supabase } from "../../lib/supabase";
 
 export default async function handler(req, res) {
   try {
-    console.log("WEBHOOK RECEBIDO:", req.body);
+    console.log("🔔 WEBHOOK RECEBIDO:", JSON.stringify(req.body, null, 2));
 
     const payment = req.body;
 
-    if (payment.type !== "payment") {
+    // ✅ Garante que é notificação de pagamento
+    if (!payment || payment.type !== "payment") {
+      console.log("⚠️ Evento ignorado (não é pagamento)");
       return res.status(200).json({ ok: true });
     }
 
-    const paymentId = payment.data.id;
+    const paymentId = payment?.data?.id;
 
-    // 🔥 BUSCAR NO MERCADO PAGO
+    if (!paymentId) {
+      console.log("❌ paymentId não encontrado");
+      return res.status(200).json({ ok: true });
+    }
+
+    // 🔥 BUSCAR DADOS DO PAGAMENTO NO MERCADO PAGO
     const response = await fetch(
       `https://api.mercadopago.com/v1/payments/${paymentId}`,
       {
@@ -24,65 +31,74 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    console.log("DETALHES PAGAMENTO:", data);
+    console.log("💰 DETALHES PAGAMENTO:", JSON.stringify(data, null, 2));
 
     const status = data.status;
     const referencia = data.external_reference;
 
-    if (status !== "approved") {
+    if (!referencia) {
+      console.log("❌ external_reference não encontrada");
       return res.status(200).json({ ok: true });
     }
 
-    // 🔥 BUSCAR PEDIDO
-    const { data: pedido } = await supabase
+    // 🚫 Só processa pagamento aprovado
+    if (status !== "approved") {
+      console.log("⏳ Pagamento ainda não aprovado:", status);
+      return res.status(200).json({ ok: true });
+    }
+
+    // 🔎 BUSCAR PEDIDO
+    const { data: pedido, error: erroPedido } = await supabase
       .from("pedidos")
       .select("*")
       .eq("external_reference", referencia)
       .single();
 
-    if (!pedido) {
-      console.log("Pedido não encontrado, criando novo...");
-
-      await supabase.from("pedidos").insert([
-        {
-          produto: "Produto",
-          valor: data.transaction_amount,
-          status: "Pago",
-          external_reference: referencia,
-        },
-      ]);
-
+    if (erroPedido || !pedido) {
+      console.log("❌ Pedido não encontrado:", referencia);
       return res.status(200).json({ ok: true });
     }
 
     // ✅ ATUALIZA STATUS
-    await supabase
+    const { error: erroUpdate } = await supabase
       .from("pedidos")
       .update({ status: "Pago" })
       .eq("external_reference", referencia);
 
-    // 🔥 BAIXAR ESTOQUE
-    const { data: produto } = await supabase
+    if (erroUpdate) {
+      console.error("❌ Erro ao atualizar pedido:", erroUpdate);
+    } else {
+      console.log("✅ Pedido atualizado para PAGO");
+    }
+
+    // 🔥 ATUALIZA ESTOQUE
+    const { data: produto, error: erroProduto } = await supabase
       .from("produtos")
       .select("*")
       .eq("nome", pedido.produto)
       .single();
 
-    if (produto) {
+    if (!erroProduto && produto) {
       const novoEstoque = Math.max((produto.estoque || 0) - 1, 0);
 
-      await supabase
+      const { error: erroEstoque } = await supabase
         .from("produtos")
         .update({ estoque: novoEstoque })
         .eq("id", produto.id);
 
-      console.log("ESTOQUE ATUALIZADO");
+      if (erroEstoque) {
+        console.error("❌ Erro ao atualizar estoque:", erroEstoque);
+      } else {
+        console.log("📦 Estoque atualizado:", novoEstoque);
+      }
+    } else {
+      console.log("⚠️ Produto não encontrado para estoque:", pedido.produto);
     }
 
     return res.status(200).json({ ok: true });
 
   } catch (error) {
-    console.error("ERRO WEBHOOK:", error);
+    console.error("🔥 ERRO NO WEBHOOK:", error);
     return res.status(500).json({ error: "Erro no webhook" });
   }
 }
