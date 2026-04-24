@@ -114,7 +114,7 @@ export default async function handler(req, res) {
     }
 
     // ==============================
-    // 📲 ENVIO WHATSAPP (CORRIGIDO)
+    // 📲 ENVIO WHATSAPP (FINAL)
     // ==============================
     try {
       console.log("📲 Preparando envio WhatsApp...");
@@ -123,13 +123,13 @@ export default async function handler(req, res) {
       const token = process.env.ZAPI_TOKEN?.trim();
       const phone = process.env.ZAPI_PHONE?.trim();
 
-      console.log("📲 DEBUG VARIÁVEIS:");
+      console.log("📲 DEBUG:");
       console.log("INSTANCE:", instance);
       console.log("TOKEN:", token);
       console.log("PHONE:", phone);
 
       if (!instance || !token || !phone) {
-        console.error("❌ Variáveis ZAPI não configuradas corretamente");
+        console.error("❌ Variáveis ZAPI não configuradas");
         return res.status(200).json({ ok: true });
       }
 
@@ -151,15 +151,14 @@ CEP: ${pedido.cep}
       console.log("📲 Enviando WhatsApp...");
 
       const zapResponse = await fetch(
-        `https://api.z-api.io/instances/${instance}/send-text`,
+        `https://api.z-api.io/instances/${instance}/token/${token}/send-text`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Client-Token": token, // ✅ CORREÇÃO PRINCIPAL
           },
           body: JSON.stringify({
-            phone: phone, // 👉 SEU número (quem recebe)
+            phone: phone,
             message: mensagem,
           }),
         }
