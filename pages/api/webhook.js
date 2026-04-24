@@ -36,82 +36,105 @@ export default async function handler(req, res) {
     const status = data.status;
     const referencia = data.external_reference;
 
+    // 🚨 VALIDA REFERÊNCIA
     if (!referencia) {
-      console.error("❌ external_reference NÃO VEIO");
+      console.error("❌ external_reference NÃO VEIO DO MERCADO PAGO");
       return res.status(200).json({ ok: true });
     }
 
-    console.log("🔎 REFERENCIA:", referencia);
+    console.log("🔎 REFERENCIA RECEBIDA:", referencia);
 
-    // 🔎 BUSCAR PEDIDO
+    // 🔎 BUSCAR PEDIDO NO BANCO
     const { data: pedido, error: erroPedido } = await supabase
       .from("pedidos")
       .select("*")
       .eq("external_reference", referencia)
       .maybeSingle();
 
-    if (erroPedido || !pedido) {
-      console.error("❌ Pedido não encontrado:", erroPedido);
+    if (erroPedido) {
+      console.error("❌ ERRO AO BUSCAR PEDIDO:", erroPedido);
       return res.status(200).json({ ok: true });
     }
 
-    console.log("📦 PEDIDO:", pedido.id);
+    if (!pedido) {
+      console.error("❌ Pedido NÃO encontrado para referencia:", referencia);
+      return res.status(200).json({ ok: true });
+    }
 
+    console.log("📦 PEDIDO ENCONTRADO:", pedido.id);
+
+    // 🚫 SE NÃO FOI APROVADO AINDA
     if (status !== "approved") {
       console.log("⏳ Pagamento ainda não aprovado:", status);
       return res.status(200).json({ ok: true });
     }
 
-    // ✅ ATUALIZA PEDIDO
-    await supabase
+    // ✅ ATUALIZAR STATUS DO PEDIDO
+    const { error: erroUpdatePedido } = await supabase
       .from("pedidos")
       .update({ status: "Pago" })
       .eq("id", pedido.id);
 
-    console.log("✅ Pedido atualizado");
+    if (erroUpdatePedido) {
+      console.error("❌ ERRO AO ATUALIZAR PEDIDO:", erroUpdatePedido);
+    } else {
+      console.log("✅ Pedido atualizado para PAGO");
+    }
 
-    // 🔥 PRODUTO
-    const { data: produto } = await supabase
+    // 🔥 BUSCAR PRODUTO
+    const { data: produto, error: erroProduto } = await supabase
       .from("produtos")
       .select("*")
       .eq("nome", pedido.produto)
       .maybeSingle();
 
-    if (produto) {
-      const novoEstoque = Math.max((produto.estoque || 0) - 1, 0);
+    if (erroProduto) {
+      console.error("❌ ERRO AO BUSCAR PRODUTO:", erroProduto);
+      return res.status(200).json({ ok: true });
+    }
 
-      await supabase
-        .from("produtos")
-        .update({ estoque: novoEstoque })
-        .eq("id", produto.id);
+    if (!produto) {
+      console.error("❌ Produto NÃO encontrado:", pedido.produto);
+      return res.status(200).json({ ok: true });
+    }
 
+    // 🔻 DIMINUIR ESTOQUE
+    const estoqueAtual = Number(produto.estoque) || 0;
+    const novoEstoque = Math.max(estoqueAtual - 1, 0);
+
+    const { error: erroEstoque } = await supabase
+      .from("produtos")
+      .update({ estoque: novoEstoque })
+      .eq("id", produto.id);
+
+    if (erroEstoque) {
+      console.error("❌ ERRO AO ATUALIZAR ESTOQUE:", erroEstoque);
+    } else {
       console.log("📉 Estoque atualizado:", novoEstoque);
     }
 
     // ==============================
-    // 📲 ENVIO WHATSAPP
+    // 📲 ENVIO WHATSAPP (CORRIGIDO)
     // ==============================
     try {
-      console.log("📲 Enviando WhatsApp...");
+      console.log("📲 Preparando envio WhatsApp...");
 
-      // 🔒 LIMPEZA DAS VARIÁVEIS
       const instance = process.env.ZAPI_INSTANCE_ID?.trim();
       const token = process.env.ZAPI_TOKEN?.trim();
       const phone = process.env.ZAPI_PHONE?.trim();
 
-      // 🧪 DEBUG REAL
-      console.log("📌 INSTANCE:", instance);
-      console.log("📌 TOKEN:", token);
-      console.log("📌 PHONE:", phone);
+      console.log("📲 DEBUG VARIÁVEIS:");
+      console.log("INSTANCE:", instance);
+      console.log("TOKEN:", token);
+      console.log("PHONE:", phone);
 
-      // 🔥 MODO TESTE (DESCOMENTE SE QUISER TESTAR DIRETO)
-      /*
-      const instance = "3F20E67AE00542FF75B19E024201EAF7";
-      const token = "5A6EE9F51F3DF83F68804F9D";
-      const phone = "5511984309480";
-      */
+      if (!instance || !token || !phone) {
+        console.error("❌ Variáveis ZAPI não configuradas corretamente");
+        return res.status(200).json({ ok: true });
+      }
 
-      const mensagem = `🛒 *NOVO PEDIDO PAGO*
+      const mensagem = `
+🛒 *NOVO PEDIDO PAGO*
 
 👤 Cliente: ${pedido.nome_cliente}
 📞 Telefone: ${pedido.telefone}
@@ -122,35 +145,38 @@ export default async function handler(req, res) {
 📍 Endereço:
 ${pedido.rua}, ${pedido.numero}
 ${pedido.bairro} - ${pedido.cidade}/${pedido.estado}
-CEP: ${pedido.cep}`;
+CEP: ${pedido.cep}
+`;
 
-      const url = `https://api.z-api.io/instances/${instance}/token/${token}/send-text`;
+      console.log("📲 Enviando WhatsApp...");
 
-      console.log("🌐 URL FINAL:", url);
-
-      const zapResponse = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          phone,
-          message: mensagem,
-        }),
-      });
+      const zapResponse = await fetch(
+        `https://api.z-api.io/instances/${instance}/send-text`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Client-Token": token, // ✅ CORREÇÃO PRINCIPAL
+          },
+          body: JSON.stringify({
+            phone: phone, // 👉 SEU número (quem recebe)
+            message: mensagem,
+          }),
+        }
+      );
 
       const zapData = await zapResponse.json();
 
       console.log("📲 RESPOSTA ZAPI:", zapData);
 
     } catch (err) {
-      console.error("❌ ERRO WHATSAPP:", err);
+      console.error("❌ ERRO AO ENVIAR WHATSAPP:", err);
     }
 
     return res.status(200).json({ ok: true });
 
   } catch (error) {
-    console.error("❌ ERRO GERAL:", error);
+    console.error("❌ ERRO NO WEBHOOK:", error);
     return res.status(500).json({ error: "Erro no webhook" });
   }
 }
