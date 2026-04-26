@@ -1,4 +1,37 @@
 import { supabase } from "../../lib/supabase";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+// 📩 FUNÇÃO SEGURA DE EMAIL
+async function enviarEmailVenda(pedido) {
+  try {
+    await resend.emails.send({
+      from: "onboarding@resend.dev",
+      to: "romulojosepereirasilva@gmail.com",
+      subject: "🛒 Nova venda no site!",
+      html: `
+        <h2>Nova Venda 🚀</h2>
+        <p><strong>Cliente:</strong> ${pedido?.nome_cliente || "N/A"}</p>
+        <p><strong>Telefone:</strong> ${pedido?.telefone || "N/A"}</p>
+        <p><strong>Produto:</strong> ${pedido?.produto || "N/A"}</p>
+        <p><strong>Valor:</strong> R$ ${pedido?.valor || "0"}</p>
+        <p><strong>Frete:</strong> R$ ${pedido?.frete || "0"}</p>
+
+        <h3>Endereço:</h3>
+        <p>
+          ${pedido?.rua || ""}, ${pedido?.numero || ""}<br/>
+          ${pedido?.bairro || ""} - ${pedido?.cidade || ""}/${pedido?.estado || ""}<br/>
+          CEP: ${pedido?.cep || ""}
+        </p>
+      `,
+    });
+
+    console.log("📩 Email enviado com sucesso");
+  } catch (error) {
+    console.error("❌ ERRO AO ENVIAR EMAIL:", error.message);
+  }
+}
 
 export default async function handler(req, res) {
   try {
@@ -6,7 +39,6 @@ export default async function handler(req, res) {
 
     const body = req.body;
 
-    // ⚠️ Mercado Pago envia vários tipos de evento
     if (body.type !== "payment") {
       console.log("⚠️ Evento ignorado (não é pagamento)");
       return res.status(200).json({ ok: true });
@@ -19,7 +51,6 @@ export default async function handler(req, res) {
       return res.status(200).json({ ok: true });
     }
 
-    // 🔥 BUSCAR PAGAMENTO NO MERCADO PAGO
     const response = await fetch(
       `https://api.mercadopago.com/v1/payments/${paymentId}`,
       {
@@ -36,7 +67,6 @@ export default async function handler(req, res) {
     const status = data.status;
     const referencia = data.external_reference;
 
-    // 🚨 VALIDA REFERÊNCIA
     if (!referencia) {
       console.error("❌ external_reference NÃO VEIO DO MERCADO PAGO");
       return res.status(200).json({ ok: true });
@@ -44,7 +74,6 @@ export default async function handler(req, res) {
 
     console.log("🔎 REFERENCIA RECEBIDA:", referencia);
 
-    // 🔎 BUSCAR PEDIDO NO BANCO
     const { data: pedido, error: erroPedido } = await supabase
       .from("pedidos")
       .select("*")
@@ -63,13 +92,11 @@ export default async function handler(req, res) {
 
     console.log("📦 PEDIDO ENCONTRADO:", pedido.id);
 
-    // 🚫 SE NÃO FOI APROVADO AINDA
     if (status !== "approved") {
       console.log("⏳ Pagamento ainda não aprovado:", status);
       return res.status(200).json({ ok: true });
     }
 
-    // ✅ ATUALIZAR STATUS DO PEDIDO
     const { error: erroUpdatePedido } = await supabase
       .from("pedidos")
       .update({ status: "Pago" })
@@ -81,7 +108,6 @@ export default async function handler(req, res) {
       console.log("✅ Pedido atualizado para PAGO");
     }
 
-    // 🔥 BUSCAR PRODUTO
     const { data: produto, error: erroProduto } = await supabase
       .from("produtos")
       .select("*")
@@ -98,7 +124,6 @@ export default async function handler(req, res) {
       return res.status(200).json({ ok: true });
     }
 
-    // 🔻 DIMINUIR ESTOQUE
     const estoqueAtual = Number(produto.estoque) || 0;
     const novoEstoque = Math.max(estoqueAtual - 1, 0);
 
@@ -114,7 +139,12 @@ export default async function handler(req, res) {
     }
 
     // ==============================
-    // 📲 ENVIO WHATSAPP (FINAL)
+    // 📩 EMAIL (NOVO - SEGURO)
+    // ==============================
+    await enviarEmailVenda(pedido);
+
+    // ==============================
+    // 📲 WHATSAPP (EXISTENTE)
     // ==============================
     try {
       console.log("📲 Preparando envio WhatsApp...");
@@ -122,11 +152,6 @@ export default async function handler(req, res) {
       const instance = process.env.ZAPI_INSTANCE_ID?.trim();
       const token = process.env.ZAPI_TOKEN?.trim();
       const phone = process.env.ZAPI_PHONE?.trim();
-
-      console.log("📲 DEBUG:");
-      console.log("INSTANCE:", instance);
-      console.log("TOKEN:", token);
-      console.log("PHONE:", phone);
 
       if (!instance || !token || !phone) {
         console.error("❌ Variáveis ZAPI não configuradas");
@@ -148,15 +173,11 @@ ${pedido.bairro} - ${pedido.cidade}/${pedido.estado}
 CEP: ${pedido.cep}
 `;
 
-      console.log("📲 Enviando WhatsApp...");
-
       const zapResponse = await fetch(
         `https://api.z-api.io/instances/${instance}/token/${token}/send-text`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             phone: phone,
             message: mensagem,
