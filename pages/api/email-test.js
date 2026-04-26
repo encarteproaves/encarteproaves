@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   try {
     const data = await resend.emails.send({
       from: 'onboarding@resend.dev',
-      to: 'seuemail@gmail.com', // 🔴 COLOQUE SEU EMAIL AQUI
+      to: 'romulojosepereirasilva@gmail.com', // 🔴 COLOQUE SEU EMAIL AQUI
       subject: 'Teste de envio 🚀',
       html: '<h1>Email funcionando!</h1>',
     });
