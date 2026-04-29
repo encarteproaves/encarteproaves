@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function Home() {
@@ -221,7 +222,22 @@ export default function Home() {
                   </label>
                 </div>
               ))}
-
+<Link href={`/produto/${p.id}`}>
+  <a
+    style={{
+      display: "block",
+      marginTop: "5px",
+      width: "100%",
+      textAlign: "center",
+      padding: "10px",
+      background: "#ddd",
+      borderRadius: "4px",
+      cursor: "pointer"
+    }}
+  >
+    Ver detalhes
+  </a>
+</Link>
               <button onClick={() => compraSegura(p)}>Compra segura</button>
 
               <button onClick={() => falarWhatsapp(p)} style={{ background: "#25D366", color: "#fff", width: "100%", marginTop: "5px" }}>
