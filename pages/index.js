@@ -64,8 +64,12 @@ export default function Home() {
   }
 
   function falarWhatsapp(p) {
-    window.open(`https://wa.me/5511984309480?text=Tenho interesse no produto ${p.nome}`);
-  }
+  const mensagem = encodeURIComponent(
+    `Olá, tenho interesse no produto ${p?.nome || ""}`
+  );
+
+  window.open(`https://wa.me/5511984309480?text=${mensagem}`);
+}
 
   function formatarMoeda(v) {
     return Number(v || 0).toFixed(2);
