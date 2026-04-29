@@ -1,81 +1,28 @@
-import { supabase } from '../../lib/supabase'
+import { supabase } from "../../lib/supabase";
 
 export default async function handler(req, res) {
-  const { method } = req
+  try {
+    const { id } = req.query;
 
-  // 🔓 GET é público (mostrar produtos)
-  if (method === 'GET') {
-    const { data, error } = await supabase
-      .from('produtos')
-      .select('*')
-      .eq('ativo', true)
-      .order('created_at', { ascending: false })
-
-    if (error) return res.status(500).json({ error })
-
-    return res.status(200).json(data)
-  }
-
-  // 🔒 PROTEÇÃO PARA MÉTODOS SENSÍVEIS
-  const token = req.headers.authorization
-
-  if (token !== process.env.ADMIN_TOKEN) {
-    return res.status(401).json({ error: 'Não autorizado' })
-  }
-
-  // ➕ CRIAR PRODUTO
-  if (method === 'POST') {
-    const { nome, preco, descricao, imagem, estoque } = req.body
+    if (!id) {
+      return res.status(400).json({ error: "ID não informado" });
+    }
 
     const { data, error } = await supabase
-      .from('produtos')
-      .insert([{
-        nome,
-        preco,
-        descricao,
-        imagem,
-        estoque,
-        ativo: true
-      }])
+      .from("produtos")
+      .select("*")
+      .eq("id", id)
+      .single();
 
-    if (error) return res.status(500).json({ error })
+    if (error) {
+      console.error("Erro ao buscar produto:", error);
+      return res.status(404).json({ error: "Produto não encontrado" });
+    }
 
-    return res.status(200).json(data)
+    return res.status(200).json(data);
+
+  } catch (err) {
+    console.error("Erro geral:", err);
+    return res.status(500).json({ error: "Erro interno" });
   }
-
-  // ✏️ ATUALIZAR PRODUTO (CORRIGIDO)
-  if (method === 'PUT') {
-    const { id, nome, preco, descricao, imagem, estoque } = req.body
-
-    const { data, error } = await supabase
-      .from('produtos')
-      .update({
-        ...(nome !== undefined && { nome }),
-        ...(preco !== undefined && { preco }),
-        ...(descricao !== undefined && { descricao }),
-        ...(imagem !== undefined && { imagem }),
-        ...(estoque !== undefined && { estoque }),
-      })
-      .eq('id', id)
-
-    if (error) return res.status(500).json({ error })
-
-    return res.status(200).json(data)
-  }
-
-  // ❌ EXCLUIR
-  if (method === 'DELETE') {
-    const { id } = req.body
-
-    const { error } = await supabase
-      .from('produtos')
-      .delete()
-      .eq('id', id)
-
-    if (error) return res.status(500).json({ error })
-
-    return res.status(200).json({ success: true })
-  }
-
-  return res.status(405).json({ message: 'Método não permitido' })
 }
