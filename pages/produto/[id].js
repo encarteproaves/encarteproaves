@@ -14,9 +14,6 @@ export default function ProdutoPage() {
   const [loadingFrete, setLoadingFrete] = useState(false);
   const [cepErro, setCepErro] = useState(false);
 
-  // =============================
-  // BUSCAR PRODUTO
-  // =============================
   useEffect(() => {
     if (!id) return;
 
@@ -35,9 +32,6 @@ export default function ProdutoPage() {
     fetchProduto();
   }, [id]);
 
-  // =============================
-  // BUSCAR CEP AUTOMÁTICO
-  // =============================
   useEffect(() => {
     if (!cliente.cep || cliente.cep.length < 8) return;
 
@@ -62,7 +56,7 @@ export default function ProdutoPage() {
           cidade: data.localidade || "",
           estado: data.uf || "",
         }));
-      } catch (err) {
+      } catch {
         setCepErro(true);
       }
     }
@@ -70,9 +64,6 @@ export default function ProdutoPage() {
     buscarCep();
   }, [cliente.cep]);
 
-  // =============================
-  // INPUTS
-  // =============================
   function handleChange(campo, valor) {
     setCliente((prev) => ({
       ...prev,
@@ -80,9 +71,6 @@ export default function ProdutoPage() {
     }));
   }
 
-  // =============================
-  // CALCULAR FRETE
-  // =============================
   async function calcularFrete() {
     try {
       if (!cliente.cep) return alert("Digite o CEP");
@@ -104,12 +92,10 @@ export default function ProdutoPage() {
 
       let lista = data.options || data || [];
 
-      // remover fretes zerados
       lista = lista.filter(
         (f) => Number(f.price || f.cost || f.valor || 0) > 0
       );
 
-      // ordenar do mais barato para o mais caro
       lista.sort(
         (a, b) =>
           Number(a.price || a.cost || a.valor || 0) -
@@ -124,9 +110,6 @@ export default function ProdutoPage() {
     }
   }
 
-  // =============================
-  // TOTAL
-  // =============================
   const valorProduto = Number(produto?.preco || 0);
   const valorFrete = Number(
     freteSelecionado?.price ||
@@ -137,9 +120,6 @@ export default function ProdutoPage() {
 
   const total = valorProduto + valorFrete;
 
-  // =============================
-  // WHATSAPP
-  // =============================
   function falarWhatsapp() {
     const mensagem = encodeURIComponent(
       `Olá, tenho interesse no produto ${produto?.nome}`
@@ -150,9 +130,6 @@ export default function ProdutoPage() {
     );
   }
 
-  // =============================
-  // COMPRA SEGURA
-  // =============================
   async function comprar() {
     if (!cliente.nome || !cliente.telefone || !cliente.cep) {
       return alert("Preencha os dados obrigatórios");
@@ -190,13 +167,14 @@ export default function ProdutoPage() {
   if (loading) return <p style={{ textAlign: "center" }}>Carregando...</p>;
   if (!produto) return <p>Produto não encontrado</p>;
 
-  // =============================
-  // RENDER
-  // =============================
   return (
     <div style={container}>
       <div style={card}>
-        <img src={produto.imagem} style={img} />
+        
+        {/* IMAGEM CORRIGIDA */}
+        <div style={imgContainer}>
+          <img src={produto.imagem} style={img} />
+        </div>
 
         <div style={{ flex: 1 }}>
           <h1>{produto.nome}</h1>
@@ -210,7 +188,6 @@ export default function ProdutoPage() {
 
           <p>{produto.descricao}</p>
 
-          {/* DESCRIÇÃO COMPLETA */}
           {produto.descricao_completa && (
             <div style={descricaoBox}>
               {produto.descricao_completa}
@@ -223,7 +200,6 @@ export default function ProdutoPage() {
 
           <hr />
 
-          {/* FORM */}
           <input
             placeholder="Digite seu CEP"
             style={{ ...input, borderColor: cepErro ? "red" : "#ccc" }}
@@ -243,7 +219,6 @@ export default function ProdutoPage() {
           <input placeholder="Cidade" style={input} value={cliente.cidade || ""} onChange={(e) => handleChange("cidade", e.target.value)} />
           <input placeholder="Estado" style={input} value={cliente.estado || ""} onChange={(e) => handleChange("estado", e.target.value)} />
 
-          {/* CANTO SOMENTE PEN DRIVE */}
           {produto.nome?.toLowerCase().includes("pen drive") && (
             <input
               placeholder="Digite o canto"
@@ -262,7 +237,6 @@ export default function ProdutoPage() {
             </button>
           </div>
 
-          {/* FRETES */}
           {loadingFrete && <p>Calculando frete...</p>}
 
           {fretes.map((f, i) => {
@@ -275,7 +249,6 @@ export default function ProdutoPage() {
                   name="frete"
                   onChange={() => setFreteSelecionado(f)}
                 />
-
                 {f.name} -{" "}
                 {valor.toLocaleString("pt-BR", {
                   style: "currency",
@@ -286,7 +259,6 @@ export default function ProdutoPage() {
             );
           })}
 
-          {/* TOTAL */}
           <h3 style={{ marginTop: 10 }}>
             Total:{" "}
             {total.toLocaleString("pt-BR", {
@@ -304,9 +276,6 @@ export default function ProdutoPage() {
   );
 }
 
-// =============================
-// ESTILOS
-// =============================
 const container = {
   padding: 20,
 };
@@ -319,9 +288,24 @@ const card = {
   flexWrap: "wrap",
 };
 
-const img = {
-  width: 320,
+/* 🔥 NOVO CONTAINER */
+const imgContainer = {
+  width: 350,
+  height: 350,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  background: "#fff",
+  border: "1px solid #eee",
   borderRadius: 10,
+};
+
+/* 🔥 IMAGEM CORRIGIDA */
+const img = {
+  width: "100%",
+  maxWidth: 320,
+  height: "auto",
+  objectFit: "contain",
 };
 
 const input = {
