@@ -77,15 +77,15 @@ export default function ProdutoPage() {
   if (loading) return <p style={{ textAlign: "center" }}>Carregando...</p>;
   if (!produto) return <p>Produto não encontrado</p>;
 
-  // 🔥 CÁLCULO TOTAL
+  // 🔥 VALORES
+  const valorProduto = Number(produto?.preco || 0);
+
   const valorFrete = Number(
     freteSelecionado?.price ||
     freteSelecionado?.cost ||
     freteSelecionado?.valor ||
     0
   );
-
-  const valorProduto = Number(produto?.preco || 0);
 
   const valorTotal = valorProduto + valorFrete;
 
@@ -132,7 +132,14 @@ export default function ProdutoPage() {
           <input placeholder="Cidade" style={input} onChange={(e) => handleChange("cidade", e.target.value)} />
           <input placeholder="Estado" style={input} onChange={(e) => handleChange("estado", e.target.value)} />
 
-          <input placeholder="Digite o canto" style={input} onChange={(e) => handleChange("canto", e.target.value)} />
+          {/* ✅ CAMPO CANTO SOMENTE PEN DRIVE */}
+          {produto?.nome === "Pen Drive 8GB" && (
+            <input
+              placeholder="Digite o canto"
+              style={input}
+              onChange={(e) => handleChange("canto", e.target.value)}
+            />
+          )}
 
           {/* BOTÕES */}
           <div style={{ marginTop: 10 }}>
@@ -160,14 +167,13 @@ export default function ProdutoPage() {
                 const valor = Number(f.price || f.cost || f.valor || 0);
 
                 return (
-                  <div key={i} style={{ marginBottom: 8 }}>
-                    <label style={{ cursor: "pointer" }}>
+                  <div key={i}>
+                    <label>
                       <input
                         type="radio"
                         name="frete"
                         onChange={() => setFreteSelecionado(f)}
                       />
-
                       {" "}
                       {f.name} -{" "}
                       {valor.toLocaleString("pt-BR", {
@@ -180,9 +186,9 @@ export default function ProdutoPage() {
                 );
               })}
 
-          {/* ✅ TOTAL NA TELA */}
+          {/* TOTAL */}
           {freteSelecionado && (
-            <div style={{ marginTop: 15, padding: 10, border: "1px solid #ccc" }}>
+            <div style={{ marginTop: 15, border: "1px solid #ccc", padding: 10 }}>
               <p>
                 Produto:{" "}
                 {valorProduto.toLocaleString("pt-BR", {
