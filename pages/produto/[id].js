@@ -153,7 +153,10 @@ export default function ProdutoPage() {
           {/* FRETE */}
           {loadingFrete && <p>Calculando frete...</p>}
 
-          {Array.isArray(fretes) && fretes.map((f, i) => (
+          {Array.isArray(fretes) &&
+  fretes
+    .filter(f => Number(f.price || f.cost || f.valor || 0) > 0)
+    .map((f, i) => (
             <div key={i} style={{ marginBottom: 8 }}>
               <label style={{ cursor: "pointer" }}>
                 <input
