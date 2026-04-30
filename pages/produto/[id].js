@@ -64,6 +64,52 @@ export default function ProdutoPage() {
     }
   }
 
+  // 🔥 NOVO: FUNÇÃO DE COMPRA
+  async function comprar() {
+    try {
+      if (!freteSelecionado) {
+        alert("Selecione um frete antes de continuar");
+        return;
+      }
+
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nome: produto.nome,
+          preco: produto.preco,
+          frete: freteSelecionado,
+
+          nome_cliente: cliente.nome,
+          telefone: cliente.telefone,
+          cpf: cliente.cpf,
+
+          cep: cliente.cep,
+          endereco: cliente.endereco,
+          numero: cliente.numero,
+          bairro: cliente.bairro,
+          cidade: cliente.cidade,
+          estado: cliente.estado,
+
+          canto: cliente.canto,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.init_point) {
+        window.location.href = data.init_point;
+      } else {
+        alert("Erro ao iniciar pagamento");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Erro no checkout");
+    }
+  }
+
   function falarWhatsapp() {
     const mensagem = encodeURIComponent(
       `Olá, tenho interesse no produto ${produto?.nome || ""}`
@@ -77,7 +123,6 @@ export default function ProdutoPage() {
   if (loading) return <p style={{ textAlign: "center" }}>Carregando...</p>;
   if (!produto) return <p>Produto não encontrado</p>;
 
-  // 🔥 VALORES
   const valorProduto = Number(produto?.preco || 0);
 
   const valorFrete = Number(
@@ -132,7 +177,7 @@ export default function ProdutoPage() {
           <input placeholder="Cidade" style={input} onChange={(e) => handleChange("cidade", e.target.value)} />
           <input placeholder="Estado" style={input} onChange={(e) => handleChange("estado", e.target.value)} />
 
-          {/* ✅ CAMPO CANTO SOMENTE PEN DRIVE */}
+          {/* CAMPO CANTO SOMENTE PEN DRIVE */}
           {produto?.nome === "Pen Drive 8GB" && (
             <input
               placeholder="Digite o canto"
@@ -147,7 +192,7 @@ export default function ProdutoPage() {
               Calcular Frete
             </button>
 
-            <button style={btn}>
+            <button style={btn} onClick={comprar}>
               Compra segura
             </button>
           </div>
