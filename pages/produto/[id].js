@@ -13,6 +13,9 @@ export default function ProdutoPage() {
   const [loadingFrete, setLoadingFrete] = useState(false);
   const [freteSelecionado, setFreteSelecionado] = useState(null);
 
+  // =========================
+  // BUSCAR PRODUTO
+  // =========================
   useEffect(() => {
     if (!id) return;
 
@@ -31,6 +34,9 @@ export default function ProdutoPage() {
     fetchProduto();
   }, [id]);
 
+  // =========================
+  // HANDLE INPUT
+  // =========================
   function handleChange(campo, valor) {
     setCliente((prev) => ({
       ...prev,
@@ -38,6 +44,48 @@ export default function ProdutoPage() {
     }));
   }
 
+  // =========================
+  // FORMATA CEP (00000-000)
+  // =========================
+  function formatarCEP(valor) {
+    const cep = valor.replace(/\D/g, "").slice(0, 8);
+    if (cep.length <= 5) return cep;
+    return cep.replace(/(\d{5})(\d+)/, "$1-$2");
+  }
+
+  // =========================
+  // BUSCAR CEP (VIACEP)
+  // =========================
+  async function buscarCEP(cep) {
+    const cepLimpo = cep.replace(/\D/g, "");
+
+    if (cepLimpo.length !== 8) return;
+
+    try {
+      const res = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
+      const data = await res.json();
+
+      if (data.erro) {
+        console.log("CEP não encontrado");
+        return;
+      }
+
+      setCliente((prev) => ({
+        ...prev,
+        endereco: data.logradouro || "",
+        bairro: data.bairro || "",
+        cidade: data.localidade || "",
+        estado: data.uf || "",
+      }));
+
+    } catch (err) {
+      console.error("Erro ao buscar CEP:", err);
+    }
+  }
+
+  // =========================
+  // CALCULAR FRETE
+  // =========================
   async function calcularFrete() {
     try {
       setLoadingFrete(true);
@@ -55,22 +103,15 @@ export default function ProdutoPage() {
 
       const data = await res.json();
 
-      console.log("FRETES API:", data);
+      const lista = data?.options || data || [];
 
-      const lista =
-        data?.options || data || [];
-
-      // filtrar frete válido (> 0)
-      const filtrados = lista.filter(
-        (f) => Number(f.price || f.cost || f.valor || 0) > 0
-      );
-
-      // ordenar do mais barato para o mais caro
-      filtrados.sort(
-        (a, b) =>
-          Number(a.price || a.cost || a.valor || 0) -
-          Number(b.price || b.cost || b.valor || 0)
-      );
+      const filtrados = lista
+        .filter((f) => Number(f.price || f.cost || f.valor || 0) > 0)
+        .sort(
+          (a, b) =>
+            Number(a.price || a.cost || a.valor || 0) -
+            Number(b.price || b.cost || b.valor || 0)
+        );
 
       setFretes(filtrados);
 
@@ -81,6 +122,9 @@ export default function ProdutoPage() {
     }
   }
 
+  // =========================
+  // VALIDAR CAMPOS
+  // =========================
   function validarCampos() {
     if (!cliente.nome) return "Digite seu nome";
     if (!cliente.telefone) return "Digite o telefone";
@@ -90,10 +134,10 @@ export default function ProdutoPage() {
     return null;
   }
 
+  // =========================
+  // COMPRAR
+  // =========================
   async function comprar() {
-    console.log("BOTÃO CLICADO");
-    console.log("FRETE:", freteSelecionado);
-
     const erro = validarCampos();
 
     if (erro) {
@@ -102,7 +146,7 @@ export default function ProdutoPage() {
     }
 
     if (!freteSelecionado) {
-      alert("Selecione um frete antes de continuar");
+      alert("Selecione um frete");
       return;
     }
 
@@ -134,16 +178,14 @@ export default function ProdutoPage() {
 
       const data = await res.json();
 
-      console.log("CHECKOUT:", data);
-
       if (data.init_point) {
         window.location.href = data.init_point;
       } else {
-        alert("Erro ao iniciar pagamento");
+        alert("Erro no pagamento");
       }
 
     } catch (err) {
-      console.error("Erro checkout:", err);
+      console.error(err);
       alert("Erro no checkout");
     }
   }
@@ -164,16 +206,10 @@ export default function ProdutoPage() {
     <div style={{ padding: 20, maxWidth: 1000, margin: "0 auto" }}>
       <div style={{ display: "flex", gap: 40, flexWrap: "wrap" }}>
 
-        {/* IMAGEM */}
         <div>
-          <img
-            src={produto.imagem}
-            alt={produto.nome}
-            style={{ width: 300 }}
-          />
+          <img src={produto.imagem} style={{ width: 300 }} />
         </div>
 
-        {/* INFO */}
         <div style={{ flex: 1 }}>
           <h1>{produto.nome}</h1>
 
@@ -187,21 +223,32 @@ export default function ProdutoPage() {
           <p>{produto.descricao}</p>
 
           <p style={{ color: "red" }}>
-            Restam apenas {produto.estoque} unidades
+            Restam {produto.estoque} unidades
           </p>
 
           <hr />
 
-          {/* FORM */}
-          <input placeholder="Digite seu CEP" style={input} onChange={(e)=>handleChange("cep", e.target.value)} />
+          {/* CEP */}
+          <input
+            placeholder="Digite seu CEP"
+            style={input}
+            value={cliente.cep || ""}
+            onChange={(e) => {
+              const formatado = formatarCEP(e.target.value);
+              handleChange("cep", formatado);
+              buscarCEP(formatado);
+            }}
+          />
+
           <input placeholder="Seu nome" style={input} onChange={(e)=>handleChange("nome", e.target.value)} />
           <input placeholder="Telefone" style={input} onChange={(e)=>handleChange("telefone", e.target.value)} />
           <input placeholder="CPF" style={input} onChange={(e)=>handleChange("cpf", e.target.value)} />
-          <input placeholder="Endereço" style={input} onChange={(e)=>handleChange("endereco", e.target.value)} />
+
+          <input placeholder="Endereço" style={input} value={cliente.endereco || ""} onChange={(e)=>handleChange("endereco", e.target.value)} />
           <input placeholder="Número" style={input} onChange={(e)=>handleChange("numero", e.target.value)} />
-          <input placeholder="Bairro" style={input} onChange={(e)=>handleChange("bairro", e.target.value)} />
-          <input placeholder="Cidade" style={input} onChange={(e)=>handleChange("cidade", e.target.value)} />
-          <input placeholder="Estado" style={input} onChange={(e)=>handleChange("estado", e.target.value)} />
+          <input placeholder="Bairro" style={input} value={cliente.bairro || ""} onChange={(e)=>handleChange("bairro", e.target.value)} />
+          <input placeholder="Cidade" style={input} value={cliente.cidade || ""} onChange={(e)=>handleChange("cidade", e.target.value)} />
+          <input placeholder="Estado" style={input} value={cliente.estado || ""} onChange={(e)=>handleChange("estado", e.target.value)} />
 
           {/* CANTO SOMENTE PEN DRIVE */}
           {produto.nome?.toLowerCase().includes("pen drive") && (
@@ -213,16 +260,10 @@ export default function ProdutoPage() {
           )}
 
           <div style={{ marginTop: 10 }}>
-            <button style={btn} onClick={calcularFrete}>
-              Calcular Frete
-            </button>
-
-            <button style={btn} onClick={comprar}>
-              Compra segura
-            </button>
+            <button style={btn} onClick={calcularFrete}>Calcular Frete</button>
+            <button style={btn} onClick={comprar}>Compra segura</button>
           </div>
 
-          {/* FRETES */}
           {loadingFrete && <p>Calculando frete...</p>}
 
           {fretes.map((f, i) => (
@@ -231,10 +272,7 @@ export default function ProdutoPage() {
                 <input
                   type="radio"
                   name="frete"
-                  onChange={() => {
-                    console.log("FRETE SELECIONADO:", f);
-                    setFreteSelecionado(f);
-                  }}
+                  onChange={() => setFreteSelecionado(f)}
                 />
 
                 {f.name} - {Number(f.price || f.cost || f.valor || 0).toLocaleString("pt-BR", {
@@ -245,8 +283,7 @@ export default function ProdutoPage() {
             </div>
           ))}
 
-          {/* TOTAL */}
-          <h3 style={{ marginTop: 10 }}>
+          <h3>
             Total: {total.toLocaleString("pt-BR", {
               style: "currency",
               currency: "BRL",
