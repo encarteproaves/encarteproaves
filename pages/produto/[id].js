@@ -54,8 +54,6 @@ export default function ProdutoPage() {
       });
 
       const data = await res.json();
-      console.log("FRETES API:", data);
-
       setFretes(data.options || data || []);
     } catch (err) {
       console.error("Erro frete:", err);
@@ -64,14 +62,39 @@ export default function ProdutoPage() {
     }
   }
 
-  // 🔥 NOVO: FUNÇÃO DE COMPRA
-  async function comprar() {
-    try {
-      if (!freteSelecionado) {
-        alert("Selecione um frete antes de continuar");
-        return;
-      }
+  // 🔥 VALIDAÇÃO COMPLETA
+  function validarCampos() {
+    if (!cliente.nome) return "Preencha o nome";
+    if (!cliente.telefone) return "Preencha o telefone";
+    if (!cliente.cpf) return "Preencha o CPF";
+    if (!cliente.cep) return "Preencha o CEP";
+    if (!cliente.endereco) return "Preencha o endereço";
+    if (!cliente.numero) return "Preencha o número";
+    if (!cliente.cidade) return "Preencha a cidade";
+    if (!cliente.estado) return "Preencha o estado";
 
+    if (produto?.nome === "Pen Drive 8GB" && !cliente.canto) {
+      return "Digite o canto desejado";
+    }
+
+    return null;
+  }
+
+  // 🔥 COMPRA
+  async function comprar() {
+    const erro = validarCampos();
+
+    if (erro) {
+      alert(erro);
+      return;
+    }
+
+    if (!freteSelecionado) {
+      alert("Selecione um frete antes de continuar");
+      return;
+    }
+
+    try {
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: {
@@ -137,8 +160,6 @@ export default function ProdutoPage() {
   return (
     <div style={{ padding: 20, maxWidth: 1000, margin: "0 auto" }}>
       <div style={{ display: "flex", gap: 40, flexWrap: "wrap" }}>
-
-        {/* IMAGEM */}
         <div>
           <img
             src={produto.imagem}
@@ -147,7 +168,6 @@ export default function ProdutoPage() {
           />
         </div>
 
-        {/* INFO */}
         <div style={{ flex: 1 }}>
           <h1>{produto.nome}</h1>
 
@@ -177,7 +197,7 @@ export default function ProdutoPage() {
           <input placeholder="Cidade" style={input} onChange={(e) => handleChange("cidade", e.target.value)} />
           <input placeholder="Estado" style={input} onChange={(e) => handleChange("estado", e.target.value)} />
 
-          {/* CAMPO CANTO SOMENTE PEN DRIVE */}
+          {/* CANTO */}
           {produto?.nome === "Pen Drive 8GB" && (
             <input
               placeholder="Digite o canto"
@@ -186,7 +206,6 @@ export default function ProdutoPage() {
             />
           )}
 
-          {/* BOTÕES */}
           <div style={{ marginTop: 10 }}>
             <button style={btn} onClick={calcularFrete}>
               Calcular Frete
@@ -197,7 +216,6 @@ export default function ProdutoPage() {
             </button>
           </div>
 
-          {/* FRETE */}
           {loadingFrete && <p>Calculando frete...</p>}
 
           {Array.isArray(fretes) &&
@@ -231,38 +249,17 @@ export default function ProdutoPage() {
                 );
               })}
 
-          {/* TOTAL */}
           {freteSelecionado && (
             <div style={{ marginTop: 15, border: "1px solid #ccc", padding: 10 }}>
-              <p>
-                Produto:{" "}
-                {valorProduto.toLocaleString("pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
-                })}
-              </p>
-
-              <p>
-                Frete:{" "}
-                {valorFrete.toLocaleString("pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
-                })}
-              </p>
-
+              <p>Produto: {valorProduto.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</p>
+              <p>Frete: {valorFrete.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</p>
               <hr />
-
               <p style={{ fontWeight: "bold", fontSize: 18 }}>
-                Total:{" "}
-                {valorTotal.toLocaleString("pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
-                })}
+                Total: {valorTotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
               </p>
             </div>
           )}
 
-          {/* WHATSAPP */}
           <button style={whats} onClick={falarWhatsapp}>
             Falar no WhatsApp
           </button>
