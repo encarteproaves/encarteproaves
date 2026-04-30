@@ -8,6 +8,10 @@ export default function ProdutoPage() {
   const [produto, setProduto] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const [cliente, setCliente] = useState({});
+  const [fretes, setFretes] = useState([]);
+  const [loadingFrete, setLoadingFrete] = useState(false);
+
   useEffect(() => {
     if (!id) return;
 
@@ -15,7 +19,6 @@ export default function ProdutoPage() {
       try {
         const res = await fetch(`/api/produto?id=${id}`);
         const data = await res.json();
-
         setProduto(data);
       } catch (error) {
         console.error("Erro ao buscar produto:", error);
@@ -27,14 +30,54 @@ export default function ProdutoPage() {
     fetchProduto();
   }, [id]);
 
-  if (loading) return <p style={{ textAlign: "center" }}>Carregando...</p>;
+  function handleChange(campo, valor) {
+    setCliente((prev) => ({
+      ...prev,
+      [campo]: valor,
+    }));
+  }
 
+  async function calcularFrete() {
+    try {
+      setLoadingFrete(true);
+
+      const res = await fetch("/api/frete", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          cep: cliente.cep,
+          produtoId: produto.id,
+        }),
+      });
+
+      const data = await res.json();
+      setFretes(data || []);
+    } catch (err) {
+      console.error("Erro frete:", err);
+    } finally {
+      setLoadingFrete(false);
+    }
+  }
+
+  function falarWhatsapp() {
+    const mensagem = encodeURIComponent(
+      `Olá, tenho interesse no produto ${produto?.nome || ""}`
+    );
+
+    window.open(
+      `https://api.whatsapp.com/send?phone=5511981309480&text=${mensagem}`
+    );
+  }
+
+  if (loading) return <p style={{ textAlign: "center" }}>Carregando...</p>;
   if (!produto) return <p>Produto não encontrado</p>;
 
   return (
     <div style={{ padding: 20, maxWidth: 1000, margin: "0 auto" }}>
       <div style={{ display: "flex", gap: 40, flexWrap: "wrap" }}>
-        
+
         {/* IMAGEM */}
         <div>
           <img
@@ -48,8 +91,12 @@ export default function ProdutoPage() {
         <div style={{ flex: 1 }}>
           <h1>{produto.nome}</h1>
 
+          {/* ✅ PREÇO CORRIGIDO BR */}
           <h2 style={{ color: "green" }}>
-            R$ {Number(produto.preco).toFixed(2)}
+            {Number(produto.preco || 0).toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            })}
           </h2>
 
           <p>{produto.descricao}</p>
@@ -61,22 +108,41 @@ export default function ProdutoPage() {
           <hr />
 
           {/* FORMULÁRIO */}
-          <input placeholder="Digite seu CEP" style={input} />
-          <input placeholder="Seu nome" style={input} />
-          <input placeholder="Telefone" style={input} />
-          <input placeholder="CPF" style={input} />
-          <input placeholder="Endereço" style={input} />
-          <input placeholder="Número" style={input} />
-          <input placeholder="Bairro" style={input} />
-          <input placeholder="Cidade" style={input} />
-          <input placeholder="Estado" style={input} />
+          <input placeholder="Digite seu CEP" style={input} onChange={(e) => handleChange("cep", e.target.value)} />
+          <input placeholder="Seu nome" style={input} onChange={(e) => handleChange("nome", e.target.value)} />
+          <input placeholder="Telefone" style={input} onChange={(e) => handleChange("telefone", e.target.value)} />
+          <input placeholder="CPF" style={input} onChange={(e) => handleChange("cpf", e.target.value)} />
+          <input placeholder="Endereço" style={input} onChange={(e) => handleChange("endereco", e.target.value)} />
+          <input placeholder="Número" style={input} onChange={(e) => handleChange("numero", e.target.value)} />
+          <input placeholder="Bairro" style={input} onChange={(e) => handleChange("bairro", e.target.value)} />
+          <input placeholder="Cidade" style={input} onChange={(e) => handleChange("cidade", e.target.value)} />
+          <input placeholder="Estado" style={input} onChange={(e) => handleChange("estado", e.target.value)} />
 
+          {/* ✅ CAMPO CANTO RESTAURADO */}
+          <input placeholder="Digite o canto" style={input} onChange={(e) => handleChange("canto", e.target.value)} />
+
+          {/* BOTÕES */}
           <div style={{ marginTop: 10 }}>
-            <button style={btn}>Calcular Frete</button>
-            <button style={btn}>Compra segura</button>
+            <button style={btn} onClick={calcularFrete}>
+              Calcular Frete
+            </button>
+
+            <button style={btn}>
+              Compra segura
+            </button>
           </div>
 
-          <button style={whats}>
+          {/* FRETE */}
+          {loadingFrete && <p>Calculando frete...</p>}
+
+          {fretes.map((f, i) => (
+            <div key={i}>
+              {f.name} - R$ {Number(f.price).toFixed(2)} ({f.delivery_time} dias)
+            </div>
+          ))}
+
+          {/* WHATSAPP */}
+          <button style={whats} onClick={falarWhatsapp}>
             Falar no WhatsApp
           </button>
         </div>
@@ -104,4 +170,5 @@ const whats = {
   backgroundColor: "green",
   color: "white",
   border: "none",
+  cursor: "pointer",
 };
