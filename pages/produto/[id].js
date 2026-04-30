@@ -11,6 +11,7 @@ export default function ProdutoPage() {
   const [cliente, setCliente] = useState({});
   const [fretes, setFretes] = useState([]);
   const [loadingFrete, setLoadingFrete] = useState(false);
+  const [freteSelecionado, setFreteSelecionado] = useState(null);
 
   useEffect(() => {
     if (!id) return;
@@ -53,7 +54,9 @@ export default function ProdutoPage() {
       });
 
       const data = await res.json();
-      setFretes(data || []);
+      console.log("FRETES API:", data);
+
+      setFretes(data.options || data || []);
     } catch (err) {
       console.error("Erro frete:", err);
     } finally {
@@ -67,7 +70,7 @@ export default function ProdutoPage() {
     );
 
     window.open(
-      `https://api.whatsapp.com/send?phone=5511981309480&text=${mensagem}`
+      `https://api.whatsapp.com/send?phone=5511984309480&text=${mensagem}`
     );
   }
 
@@ -77,7 +80,7 @@ export default function ProdutoPage() {
   return (
     <div style={{ padding: 20, maxWidth: 1000, margin: "0 auto" }}>
       <div style={{ display: "flex", gap: 40, flexWrap: "wrap" }}>
-
+        
         {/* IMAGEM */}
         <div>
           <img
@@ -91,7 +94,6 @@ export default function ProdutoPage() {
         <div style={{ flex: 1 }}>
           <h1>{produto.nome}</h1>
 
-          {/* ✅ PREÇO CORRIGIDO BR */}
           <h2 style={{ color: "green" }}>
             {Number(produto.preco || 0).toLocaleString("pt-BR", {
               style: "currency",
@@ -118,7 +120,7 @@ export default function ProdutoPage() {
           <input placeholder="Cidade" style={input} onChange={(e) => handleChange("cidade", e.target.value)} />
           <input placeholder="Estado" style={input} onChange={(e) => handleChange("estado", e.target.value)} />
 
-          {/* ✅ CAMPO CANTO RESTAURADO */}
+          {/* CAMPO CANTO */}
           <input placeholder="Digite o canto" style={input} onChange={(e) => handleChange("canto", e.target.value)} />
 
           {/* BOTÕES */}
@@ -127,7 +129,23 @@ export default function ProdutoPage() {
               Calcular Frete
             </button>
 
-            <button style={btn}>
+            <button
+              style={btn}
+              onClick={() => {
+                if (!freteSelecionado) {
+                  alert("Selecione um frete primeiro");
+                  return;
+                }
+
+                console.log("CHECKOUT:", {
+                  produto,
+                  frete: freteSelecionado,
+                  cliente,
+                });
+
+                // 🔥 aqui futuramente entra Mercado Pago
+              }}
+            >
               Compra segura
             </button>
           </div>
@@ -135,13 +153,33 @@ export default function ProdutoPage() {
           {/* FRETE */}
           {loadingFrete && <p>Calculando frete...</p>}
 
-          {fretes.map((f, i) => (
-            <div key={i}>
-              {f.name} - R$ {Number(f.price).toFixed(2)} ({f.delivery_time} dias)
+          {Array.isArray(fretes) && fretes.map((f, i) => (
+            <div key={i} style={{ marginBottom: 8 }}>
+              <label style={{ cursor: "pointer" }}>
+                <input
+                  type="radio"
+                  name="frete"
+                  onChange={() => setFreteSelecionado(f)}
+                />
+
+                {" "}
+                {f.name} - {
+                  Number(f.price || f.cost || f.valor || 0).toLocaleString("pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                  })
+                } ({f.delivery_time || f.delivery_days || "?"} dias)
+              </label>
             </div>
           ))}
 
-          {/* WHATSAPP */}
+          {freteSelecionado && (
+            <p style={{ color: "green" }}>
+              Frete escolhido: {freteSelecionado.name}
+            </p>
+          )}
+
+          {/* WHATSAPP (mantido como estava) */}
           <button style={whats} onClick={falarWhatsapp}>
             Falar no WhatsApp
           </button>
@@ -170,5 +208,4 @@ const whats = {
   backgroundColor: "green",
   color: "white",
   border: "none",
-  cursor: "pointer",
 };
