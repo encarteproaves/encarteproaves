@@ -13,9 +13,10 @@ export default function ProdutoPage() {
   const [loadingFrete, setLoadingFrete] = useState(false);
   const [freteSelecionado, setFreteSelecionado] = useState(null);
 
-  // =========================
-  // BUSCAR PRODUTO
-  // =========================
+  // 🔥 NOVOS STATES CEP
+  const [cepErro, setCepErro] = useState(false);
+  const [cepValido, setCepValido] = useState(false);
+
   useEffect(() => {
     if (!id) return;
 
@@ -34,9 +35,6 @@ export default function ProdutoPage() {
     fetchProduto();
   }, [id]);
 
-  // =========================
-  // HANDLE INPUT
-  // =========================
   function handleChange(campo, valor) {
     setCliente((prev) => ({
       ...prev,
@@ -44,31 +42,44 @@ export default function ProdutoPage() {
     }));
   }
 
-  // =========================
-  // FORMATA CEP (00000-000)
-  // =========================
+  // 🔥 FORMATA CEP
   function formatarCEP(valor) {
     const cep = valor.replace(/\D/g, "").slice(0, 8);
     if (cep.length <= 5) return cep;
     return cep.replace(/(\d{5})(\d+)/, "$1-$2");
   }
 
-  // =========================
-  // BUSCAR CEP (VIACEP)
-  // =========================
+  // 🔥 BUSCAR CEP COM VALIDAÇÃO VISUAL
   async function buscarCEP(cep) {
     const cepLimpo = cep.replace(/\D/g, "");
 
-    if (cepLimpo.length !== 8) return;
+    if (cepLimpo.length !== 8) {
+      setCepErro(false);
+      setCepValido(false);
+      return;
+    }
 
     try {
       const res = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
       const data = await res.json();
 
       if (data.erro) {
-        console.log("CEP não encontrado");
+        setCepErro(true);
+        setCepValido(false);
+
+        setCliente((prev) => ({
+          ...prev,
+          endereco: "",
+          bairro: "",
+          cidade: "",
+          estado: "",
+        }));
+
         return;
       }
+
+      setCepErro(false);
+      setCepValido(true);
 
       setCliente((prev) => ({
         ...prev,
@@ -79,13 +90,12 @@ export default function ProdutoPage() {
       }));
 
     } catch (err) {
-      console.error("Erro ao buscar CEP:", err);
+      console.error("Erro CEP:", err);
+      setCepErro(true);
+      setCepValido(false);
     }
   }
 
-  // =========================
-  // CALCULAR FRETE
-  // =========================
   async function calcularFrete() {
     try {
       setLoadingFrete(true);
@@ -122,9 +132,6 @@ export default function ProdutoPage() {
     }
   }
 
-  // =========================
-  // VALIDAR CAMPOS
-  // =========================
   function validarCampos() {
     if (!cliente.nome) return "Digite seu nome";
     if (!cliente.telefone) return "Digite o telefone";
@@ -134,9 +141,6 @@ export default function ProdutoPage() {
     return null;
   }
 
-  // =========================
-  // COMPRAR
-  // =========================
   async function comprar() {
     const erro = validarCampos();
 
@@ -190,6 +194,16 @@ export default function ProdutoPage() {
     }
   }
 
+  function falarWhatsapp() {
+    const mensagem = encodeURIComponent(
+      `Olá, tenho interesse no produto ${produto?.nome || ""}`
+    );
+
+    window.open(
+      `https://api.whatsapp.com/send?phone=5511984309480&text=${mensagem}`
+    );
+  }
+
   if (loading) return <p>Carregando...</p>;
   if (!produto) return <p>Produto não encontrado</p>;
 
@@ -231,7 +245,10 @@ export default function ProdutoPage() {
           {/* CEP */}
           <input
             placeholder="Digite seu CEP"
-            style={input}
+            style={{
+              ...input,
+              border: cepErro ? "2px solid red" : "1px solid #ccc"
+            }}
             value={cliente.cep || ""}
             onChange={(e) => {
               const formatado = formatarCEP(e.target.value);
@@ -239,6 +256,18 @@ export default function ProdutoPage() {
               buscarCEP(formatado);
             }}
           />
+
+          {cepErro && (
+            <p style={{ color: "red", marginTop: -5 }}>
+              CEP inválido ou não encontrado
+            </p>
+          )}
+
+          {cepValido && (
+            <p style={{ color: "green", marginTop: -5 }}>
+              CEP válido ✔
+            </p>
+          )}
 
           <input placeholder="Seu nome" style={input} onChange={(e)=>handleChange("nome", e.target.value)} />
           <input placeholder="Telefone" style={input} onChange={(e)=>handleChange("telefone", e.target.value)} />
@@ -250,7 +279,6 @@ export default function ProdutoPage() {
           <input placeholder="Cidade" style={input} value={cliente.cidade || ""} onChange={(e)=>handleChange("cidade", e.target.value)} />
           <input placeholder="Estado" style={input} value={cliente.estado || ""} onChange={(e)=>handleChange("estado", e.target.value)} />
 
-          {/* CANTO SOMENTE PEN DRIVE */}
           {produto.nome?.toLowerCase().includes("pen drive") && (
             <input
               placeholder="Digite o canto"
@@ -260,8 +288,21 @@ export default function ProdutoPage() {
           )}
 
           <div style={{ marginTop: 10 }}>
-            <button style={btn} onClick={calcularFrete}>Calcular Frete</button>
-            <button style={btn} onClick={comprar}>Compra segura</button>
+            <button
+              style={{
+                ...btn,
+                opacity: cepValido ? 1 : 0.5,
+                cursor: cepValido ? "pointer" : "not-allowed"
+              }}
+              onClick={calcularFrete}
+              disabled={!cepValido}
+            >
+              Calcular Frete
+            </button>
+
+            <button style={btn} onClick={comprar}>
+              Compra segura
+            </button>
           </div>
 
           {loadingFrete && <p>Calculando frete...</p>}
@@ -274,7 +315,6 @@ export default function ProdutoPage() {
                   name="frete"
                   onChange={() => setFreteSelecionado(f)}
                 />
-
                 {f.name} - {Number(f.price || f.cost || f.valor || 0).toLocaleString("pt-BR", {
                   style: "currency",
                   currency: "BRL",
@@ -289,6 +329,10 @@ export default function ProdutoPage() {
               currency: "BRL",
             })}
           </h3>
+
+          <button style={btn} onClick={falarWhatsapp}>
+            Falar no WhatsApp
+          </button>
 
         </div>
       </div>
