@@ -15,24 +15,28 @@ export default async function handler(req, res) {
   try {
     console.log("BODY RECEBIDO:", req.body);
 
-    const {
-      nome,
-      nome_cliente,
-      cpf,
-      telefone,
-      cep,
-      endereco,
-      numero,
-      bairro,
-      cidade,
-      estado,
-      preco,
-      frete,
-      canto,
-    } = req.body;
+    // 🔥 SUPORTE AOS DOIS FORMATOS (ANTIGO + NOVO)
+    const produto = req.body.produto || {};
+    const cliente = req.body.cliente || {};
+
+    const nome = req.body.nome || produto.nome;
+    const preco = req.body.preco ?? produto.preco;
+    const frete = req.body.frete;
+
+    const nome_cliente = req.body.nome_cliente || cliente.nome;
+    const telefone = req.body.telefone || cliente.telefone;
+    const cpf = req.body.cpf || cliente.cpf;
+
+    const cep = req.body.cep || cliente.cep;
+    const endereco = req.body.endereco || cliente.endereco;
+    const numero = req.body.numero || cliente.numero;
+    const bairro = req.body.bairro || cliente.bairro;
+    const cidade = req.body.cidade || cliente.cidade;
+    const estado = req.body.estado || cliente.estado;
+
+    const canto = req.body.canto || cliente.canto;
 
     if (!nome || preco === undefined || preco === null) {
-      console.error("DADOS INVÁLIDOS");
       return res.status(400).json({
         error: "Dados básicos obrigatórios",
       });
@@ -40,10 +44,11 @@ export default async function handler(req, res) {
 
     const externalReference = `pedido-${Date.now()}`;
 
-    // 🔥 FRETE SEGURO
+    // 🔥 FRETE ROBUSTO (compatível com qualquer API)
     let valorFrete = 0;
-    if (typeof frete === "object" && frete?.price) {
-      valorFrete = Number(frete.price);
+
+    if (typeof frete === "object") {
+      valorFrete = Number(frete.price || frete.cost || frete.valor || 0);
     } else if (!isNaN(Number(frete))) {
       valorFrete = Number(frete);
     }
@@ -51,7 +56,6 @@ export default async function handler(req, res) {
     const valorProduto = Number(preco);
 
     if (isNaN(valorProduto)) {
-      console.error("PREÇO INVÁLIDO");
       return res.status(400).json({
         error: "Preço inválido",
       });
@@ -65,7 +69,7 @@ export default async function handler(req, res) {
       valorTotal,
     });
 
-    // 🔥 CRIA PAGAMENTO
+    // 🔥 MERCADO PAGO
     const preference = new Preference(client);
 
     const response = await preference.create({
@@ -94,7 +98,7 @@ export default async function handler(req, res) {
 
     console.log("PREFERENCE CRIADA:", response.id);
 
-    // 🔥 INSERT SUPER SEGURO
+    // 🔥 SALVA PEDIDO
     const { data, error: pedidoError } = await supabase
       .from("pedidos")
       .insert([
@@ -123,8 +127,7 @@ export default async function handler(req, res) {
       .select();
 
     if (pedidoError) {
-      console.error("ERRO SUPABASE COMPLETO:");
-      console.error(JSON.stringify(pedidoError, null, 2));
+      console.error("ERRO SUPABASE:", pedidoError);
 
       return res.status(500).json({
         error: "Erro ao salvar pedido",
@@ -132,16 +135,13 @@ export default async function handler(req, res) {
       });
     }
 
-    console.log("PEDIDO SALVO:", data);
-
     return res.status(200).json({
       init_point: response.init_point,
       external_reference: externalReference,
     });
 
   } catch (error) {
-    console.error("ERRO GERAL:");
-    console.error(error);
+    console.error("ERRO GERAL:", error);
 
     return res.status(500).json({
       error: "Erro interno no checkout",
