@@ -77,10 +77,22 @@ export default function ProdutoPage() {
   if (loading) return <p style={{ textAlign: "center" }}>Carregando...</p>;
   if (!produto) return <p>Produto não encontrado</p>;
 
+  // 🔥 CÁLCULO TOTAL
+  const valorFrete = Number(
+    freteSelecionado?.price ||
+    freteSelecionado?.cost ||
+    freteSelecionado?.valor ||
+    0
+  );
+
+  const valorProduto = Number(produto?.preco || 0);
+
+  const valorTotal = valorProduto + valorFrete;
+
   return (
     <div style={{ padding: 20, maxWidth: 1000, margin: "0 auto" }}>
       <div style={{ display: "flex", gap: 40, flexWrap: "wrap" }}>
-        
+
         {/* IMAGEM */}
         <div>
           <img
@@ -95,7 +107,7 @@ export default function ProdutoPage() {
           <h1>{produto.nome}</h1>
 
           <h2 style={{ color: "green" }}>
-            {Number(produto.preco || 0).toLocaleString("pt-BR", {
+            {valorProduto.toLocaleString("pt-BR", {
               style: "currency",
               currency: "BRL",
             })}
@@ -120,7 +132,6 @@ export default function ProdutoPage() {
           <input placeholder="Cidade" style={input} onChange={(e) => handleChange("cidade", e.target.value)} />
           <input placeholder="Estado" style={input} onChange={(e) => handleChange("estado", e.target.value)} />
 
-          {/* CAMPO CANTO */}
           <input placeholder="Digite o canto" style={input} onChange={(e) => handleChange("canto", e.target.value)} />
 
           {/* BOTÕES */}
@@ -129,23 +140,7 @@ export default function ProdutoPage() {
               Calcular Frete
             </button>
 
-            <button
-              style={btn}
-              onClick={() => {
-                if (!freteSelecionado) {
-                  alert("Selecione um frete primeiro");
-                  return;
-                }
-
-                console.log("CHECKOUT:", {
-                  produto,
-                  frete: freteSelecionado,
-                  cliente,
-                });
-
-                // futura integração pagamento aqui
-              }}
-            >
+            <button style={btn}>
               Compra segura
             </button>
           </div>
@@ -185,10 +180,35 @@ export default function ProdutoPage() {
                 );
               })}
 
+          {/* ✅ TOTAL NA TELA */}
           {freteSelecionado && (
-            <p style={{ color: "green" }}>
-              Frete escolhido: {freteSelecionado.name}
-            </p>
+            <div style={{ marginTop: 15, padding: 10, border: "1px solid #ccc" }}>
+              <p>
+                Produto:{" "}
+                {valorProduto.toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
+              </p>
+
+              <p>
+                Frete:{" "}
+                {valorFrete.toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
+              </p>
+
+              <hr />
+
+              <p style={{ fontWeight: "bold", fontSize: 18 }}>
+                Total:{" "}
+                {valorTotal.toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
+              </p>
+            </div>
           )}
 
           {/* WHATSAPP */}
