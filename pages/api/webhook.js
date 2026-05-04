@@ -264,21 +264,37 @@ export default async function handler(req, res) {
     // ===============================
 // ENVIO DE WHATSAPP (CALLMEBOT - GRÁTIS)
 // ===============================
-try {
-  console.log("📲 Enviando WhatsApp Grátis...");
+// ===============================
+    // ENVIO DE WHATSAPP (CALLMEBOT - GRÁTIS)
+    // ===============================
+    try {
+      console.log("📲 Enviando WhatsApp Grátis...");
 
-  const apiKey = "SUA_API_KEY_AQUI"; // Coloque a chave que recebeu do bot
-  const phone = "+5511984309480"; // Seu número com DDI e DDD (ex: +55...)
-  const texto = `Nova Venda: ${pedido.produto} - R$ ${pedido.valor}`;
-  
-  // O CallMeBot recebe os dados via URL (GET)
-  const urlBot = `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encodeURIComponent(texto)}&apikey=${apiKey}`;
+      const apiKey = "SUA_API_KEY_AQUI"; // Se não tiver a chave, deixe vazio "" por enquanto
+      const phone = "+5511984309480"; // Seu número
+      const texto = `Nova Venda: ${pedido.produto} - R$ ${pedido.valor}`;
+      
+      if (apiKey && apiKey !== "") {
+          const urlBot = `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encodeURIComponent(texto)}&apikey=${apiKey}`;
+          await fetch(urlBot);
+          console.log("✅ WhatsApp enviado via CallMeBot");
+      } else {
+          console.log("⚠️ WhatsApp ignorado: Sem API Key do CallMeBot");
+      }
 
-  await fetch(urlBot);
-  console.log("✅ WhatsApp enviado via CallMeBot");
+    } catch (err) {
+      console.error("❌ ERRO WHATSAPP GRÁTIS:", err);
+    }
+    // ===============================
+    // FIM WHATSAPP
+    // ===============================
 
-} catch (err) {
-  console.error("❌ ERRO WHATSAPP GRÁTIS:", err);
+    return res.status(200).json({ ok: true });
+
+  } catch (error) {
+    console.error("❌ ERRO NO WEBHOOK:", error);
+    return res.status(500).json({ error: "Erro no webhook" });
+  }
 }
 
       // Monta mensagem
