@@ -27,7 +27,6 @@ export default function ProdutoPage() {
         const res = await fetch(`/api/produto?id=${id}`);
         const data = await res.json();
 
-        // 🔥 segurança extra
         if (data && data.id) {
           setProduto(data);
         } else {
@@ -89,7 +88,7 @@ export default function ProdutoPage() {
   }
 
   // ===============================
-  // FRETE
+  // FRETE (CORRIGIDO)
   // ===============================
   async function calcularFrete() {
 
@@ -105,18 +104,24 @@ export default function ProdutoPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-  cep: cliente.cep,
-  peso: produto.peso || 1,
-  largura: produto.largura || 20,
-  altura: produto.altura || 20,
-  comprimento: produto.comprimento || 20,
-  valor: produto.preco || 0,
-})
+          cep: cliente.cep,
+          produtoId: produto.id, // 🔥 ESSENCIAL
+        }),
       });
 
       const data = await res.json();
 
+      if (!data) {
+        console.error("Resposta vazia da API");
+        return;
+      }
+
       let lista = data.options || data || [];
+
+      if (!Array.isArray(lista)) {
+        console.error("Formato inválido de frete:", lista);
+        return;
+      }
 
       lista = lista.filter(
         (f) => Number(f.price || f.cost || f.valor || 0) > 0
@@ -178,8 +183,7 @@ export default function ProdutoPage() {
         },
         body: JSON.stringify({
           ...cliente,
-          nome: produto.nome,
-          preco: produto.preco,
+          produtoId: produto.id,
           frete: freteSelecionado,
           canto: cliente.canto || "",
         }),
@@ -233,7 +237,6 @@ export default function ProdutoPage() {
 
           <hr />
 
-          {/* FORMULÁRIO COMPLETO */}
           <input placeholder="Digite seu CEP" style={input}
             onChange={(e) => handleChange("cep", e.target.value)} />
 
@@ -265,14 +268,13 @@ export default function ProdutoPage() {
             value={cliente.estado || ""}
             onChange={(e) => handleChange("estado", e.target.value)} />
 
-          {/* CAMPO CANTO (APENAS PEN DRIVE) */}
           {produto.nome?.toLowerCase().includes("pen drive") && (
             <input placeholder="Digite o canto" style={input}
               onChange={(e) => handleChange("canto", e.target.value)} />
           )}
 
           <button style={btn} onClick={calcularFrete}>
-            Calcular Frete
+            {loadingFrete ? "Calculando..." : "Calcular Frete"}
           </button>
 
           <button style={btn} onClick={comprar}>
