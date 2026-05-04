@@ -1,25 +1,53 @@
+// ===============================
+// IMPORTAÇÕES
+// ===============================
+
+// Hook de estado e efeito do React
 import { useEffect, useState } from "react";
+
+// Link do Next.js para navegação entre páginas
 import Link from "next/link";
 
-export default function Home() {
-  const [produtos, setProdutos] = useState([]);
-  const [fretes, setFretes] = useState({});
-  const [loadingFrete, setLoadingFrete] = useState({});
-  const [cliente, setCliente] = useState({});
 
+// ===============================
+// COMPONENTE PRINCIPAL (HOME)
+// ===============================
+export default function Home() {
+
+  // ===============================
+  // ESTADOS
+  // ===============================
+
+  const [produtos, setProdutos] = useState([]); // Lista de produtos
+  const [fretes, setFretes] = useState({}); // Fretes por produto (objeto por ID)
+  const [loadingFrete, setLoadingFrete] = useState({}); // Loading por produto
+  const [cliente, setCliente] = useState({}); // Dados do cliente por produto
+
+
+  // ===============================
+  // CARREGAR PRODUTOS AO INICIAR
+  // ===============================
   useEffect(() => {
     async function carregarProdutos() {
       try {
-        const res = await fetch("/api/produtos"); // ✅ corrigido
+        const res = await fetch("/api/produtos");
         const data = await res.json();
         setProdutos(data || []);
       } catch (err) {
         console.error("Erro ao carregar produtos:", err);
       }
     }
+
     carregarProdutos();
   }, []);
+  // ===============================
+  // FIM CARREGAMENTO PRODUTOS
+  // ===============================
 
+
+  // ===============================
+  // ATUALIZA DADOS DO CLIENTE POR PRODUTO
+  // ===============================
   function handleClienteChange(id, campo, valor) {
     setCliente((prev) => ({
       ...prev,
@@ -29,103 +57,188 @@ export default function Home() {
       },
     }));
   }
+  // ===============================
+  // FIM HANDLE CLIENTE
+  // ===============================
 
+
+  // ===============================
+  // CALCULAR FRETE POR PRODUTO
+  // ===============================
   async function calcularFrete(p) {
     try {
+      // Ativa loading apenas para esse produto
       setLoadingFrete((prev) => ({ ...prev, [p.id]: true }));
 
       const res = await fetch("/api/frete", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json", // ✅ corrigido
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ produto: p }),
       });
 
       const data = await res.json();
 
+      // Salva fretes por ID do produto
       setFretes((prev) => ({
         ...prev,
         [p.id]: data,
       }));
+
     } catch (err) {
       console.error("Erro frete:", err);
     } finally {
+      // Desativa loading do produto específico
       setLoadingFrete((prev) => ({ ...prev, [p.id]: false }));
     }
   }
+  // ===============================
+  // FIM CALCULAR FRETE
+  // ===============================
 
+
+  // ===============================
+  // SELECIONAR FRETE
+  // ===============================
   function selecionarFrete(id, frete) {
     console.log("Frete selecionado:", id, frete);
   }
+  // ===============================
+  // FIM SELEÇÃO FRETE
+  // ===============================
 
+
+  // ===============================
+  // AÇÃO DE COMPRA (AINDA SIMPLES)
+  // ===============================
   function compraSegura(p) {
     console.log("Compra:", p);
   }
+  // ===============================
+  // FIM COMPRA
+  // ===============================
 
+
+  // ===============================
+  // ABRIR WHATSAPP
+  // ===============================
   function falarWhatsapp(p) {
-  const mensagem = encodeURIComponent(
-    `Olá, tenho interesse no produto ${p?.nome || ""}`
-  );
+    const mensagem = encodeURIComponent(
+      `Olá, tenho interesse no produto ${p?.nome || ""}`
+    );
 
-  window.open(`https://wa.me/5511984309480?text=${mensagem}`);
-}
+    window.open(`https://wa.me/5511984309480?text=${mensagem}`);
+  }
+  // ===============================
+  // FIM WHATSAPP
+  // ===============================
 
+
+  // ===============================
+  // FORMATAR MOEDA
+  // ===============================
   function formatarMoeda(v) {
     return Number(v || 0).toFixed(2);
   }
+  // ===============================
+  // FIM FORMATAÇÃO
+  // ===============================
 
+
+  // ===============================
+  // RENDER PRINCIPAL
+  // ===============================
   return (
     <main style={{ padding: 20 }}>
-      <h1 style={{ textAlign: "center" }}>ENCARTEPROAVES</h1>
 
-      <div style={{ display: "flex", gap: 20, flexWrap: "wrap", justifyContent: "center" }}>
+      {/* TÍTULO */}
+      <h1 style={{ textAlign: "center" }}>
+        ENCARTEPROAVES
+      </h1>
+
+      {/* LISTA DE PRODUTOS */}
+      <div style={{
+        display: "flex",
+        gap: 20,
+        flexWrap: "wrap",
+        justifyContent: "center"
+      }}>
+
         {produtos.map((p) => (
-          <div key={p.id} style={{ width: 250, border: "1px solid #ccc", padding: 10 }}>
 
-            <img
-              src={p.imagem || "/placeholder.png"} // ✅ segurança
-              style={{ width: "100%" }}
-            />
+          // ===============================
+          // CARD DO PRODUTO
+          // ===============================
+          <div
+  key={p.id}
+  style={{
+    width: 250,
+    border: "1px solid #ddd",
+    borderRadius: "12px",
+    padding: "16px",
+    textAlign: "center",
+    background: "#fff",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+  }}
+>
+  {/* IMAGEM */}
+  <img
+    src={p.imagem || "/placeholder.png"}
+    alt={p.nome}
+    style={{
+      width: "100%",
+      maxHeight: "200px",
+      objectFit: "contain",
+      marginBottom: "10px",
+    }}
+  />
 
-            <h3>{p.nome}</h3>
+  {/* NOME */}
+  <h3>{p.nome}</h3>
 
-            <p style={{ color: "green" }}>
-              R$ {formatarMoeda(p.preco)}
-            </p>
+  {/* PREÇO */}
+  <p style={{ color: "green", fontWeight: "bold" }}>
+    R$ {formatarMoeda(p.preco)}
+  </p>
 
-            <p style={{ color: "red" }}>
-              Restam apenas {p.estoque || 0} unidades
-            </p>
+  {/* BOTÕES */}
+  <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+    
+    <Link
+      href={`/produto/${p.id}`}
+      style={{
+        flex: 1,
+        textAlign: "center",
+        padding: "10px",
+        background: "#0070f3",
+        color: "#fff",
+        borderRadius: "6px",
+      }}
+    >
+      Ver detalhes
+    </Link>
 
-            <input placeholder="Digite seu CEP" onChange={(e) => handleClienteChange(p.id, "cep", e.target.value)} />
-            <input placeholder="Seu nome" onChange={(e) => handleClienteChange(p.id, "nome", e.target.value)} />
-            <input placeholder="Telefone" onChange={(e) => handleClienteChange(p.id, "telefone", e.target.value)} />
-            <input placeholder="CPF" onChange={(e) => handleClienteChange(p.id, "cpf", e.target.value)} />
-            <input placeholder="Endereço" onChange={(e) => handleClienteChange(p.id, "endereco", e.target.value)} />
-            <input placeholder="Número" onChange={(e) => handleClienteChange(p.id, "numero", e.target.value)} />
-            <input placeholder="Bairro" onChange={(e) => handleClienteChange(p.id, "bairro", e.target.value)} />
-            <input placeholder="Cidade" onChange={(e) => handleClienteChange(p.id, "cidade", e.target.value)} />
-            <input placeholder="Estado" onChange={(e) => handleClienteChange(p.id, "estado", e.target.value)} />
+    <button
+      onClick={() => falarWhatsapp(p)}
+      style={{
+        flex: 1,
+        background: "#25D366",
+        color: "#fff",
+        borderRadius: "6px",
+        border: "none",
+        cursor: "pointer",
+      }}
+    >
+      WhatsApp
+    </button>
 
-            <button onClick={() => calcularFrete(p)}>Calcular Frete</button>
-
-            {loadingFrete[p.id] && <p>Calculando...</p>}
-
-            {fretes[p.id]?.map((f, i) => (
-              <div key={i}>
-                <label>
-                  <input
-                    type="radio"
-                    name={`frete-${p.id}`}
-                    onChange={() => selecionarFrete(p.id, f)}
-                  />
-                  {f.name} - R$ {formatarMoeda(f.price)} ({f.delivery_time} dias)
-                </label>
-              </div>
+  </div>
+</div>
             ))}
 
-            {/* LINK CORRIGIDO */}
+
+            {/* LINK PARA DETALHES */}
             {p?.id && (
               <Link
                 href={`/produto/${p.id}`}
@@ -143,8 +256,14 @@ export default function Home() {
               </Link>
             )}
 
-            <button onClick={() => compraSegura(p)}>Compra segura</button>
 
+            {/* BOTÃO COMPRA */}
+            <button onClick={() => compraSegura(p)}>
+              Compra segura
+            </button>
+
+
+            {/* BOTÃO WHATSAPP */}
             <button
               onClick={() => falarWhatsapp(p)}
               style={{
@@ -156,9 +275,22 @@ export default function Home() {
             >
               Falar no WhatsApp
             </button>
+
           </div>
+          // ===============================
+          // FIM CARD PRODUTO
+          // ===============================
+
         ))}
+
       </div>
+      {/* ===============================
+          FIM LISTA PRODUTOS
+         =============================== */}
+
     </main>
   );
 }
+// ===============================
+// FIM COMPONENTE HOME
+// ===============================

@@ -1,53 +1,135 @@
+// ===============================
+// FUNÇÃO PRINCIPAL (API FRETE)
+// ===============================
 export default async function handler(req, res) {
+
+  // ===============================
+  // VALIDAÇÃO DE MÉTODO (SÓ POST)
+  // ===============================
   if (req.method !== "POST") {
     return res.status(405).json({
       error: "Método não permitido"
     });
   }
+  // ===============================
+  // FIM VALIDAÇÃO MÉTODO
+  // ===============================
+
 
   try {
-    const body = req.body;
 
+    // ===============================
+    // CAPTURA DO BODY ENVIADO PELO FRONT
+    // ===============================
+    const body = req.body;
+    // Aqui vêm dados como:
+    // cep, width, height, length, weight, price
+    // ===============================
+    // FIM CAPTURA BODY
+    // ===============================
+
+
+    // ===============================
+    // CHAMADA PARA API MELHOR ENVIO
+    // ===============================
     const response = await fetch(
       "https://melhorenvio.com.br/api/v2/me/shipment/calculate",
       {
         method: "POST",
+
+        // ===============================
+        // HEADERS DA REQUISIÇÃO
+        // ===============================
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json",
-          "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiZmEzN2NmM2ZhMGY2YzllODdhZDI1Mjg2NDQxMzljNjk2YzE5NmU0MzI2NjVmYzA5MTAxM2NmOWI0YTUwZWE2ZjU1ZThhMWE5NDQ4NjdlYjAiLCJpYXQiOjE3NzE1MjEzODMuNDY3OTQ2LCJuYmYiOjE3NzE1MjEzODMuNDY3OTQ4LCJleHAiOjE4MDMwNTczODMuNDU1OTU2LCJzdWIiOiI2YjU1ZDBhNi0wNTg0LTQ5NWEtOWZkOS1lZWQ5ZTIwMmE4YzEiLCJzY29wZXMiOlsiY2FydC1yZWFkIiwiY2FydC13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiY29tcGFuaWVzLXdyaXRlIiwiY291cG9ucy1yZWFkIiwiY291cG9ucy13cml0ZSIsIm5vdGlmaWNhdGlvbnMtcmVhZCIsIm9yZGVycy1yZWFkIiwicHJvZHVjdHMtcmVhZCIsInByb2R1Y3RzLWRlc3Ryb3kiLCJwcm9kdWN0cy13cml0ZSIsInB1cmNoYXNlcy1yZWFkIiwic2hpcHBpbmctY2FsY3VsYXRlIiwic2hpcHBpbmctY2FuY2VsIiwic2hpcHBpbmctY2hlY2tvdXQiLCJzaGlwcGluZy1jb21wYW5pZXMiLCJzaGlwcGluZy1nZW5lcmF0ZSIsInNoaXBwaW5nLXByZXZpZXciLCJzaGlwcGluZy1wcmludCIsInNoaXBwaW5nLXNoYXJlIiwic2hpcHBpbmctdHJhY2tpbmciLCJlY29tbWVyY2Utc2hpcHBpbmciLCJ0cmFuc2FjdGlvbnMtcmVhZCIsInVzZXJzLXJlYWQiLCJ1c2Vycy13cml0ZSIsIndlYmhvb2tzLXJlYWQiLCJ3ZWJob29rcy13cml0ZSIsIndlYmhvb2tzLWRlbGV0ZSIsInRkZWFsZXItd2ViaG9vayJdfQ.1DlY8HNZSkZv7myICGb4oi25wsDiLqyMPLEyXbkUmubgGL-Lt5VGpCyFvDJ_kp18KJBICxOCPS3uM8DKBmuukWXRqV27ij4VPW93vY2jnsIybxpB5nHQaVXbUHaQymFXvhm1RsuRPqXfnvtYu98Bbyp5_VK-MuFNxFI1e-U9mYCL9cALXaSsY2ypxgYhGNqAMsQLl1xa0EsVtWnEcLDeHGBiU7y1c2X75ISb1IJBN4J82JdmQNnjB93X4ESulOKD5OD3HeK3kGtrnBNICY5dfjXrk3RK99cVkhhMIHwIyILXPM8zi7l_97KIDkxhfxBMmUQ-7PXxuIcgCMjUhWH8zLN-E_imudqawL6wmeyLvvhYD1ps1C-FGoachggJMEr3qay00TM1Q85TCWXfGGN-TMXaJzRFJKQQcLZGzPhULn7f6RaPOFyUpuvPerkYyKiK6qrDiHjtNs5lvraHaiceMK1jPW4PiYQSfa-jLNzwoi6-dw5SohXyluLCcnG0tcMBUXbojhqmgLf4NR7Ykd-PiyZjhlFRtYpcqCax-scBZksbCFlsCukmpOyltetZrzbLOZia3yAYxCZyCxy1l6Hi_T9vATuQBGZc886FFiVrtAG8oDnMqQWdw4JsgIz3nk1YEGJvSso6v-8ZAZilTGYL9LVOHc0jvuteFQTq94-Bz1Y"
+
+          // 🔥 TOKEN DE AUTENTICAÇÃO (CUIDADO!)
+          "Authorization": "Bearer SEU_TOKEN_AQUI"
         },
+        // ===============================
+        // FIM HEADERS
+        // ===============================
+
+
+        // ===============================
+        // CORPO DA REQUISIÇÃO
+        // ===============================
         body: JSON.stringify({
+
+          // CEP DE ORIGEM (SEU)
           from: {
             postal_code: "08062-670"
           },
+
+          // CEP DE DESTINO (CLIENTE)
           to: {
             postal_code: body.cep
           },
+
+          // PRODUTO PARA CÁLCULO
           products: [
             {
               id: "1",
+
+              // DIMENSÕES DO PRODUTO
               width: body.width,
               height: body.height,
               length: body.length,
               weight: body.weight,
+
+              // VALOR PARA SEGURO
               insurance_value: body.price,
+
               quantity: 1
             }
           ]
         })
+        // ===============================
+        // FIM BODY API
+        // ===============================
+
       }
     );
+    // ===============================
+    // FIM CHAMADA MELHOR ENVIO
+    // ===============================
 
+
+    // ===============================
+    // CONVERTE RESPOSTA EM JSON
+    // ===============================
     const data = await response.json();
+    // ===============================
+    // FIM CONVERSÃO
+    // ===============================
 
+
+    // ===============================
+    // RETORNA FRETES PARA O FRONTEND
+    // ===============================
     return res.status(200).json(data);
+    // ===============================
+    // FIM RESPOSTA
+    // ===============================
+
 
   } catch (error) {
+
+    // ===============================
+    // TRATAMENTO DE ERRO
+    // ===============================
     console.error("Erro no cálculo de frete:", error);
 
     return res.status(500).json({
       error: "Erro no cálculo"
     });
+    // ===============================
+    // FIM ERRO
+    // ===============================
+
   }
 }
+// ===============================
+// FIM DO HANDLER
+// ===============================

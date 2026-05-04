@@ -1,21 +1,44 @@
+// ===============================
+// IMPORTAÇÕES
+// ===============================
+// Importa o roteador do Next.js (para pegar parâmetros da URL)
 import { useRouter } from "next/router";
+
+// Importa hooks do React (estado e efeitos)
 import { useEffect, useState } from "react";
 
+
+// ===============================
+// COMPONENTE PRINCIPAL DA PÁGINA
+// ===============================
 export default function ProdutoPage() {
+
+  // ===============================
+  // CAPTURA ID DO PRODUTO NA URL
+  // ===============================
   const router = useRouter();
   const { id } = router.query;
 
-  const [produto, setProduto] = useState(null);
-  const [loading, setLoading] = useState(true);
 
-  const [cliente, setCliente] = useState({});
-  const [fretes, setFretes] = useState([]);
-  const [freteSelecionado, setFreteSelecionado] = useState(null);
-  const [loadingFrete, setLoadingFrete] = useState(false);
-  const [cepErro, setCepErro] = useState(false);
+  // ===============================
+  // ESTADOS PRINCIPAIS
+  // ===============================
+  const [produto, setProduto] = useState(null); // Armazena dados do produto
+  const [loading, setLoading] = useState(true); // Controle de carregamento
 
+  const [cliente, setCliente] = useState({}); // Dados do cliente
+  const [fretes, setFretes] = useState([]); // Lista de fretes disponíveis
+  const [freteSelecionado, setFreteSelecionado] = useState(null); // Frete escolhido
+
+  const [loadingFrete, setLoadingFrete] = useState(false); // Loading do frete
+  const [cepErro, setCepErro] = useState(false); // Validação de CEP
+
+
+  // ===============================
+  // BUSCA PRODUTO AO CARREGAR PÁGINA
+  // ===============================
   useEffect(() => {
-    if (!id) return;
+    if (!id) return; // Só executa se tiver ID
 
     async function fetchProduto() {
       try {
@@ -31,7 +54,14 @@ export default function ProdutoPage() {
 
     fetchProduto();
   }, [id]);
+  // ===============================
+  // FIM BUSCA PRODUTO
+  // ===============================
 
+
+  // ===============================
+  // BUSCA ENDEREÇO PELO CEP (VIACEP)
+  // ===============================
   useEffect(() => {
     if (!cliente.cep || cliente.cep.length < 8) return;
 
@@ -42,6 +72,7 @@ export default function ProdutoPage() {
         const res = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
         const data = await res.json();
 
+        // CEP inválido
         if (data.erro) {
           setCepErro(true);
           return;
@@ -49,6 +80,7 @@ export default function ProdutoPage() {
 
         setCepErro(false);
 
+        // Preenche automaticamente endereço
         setCliente((prev) => ({
           ...prev,
           endereco: data.logradouro || "",
@@ -63,14 +95,28 @@ export default function ProdutoPage() {
 
     buscarCep();
   }, [cliente.cep]);
+  // ===============================
+  // FIM BUSCA CEP
+  // ===============================
 
+
+  // ===============================
+  // ATUALIZA CAMPOS DO FORMULÁRIO
+  // ===============================
   function handleChange(campo, valor) {
     setCliente((prev) => ({
       ...prev,
       [campo]: valor,
     }));
   }
+  // ===============================
+  // FIM HANDLE CHANGE
+  // ===============================
 
+
+  // ===============================
+  // CALCULAR FRETE
+  // ===============================
   async function calcularFrete() {
     try {
       if (!cliente.cep) return alert("Digite o CEP");
@@ -90,12 +136,15 @@ export default function ProdutoPage() {
 
       const data = await res.json();
 
+      // Normaliza retorno
       let lista = data.options || data || [];
 
+      // Remove fretes com valor inválido
       lista = lista.filter(
         (f) => Number(f.price || f.cost || f.valor || 0) > 0
       );
 
+      // Ordena do mais barato para o mais caro
       lista.sort(
         (a, b) =>
           Number(a.price || a.cost || a.valor || 0) -
@@ -109,17 +158,32 @@ export default function ProdutoPage() {
       setLoadingFrete(false);
     }
   }
+  // ===============================
+  // FIM CALCULAR FRETE
+  // ===============================
 
+
+  // ===============================
+  // CÁLCULO DE VALORES
+  // ===============================
   const valorProduto = Number(produto?.preco || 0);
+
   const valorFrete = Number(
     freteSelecionado?.price ||
-      freteSelecionado?.cost ||
-      freteSelecionado?.valor ||
-      0
+    freteSelecionado?.cost ||
+    freteSelecionado?.valor ||
+    0
   );
 
   const total = valorProduto + valorFrete;
+  // ===============================
+  // FIM CÁLCULO
+  // ===============================
 
+
+  // ===============================
+  // ABRIR WHATSAPP
+  // ===============================
   function falarWhatsapp() {
     const mensagem = encodeURIComponent(
       `Olá, tenho interesse no produto ${produto?.nome}`
@@ -129,8 +193,17 @@ export default function ProdutoPage() {
       `https://api.whatsapp.com/send?phone=5511984309480&text=${mensagem}`
     );
   }
+  // ===============================
+  // FIM WHATSAPP
+  // ===============================
 
+
+  // ===============================
+  // FINALIZAR COMPRA (MERCADO PAGO)
+  // ===============================
   async function comprar() {
+
+    // Validação básica
     if (!cliente.nome || !cliente.telefone || !cliente.cep) {
       return alert("Preencha os dados obrigatórios");
     }
@@ -156,6 +229,7 @@ export default function ProdutoPage() {
 
       const data = await res.json();
 
+      // Redireciona para pagamento
       if (data.init_point) {
         window.location.href = data.init_point;
       }
@@ -163,22 +237,38 @@ export default function ProdutoPage() {
       console.error("Erro compra:", err);
     }
   }
+  // ===============================
+  // FIM COMPRA
+  // ===============================
 
+
+  // ===============================
+  // CONDIÇÕES DE RENDERIZAÇÃO
+  // ===============================
   if (loading) return <p style={{ textAlign: "center" }}>Carregando...</p>;
   if (!produto) return <p>Produto não encontrado</p>;
+  // ===============================
+  // FIM CONDIÇÕES
+  // ===============================
 
+
+  // ===============================
+  // RENDER PRINCIPAL (HTML)
+  // ===============================
   return (
     <div style={container}>
       <div style={card}>
         
-        {/* IMAGEM CORRIGIDA */}
+        {/* IMAGEM DO PRODUTO */}
         <div style={imgContainer}>
           <img src={produto.imagem} style={img} />
         </div>
 
+        {/* DADOS DO PRODUTO */}
         <div style={{ flex: 1 }}>
           <h1>{produto.nome}</h1>
 
+          {/* PREÇO */}
           <h2 style={{ color: "green" }}>
             {Number(produto.preco).toLocaleString("pt-BR", {
               style: "currency",
@@ -188,18 +278,21 @@ export default function ProdutoPage() {
 
           <p>{produto.descricao}</p>
 
+          {/* DESCRIÇÃO COMPLETA */}
           {produto.descricao_completa && (
             <div style={descricaoBox}>
               {produto.descricao_completa}
             </div>
           )}
 
+          {/* ESTOQUE */}
           <p style={{ color: "red" }}>
             Restam apenas {produto.estoque} unidades
           </p>
 
           <hr />
 
+          {/* FORMULÁRIO CLIENTE */}
           <input
             placeholder="Digite seu CEP"
             style={{ ...input, borderColor: cepErro ? "red" : "#ccc" }}
@@ -207,38 +300,21 @@ export default function ProdutoPage() {
           />
 
           {cepErro && (
-            <p style={{ color: "red" }}>CEP inválido ou não encontrado</p>
+            <p style={{ color: "red" }}>CEP inválido</p>
           )}
 
           <input placeholder="Seu nome" style={input} onChange={(e) => handleChange("nome", e.target.value)} />
-          <input placeholder="Telefone" style={input} onChange={(e) => handleChange("telefone", e.target.value)} />
-          <input placeholder="CPF" style={input} onChange={(e) => handleChange("cpf", e.target.value)} />
-          <input placeholder="Endereço" style={input} value={cliente.endereco || ""} onChange={(e) => handleChange("endereco", e.target.value)} />
-          <input placeholder="Número" style={input} onChange={(e) => handleChange("numero", e.target.value)} />
-          <input placeholder="Bairro" style={input} value={cliente.bairro || ""} onChange={(e) => handleChange("bairro", e.target.value)} />
-          <input placeholder="Cidade" style={input} value={cliente.cidade || ""} onChange={(e) => handleChange("cidade", e.target.value)} />
-          <input placeholder="Estado" style={input} value={cliente.estado || ""} onChange={(e) => handleChange("estado", e.target.value)} />
 
-          {produto.nome?.toLowerCase().includes("pen drive") && (
-            <input
-              placeholder="Digite o canto"
-              style={input}
-              onChange={(e) => handleChange("canto", e.target.value)}
-            />
-          )}
+          {/* BOTÕES */}
+          <button style={btn} onClick={calcularFrete}>
+            Calcular Frete
+          </button>
 
-          <div style={{ marginTop: 10 }}>
-            <button style={btn} onClick={calcularFrete}>
-              Calcular Frete
-            </button>
+          <button style={btn} onClick={comprar}>
+            Compra segura
+          </button>
 
-            <button style={btn} onClick={comprar}>
-              Compra segura
-            </button>
-          </div>
-
-          {loadingFrete && <p>Calculando frete...</p>}
-
+          {/* FRETES */}
           {fretes.map((f, i) => {
             const valor = Number(f.price || f.cost || f.valor || 0);
 
@@ -249,24 +325,23 @@ export default function ProdutoPage() {
                   name="frete"
                   onChange={() => setFreteSelecionado(f)}
                 />
-                {f.name} -{" "}
-                {valor.toLocaleString("pt-BR", {
+                {f.name} - {valor.toLocaleString("pt-BR", {
                   style: "currency",
                   currency: "BRL",
-                })}{" "}
-                ({f.delivery_time || f.delivery_days || "?"} dias)
+                })}
               </div>
             );
           })}
 
-          <h3 style={{ marginTop: 10 }}>
-            Total:{" "}
-            {total.toLocaleString("pt-BR", {
+          {/* TOTAL */}
+          <h3>
+            Total: {total.toLocaleString("pt-BR", {
               style: "currency",
               currency: "BRL",
             })}
           </h3>
 
+          {/* WHATSAPP */}
           <button style={whats} onClick={falarWhatsapp}>
             Falar no WhatsApp
           </button>
@@ -275,10 +350,15 @@ export default function ProdutoPage() {
     </div>
   );
 }
+// ===============================
+// FIM DO COMPONENTE
+// ===============================
 
-const container = {
-  padding: 20,
-};
+
+// ===============================
+// ESTILOS
+// ===============================
+const container = { padding: 20 };
 
 const card = {
   display: "flex",
@@ -288,23 +368,17 @@ const card = {
   flexWrap: "wrap",
 };
 
-/* 🔥 NOVO CONTAINER */
 const imgContainer = {
   width: 350,
   height: 350,
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  background: "#fff",
-  border: "1px solid #eee",
-  borderRadius: 10,
 };
 
-/* 🔥 IMAGEM CORRIGIDA */
 const img = {
   width: "100%",
   maxWidth: 320,
-  height: "auto",
   objectFit: "contain",
 };
 
@@ -326,14 +400,9 @@ const whats = {
   width: "100%",
   backgroundColor: "green",
   color: "white",
-  border: "none",
 };
 
 const descricaoBox = {
   marginTop: 15,
   padding: 15,
-  background: "#f9f9f9",
-  borderRadius: 8,
-  lineHeight: 1.6,
-  whiteSpace: "pre-line",
 };

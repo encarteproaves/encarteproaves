@@ -1,15 +1,37 @@
+// ===============================
+// IMPORTAÇÕES
+// ===============================
+
+// Cliente do banco Supabase
 import { supabase } from "../../lib/supabase";
+
+// Biblioteca de envio de email
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 
-// 📩 FUNÇÃO SEGURA DE EMAIL
+// ===============================
+// CONFIGURAÇÃO DO RESEND (EMAIL)
+// ===============================
+const resend = new Resend(process.env.RESEND_API_KEY);
+// ===============================
+// FIM CONFIG EMAIL
+// ===============================
+
+
+
+// ===============================
+// FUNÇÃO PARA ENVIAR EMAIL DE VENDA
+// ===============================
 async function enviarEmailVenda(pedido) {
   try {
+
+    // Envia email com dados do pedido
     await resend.emails.send({
       from: "onboarding@resend.dev",
       to: "romulojosepereirasilva@gmail.com",
       subject: "🛒 Nova venda no site!",
+
+      // HTML do email
       html: `
         <h2>Nova Venda 🚀</h2>
         <p><strong>Cliente:</strong> ${pedido?.nome_cliente || "N/A"}</p>
@@ -28,29 +50,64 @@ async function enviarEmailVenda(pedido) {
     });
 
     console.log("📩 Email enviado com sucesso");
+
   } catch (error) {
+
+    // Erro no envio de email
     console.error("❌ ERRO AO ENVIAR EMAIL:", error.message);
   }
 }
+// ===============================
+// FIM FUNÇÃO EMAIL
+// ===============================
 
+
+
+// ===============================
+// FUNÇÃO PRINCIPAL (WEBHOOK)
+// ===============================
 export default async function handler(req, res) {
+
   try {
+
+    // ===============================
+    // LOG DO WEBHOOK RECEBIDO
+    // ===============================
     console.log("🔔 WEBHOOK RECEBIDO:", req.body);
+
 
     const body = req.body;
 
+
+    // ===============================
+    // FILTRO DE EVENTO (APENAS PAYMENT)
+    // ===============================
     if (body.type !== "payment") {
       console.log("⚠️ Evento ignorado (não é pagamento)");
       return res.status(200).json({ ok: true });
     }
+    // ===============================
+    // FIM FILTRO
+    // ===============================
 
+
+    // ===============================
+    // CAPTURA DO PAYMENT ID
+    // ===============================
     const paymentId = body.data?.id;
 
     if (!paymentId) {
       console.error("❌ paymentId não recebido");
       return res.status(200).json({ ok: true });
     }
+    // ===============================
+    // FIM CAPTURA ID
+    // ===============================
 
+
+    // ===============================
+    // CONSULTA PAGAMENTO NO MERCADO PAGO
+    // ===============================
     const response = await fetch(
       `https://api.mercadopago.com/v1/payments/${paymentId}`,
       {
@@ -61,42 +118,82 @@ export default async function handler(req, res) {
     );
 
     const data = await response.json();
+    // ===============================
+    // FIM CONSULTA
+    // ===============================
 
+
+    // ===============================
+    // LOG DOS DETALHES DO PAGAMENTO
+    // ===============================
     console.log("💰 DETALHES PAGAMENTO:", data);
+
 
     const status = data.status;
     const referencia = data.external_reference;
 
+
+    // ===============================
+    // VALIDAÇÃO DA REFERÊNCIA
+    // ===============================
     if (!referencia) {
-      console.error("❌ external_reference NÃO VEIO DO MERCADO PAGO");
+      console.error("❌ external_reference NÃO VEIO");
       return res.status(200).json({ ok: true });
     }
 
     console.log("🔎 REFERENCIA RECEBIDA:", referencia);
+    // ===============================
+    // FIM VALIDAÇÃO
+    // ===============================
 
+
+    // ===============================
+    // BUSCAR PEDIDO NO BANCO
+    // ===============================
     const { data: pedido, error: erroPedido } = await supabase
       .from("pedidos")
       .select("*")
       .eq("external_reference", referencia)
       .maybeSingle();
+    // ===============================
+    // FIM BUSCA PEDIDO
+    // ===============================
 
+
+    // ===============================
+    // TRATAMENTO DE ERRO PEDIDO
+    // ===============================
     if (erroPedido) {
       console.error("❌ ERRO AO BUSCAR PEDIDO:", erroPedido);
       return res.status(200).json({ ok: true });
     }
 
     if (!pedido) {
-      console.error("❌ Pedido NÃO encontrado para referencia:", referencia);
+      console.error("❌ Pedido NÃO encontrado");
       return res.status(200).json({ ok: true });
     }
 
     console.log("📦 PEDIDO ENCONTRADO:", pedido.id);
+    // ===============================
+    // FIM TRATAMENTO
+    // ===============================
 
+
+    // ===============================
+    // VERIFICA SE PAGAMENTO FOI APROVADO
+    // ===============================
     if (status !== "approved") {
-      console.log("⏳ Pagamento ainda não aprovado:", status);
+      console.log("⏳ Pagamento não aprovado:", status);
       return res.status(200).json({ ok: true });
     }
+    // ===============================
+    // FIM VERIFICAÇÃO
+    // ===============================
 
+
+    // ===============================
+    // ATUALIZA STATUS DO PEDIDO
+    // ===============================
     const { error: erroUpdatePedido } = await supabase
       .from("pedidos")
       .update({ status: "Pago" })
@@ -107,23 +204,33 @@ export default async function handler(req, res) {
     } else {
       console.log("✅ Pedido atualizado para PAGO");
     }
+    // ===============================
+    // FIM UPDATE PEDIDO
+    // ===============================
 
+
+    // ===============================
+    // BUSCAR PRODUTO PARA ATUALIZAR ESTOQUE
+    // ===============================
     const { data: produto, error: erroProduto } = await supabase
       .from("produtos")
       .select("*")
       .eq("nome", pedido.produto)
       .maybeSingle();
+    // ===============================
+    // FIM BUSCA PRODUTO
+    // ===============================
 
-    if (erroProduto) {
-      console.error("❌ ERRO AO BUSCAR PRODUTO:", erroProduto);
+
+    if (erroProduto || !produto) {
+      console.error("❌ Produto não encontrado");
       return res.status(200).json({ ok: true });
     }
 
-    if (!produto) {
-      console.error("❌ Produto NÃO encontrado:", pedido.produto);
-      return res.status(200).json({ ok: true });
-    }
 
+    // ===============================
+    // ATUALIZA ESTOQUE
+    // ===============================
     const estoqueAtual = Number(produto.estoque) || 0;
     const novoEstoque = Math.max(estoqueAtual - 1, 0);
 
@@ -133,31 +240,42 @@ export default async function handler(req, res) {
       .eq("id", produto.id);
 
     if (erroEstoque) {
-      console.error("❌ ERRO AO ATUALIZAR ESTOQUE:", erroEstoque);
+      console.error("❌ ERRO ESTOQUE:", erroEstoque);
     } else {
       console.log("📉 Estoque atualizado:", novoEstoque);
     }
+    // ===============================
+    // FIM ESTOQUE
+    // ===============================
 
-    // ==============================
-    // 📩 EMAIL (NOVO - SEGURO)
-    // ==============================
+
+    // ===============================
+    // ENVIO DE EMAIL
+    // ===============================
     await enviarEmailVenda(pedido);
+    // ===============================
+    // FIM EMAIL
+    // ===============================
 
-    // ==============================
-    // 📲 WHATSAPP (EXISTENTE)
-    // ==============================
+
+    // ===============================
+    // ENVIO DE WHATSAPP (Z-API)
+    // ===============================
     try {
-      console.log("📲 Preparando envio WhatsApp...");
+
+      console.log("📲 Enviando WhatsApp...");
 
       const instance = process.env.ZAPI_INSTANCE_ID?.trim();
       const token = process.env.ZAPI_TOKEN?.trim();
       const phone = process.env.ZAPI_PHONE?.trim();
 
+      // Validação das variáveis
       if (!instance || !token || !phone) {
-        console.error("❌ Variáveis ZAPI não configuradas");
+        console.error("❌ ZAPI não configurada");
         return res.status(200).json({ ok: true });
       }
 
+      // Monta mensagem
       const mensagem = `
 🛒 *NOVO PEDIDO PAGO*
 
@@ -173,6 +291,7 @@ ${pedido.bairro} - ${pedido.cidade}/${pedido.estado}
 CEP: ${pedido.cep}
 `;
 
+      // Envia mensagem
       const zapResponse = await fetch(
         `https://api.z-api.io/instances/${instance}/token/${token}/send-text`,
         {
@@ -190,13 +309,38 @@ CEP: ${pedido.cep}
       console.log("📲 RESPOSTA ZAPI:", zapData);
 
     } catch (err) {
-      console.error("❌ ERRO AO ENVIAR WHATSAPP:", err);
+      console.error("❌ ERRO WHATSAPP:", err);
     }
+    // ===============================
+    // FIM WHATSAPP
+    // ===============================
 
+
+    // ===============================
+    // RESPOSTA FINAL
+    // ===============================
     return res.status(200).json({ ok: true });
+    // ===============================
+    // FIM RESPOSTA
+    // ===============================
+
 
   } catch (error) {
+
+    // ===============================
+    // ERRO GERAL DO WEBHOOK
+    // ===============================
     console.error("❌ ERRO NO WEBHOOK:", error);
-    return res.status(500).json({ error: "Erro no webhook" });
+
+    return res.status(500).json({
+      error: "Erro no webhook"
+    });
+    // ===============================
+    // FIM ERRO
+    // ===============================
+
   }
 }
+// ===============================
+// FIM DO HANDLER
+// ===============================
