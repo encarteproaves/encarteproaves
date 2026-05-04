@@ -261,19 +261,25 @@ export default async function handler(req, res) {
     // ===============================
     // ENVIO DE WHATSAPP (Z-API)
     // ===============================
-    try {
+    // ===============================
+// ENVIO DE WHATSAPP (CALLMEBOT - GRÁTIS)
+// ===============================
+try {
+  console.log("📲 Enviando WhatsApp Grátis...");
 
-      console.log("📲 Enviando WhatsApp...");
+  const apiKey = "SUA_API_KEY_AQUI"; // Coloque a chave que recebeu do bot
+  const phone = "+5511984309480"; // Seu número com DDI e DDD (ex: +55...)
+  const texto = `Nova Venda: ${pedido.produto} - R$ ${pedido.valor}`;
+  
+  // O CallMeBot recebe os dados via URL (GET)
+  const urlBot = `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encodeURIComponent(texto)}&apikey=${apiKey}`;
 
-      const instance = process.env.ZAPI_INSTANCE_ID?.trim();
-      const token = process.env.ZAPI_TOKEN?.trim();
-      const phone = process.env.ZAPI_PHONE?.trim();
+  await fetch(urlBot);
+  console.log("✅ WhatsApp enviado via CallMeBot");
 
-      // Validação das variáveis
-      if (!instance || !token || !phone) {
-        console.error("❌ ZAPI não configurada");
-        return res.status(200).json({ ok: true });
-      }
+} catch (err) {
+  console.error("❌ ERRO WHATSAPP GRÁTIS:", err);
+}
 
       // Monta mensagem
       const mensagem = `
