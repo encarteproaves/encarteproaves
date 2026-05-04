@@ -105,9 +105,13 @@ export default function ProdutoPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          cep: cliente.cep,
-          produtoId: produto.id,
-        }),
+  cep: cliente.cep,
+  peso: produto.peso || 1,
+  largura: produto.largura || 20,
+  altura: produto.altura || 20,
+  comprimento: produto.comprimento || 20,
+  valor: produto.preco || 0,
+})
       });
 
       const data = await res.json();
