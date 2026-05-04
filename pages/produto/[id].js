@@ -171,23 +171,34 @@ export default function Produto() {
 </div>
 
           {/* FORMULÁRIO COMPLETO */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            <input placeholder="Digite seu CEP" style={inputStyle} onChange={(e) => setCliente({ ...cliente, cep: e.target.value })} />
-            <input placeholder="Seu nome" style={inputStyle} onChange={(e) => setCliente({ ...cliente, nome: e.target.value })} />
-            <input placeholder="Telefone" style={inputStyle} onChange={(e) => setCliente({ ...cliente, telefone: e.target.value })} />
-            <input placeholder="CPF" style={inputStyle} onChange={(e) => setCliente({ ...cliente, cpf: e.target.value })} />
-            <input placeholder="Endereço" style={inputStyle} onChange={(e) => setCliente({ ...cliente, endereco: e.target.value })} />
-            
-            <div style={{ display: "flex", gap: "10px" }}>
-               <input placeholder="Número" style={{...inputStyle, flex: 1}} onChange={(e) => setCliente({ ...cliente, numero: e.target.value })} />
-               <input placeholder="Bairro" style={{...inputStyle, flex: 2}} onChange={(e) => setCliente({ ...cliente, bairro: e.target.value })} />
-            </div>
-            
-            <div style={{ display: "flex", gap: "10px" }}>
-               <input placeholder="Cidade" style={{...inputStyle, flex: 2}} onChange={(e) => setCliente({ ...cliente, cidade: e.target.value })} />
-               <input placeholder="Estado" style={{...inputStyle, flex: 1}} onChange={(e) => setCliente({ ...cliente, estado: e.target.value })} />
-            </div>
-
+<div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+  <input 
+    placeholder="Digite seu CEP" 
+    style={inputStyle} 
+    value={cliente.cep}
+    onChange={(e) => {
+      const val = e.target.value;
+      setCliente({...cliente, cep: val});
+      buscarEndereco(val); // <--- Isso ativa a busca automática
+    }} 
+  />
+  <input placeholder="Seu nome" style={inputStyle} value={cliente.nome} onChange={(e) => setCliente({ ...cliente, nome: e.target.value })} />
+  <input placeholder="Telefone" style={inputStyle} value={cliente.telefone} onChange={(e) => setCliente({ ...cliente, telefone: e.target.value })} />
+  <input placeholder="CPF" style={inputStyle} value={cliente.cpf} onChange={(e) => setCliente({ ...cliente, cpf: e.target.value })} />
+  
+  {/* O value={cliente.endereco} abaixo permite que o texto apareça sozinho */}
+  <input placeholder="Endereço" style={inputStyle} value={cliente.endereco} onChange={(e) => setCliente({ ...cliente, endereco: e.target.value })} />
+  
+  <div style={{ display: "flex", gap: "10px" }}>
+     <input placeholder="Número" style={{...inputStyle, flex: 1}} value={cliente.numero} onChange={(e) => setCliente({ ...cliente, numero: e.target.value })} />
+     <input placeholder="Bairro" style={{...inputStyle, flex: 2}} value={cliente.bairro} onChange={(e) => setCliente({ ...cliente, bairro: e.target.value })} />
+  </div>
+  
+  <div style={{ display: "flex", gap: "10px" }}>
+     <input placeholder="Cidade" style={{...inputStyle, flex: 2}} value={cliente.cidade} onChange={(e) => setCliente({ ...cliente, cidade: e.target.value })} />
+     <input placeholder="Estado" style={{...inputStyle, flex: 1}} value={cliente.estado} onChange={(e) => setCliente({ ...cliente, estado: e.target.value })} />
+  </div>
+</div>
             {/* CAMPO CONDICIONAL */}
             {ehPenDrive && (
               <input 
