@@ -127,10 +127,10 @@ export default function Produto() {
             </p>
           )}
           
-          {/* DESCRIÇÃO COMPLETA - FIXADO */}
-          <div style={{ whiteSpace: "pre-wrap", color: "#444", lineHeight: "1.6", marginBottom: "25px", fontSize: "16px" }}>
-            {produto.descricao}
-          </div>
+          {/* DESCRIÇÃO COMPLETA - Agora puxando da coluna correta do seu print 1413 */}
+<div style={{ whiteSpace: "pre-wrap", color: "#333", lineHeight: "1.6", fontSize: "15px", marginBottom: "25px" }}>
+  {produto.descricao_completa || produto.descricao}
+</div>
 
           {/* FORMULÁRIO COMPLETO */}
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
