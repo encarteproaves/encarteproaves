@@ -18,7 +18,45 @@ export default function Produto() {
   const [fretes, setFretes] = useState([]);
   const [freteSelecionado, setFreteSelecionado] = useState(null);
   const [total, setTotal] = useState(0);
+// ==========================================
+  // BUSCA E VALIDAÇÃO DE CEP
+  // ==========================================
+  const buscarEndereco = async (cepDigitado) => {
+    const cepLimpo = cepDigitado.replace(/\D/g, "");
+    
+    if (cepLimpo.length === 8) {
+      try {
+        const res = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
+        const data = await res.json();
+        
+        if (data.erro) {
+          alert("CEP inválido! Por favor, confira os números digitados.");
+          setCliente((prev) => ({
+            ...prev,
+            cep: "",
+            endereco: "",
+            bairro: "",
+            cidade: "",
+            estado: ""
+          }));
+          return;
+        }
 
+        setCliente((prev) => ({
+          ...prev,
+          cep: cepLimpo,
+          endereco: data.logradouro,
+          bairro: data.bairro,
+          cidade: data.localidade,
+          estado: data.uf
+        }));
+        
+      } catch (err) {
+        console.error("Erro ao buscar CEP", err);
+        alert("Erro ao consultar o CEP. Tente novamente mais tarde.");
+      }
+    }
+  };
   // BUSCA DE DADOS
   useEffect(() => {
     async function carregarProduto() {
