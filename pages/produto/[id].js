@@ -24,16 +24,24 @@ export default function Produto() {
   const [total, setTotal] = useState(0);
 
   // =============================
-  // BUSCAR PRODUTO
+  // 🔥 CARREGAR PRODUTO (CORRIGIDO)
   // =============================
   useEffect(() => {
     if (!id) return;
 
-    fetch(`/api/produto/${id}`)
+    fetch(`/api/produtos?id=${id}`) // 🔥 AJUSTE AQUI
       .then((res) => res.json())
       .then((data) => {
-        setProduto(data);
-        setTotal(Number(data.preco));
+        if (Array.isArray(data)) {
+          setProduto(data[0]);
+          setTotal(Number(data[0].preco));
+        } else {
+          setProduto(data);
+          setTotal(Number(data.preco));
+        }
+      })
+      .catch((err) => {
+        console.error("Erro ao carregar produto:", err);
       });
   }, [id]);
 
@@ -54,16 +62,11 @@ export default function Produto() {
         },
         body: JSON.stringify({
           cep: cliente.cep,
-          produtoId: produto.id
+          produtoId: id
         })
       });
 
       const data = await res.json();
-
-      if (!data || !Array.isArray(data)) {
-        alert("Erro ao calcular frete");
-        return;
-      }
 
       setFretes(data);
 
@@ -87,11 +90,10 @@ export default function Produto() {
   }, [freteSelecionado]);
 
   // =============================
-  // COMPRA SEGURA (FIX DEFINITIVO)
+  // COMPRA SEGURA (FIX)
   // =============================
   const comprar = async () => {
     try {
-      // validação obrigatória
       if (!cliente.nome || !cliente.telefone || !cliente.cep) {
         alert("Preencha nome, telefone e CEP");
         return;
@@ -118,8 +120,8 @@ export default function Produto() {
           estado: cliente.estado,
           canto: cliente.canto || "",
 
-          produtoId: produto.id,
-          valorProduto: Number(produto.preco), // 🔥 ESSENCIAL
+          produtoId: id,
+          valorProduto: Number(produto.preco),
 
           frete: {
             nome: freteSelecionado.nome,
@@ -138,15 +140,18 @@ export default function Produto() {
         alert("Erro ao gerar pagamento");
       }
     } catch (error) {
-      console.error("Erro no checkout:", error);
-      alert("Erro ao processar pagamento");
+      console.error(error);
+      alert("Erro no checkout");
     }
   };
 
+  // =============================
+  // LOADING
+  // =============================
   if (!produto) return <p>Carregando...</p>;
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div style={{ padding: 20 }}>
       <h1>{produto.nome}</h1>
       <h2>R$ {Number(produto.preco).toFixed(2)}</h2>
 
