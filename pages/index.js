@@ -46,9 +46,12 @@ export default function Home() {
   // ===============================
   // FORMATAR MOEDA
   // ===============================
-  function formatarMoeda(v) {
-    return Number(v || 0).toFixed(2);
-  }
+ function formatarMoeda(v) {
+  return Number(v || 0).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+}
 
   // ===============================
   // RENDER

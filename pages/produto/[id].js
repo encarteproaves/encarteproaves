@@ -1,50 +1,39 @@
-// ===============================
-// IMPORTAÇÕES
-// ===============================
-// Importa o roteador do Next.js (para pegar parâmetros da URL)
 import { useRouter } from "next/router";
-
-// Importa hooks do React (estado e efeitos)
 import { useEffect, useState } from "react";
 
-
-// ===============================
-// COMPONENTE PRINCIPAL DA PÁGINA
-// ===============================
 export default function ProdutoPage() {
 
-  // ===============================
-  // CAPTURA ID DO PRODUTO NA URL
-  // ===============================
   const router = useRouter();
   const { id } = router.query;
 
+  const [produto, setProduto] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const [cliente, setCliente] = useState({});
+  const [fretes, setFretes] = useState([]);
+  const [freteSelecionado, setFreteSelecionado] = useState(null);
+
+  const [loadingFrete, setLoadingFrete] = useState(false);
+  const [cepErro, setCepErro] = useState(false);
 
   // ===============================
-  // ESTADOS PRINCIPAIS
-  // ===============================
-  const [produto, setProduto] = useState(null); // Armazena dados do produto
-  const [loading, setLoading] = useState(true); // Controle de carregamento
-
-  const [cliente, setCliente] = useState({}); // Dados do cliente
-  const [fretes, setFretes] = useState([]); // Lista de fretes disponíveis
-  const [freteSelecionado, setFreteSelecionado] = useState(null); // Frete escolhido
-
-  const [loadingFrete, setLoadingFrete] = useState(false); // Loading do frete
-  const [cepErro, setCepErro] = useState(false); // Validação de CEP
-
-
-  // ===============================
-  // BUSCA PRODUTO AO CARREGAR PÁGINA
+  // BUSCAR PRODUTO
   // ===============================
   useEffect(() => {
-    if (!id) return; // Só executa se tiver ID
+    if (!id) return;
 
     async function fetchProduto() {
       try {
         const res = await fetch(`/api/produto?id=${id}`);
         const data = await res.json();
-        setProduto(data);
+
+        // 🔥 segurança extra
+        if (data && data.id) {
+          setProduto(data);
+        } else {
+          console.error("Produto inválido:", data);
+        }
+
       } catch (error) {
         console.error("Erro ao buscar produto:", error);
       } finally {
@@ -54,13 +43,9 @@ export default function ProdutoPage() {
 
     fetchProduto();
   }, [id]);
-  // ===============================
-  // FIM BUSCA PRODUTO
-  // ===============================
-
 
   // ===============================
-  // BUSCA ENDEREÇO PELO CEP (VIACEP)
+  // CEP AUTOMÁTICO
   // ===============================
   useEffect(() => {
     if (!cliente.cep || cliente.cep.length < 8) return;
@@ -72,7 +57,6 @@ export default function ProdutoPage() {
         const res = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
         const data = await res.json();
 
-        // CEP inválido
         if (data.erro) {
           setCepErro(true);
           return;
@@ -80,7 +64,6 @@ export default function ProdutoPage() {
 
         setCepErro(false);
 
-        // Preenche automaticamente endereço
         setCliente((prev) => ({
           ...prev,
           endereco: data.logradouro || "",
@@ -88,6 +71,7 @@ export default function ProdutoPage() {
           cidade: data.localidade || "",
           estado: data.uf || "",
         }));
+
       } catch {
         setCepErro(true);
       }
@@ -95,13 +79,7 @@ export default function ProdutoPage() {
 
     buscarCep();
   }, [cliente.cep]);
-  // ===============================
-  // FIM BUSCA CEP
-  // ===============================
 
-
-  // ===============================
-  // ATUALIZA CAMPOS DO FORMULÁRIO
   // ===============================
   function handleChange(campo, valor) {
     setCliente((prev) => ({
@@ -109,18 +87,16 @@ export default function ProdutoPage() {
       [campo]: valor,
     }));
   }
-  // ===============================
-  // FIM HANDLE CHANGE
-  // ===============================
-
 
   // ===============================
-  // CALCULAR FRETE
+  // FRETE
   // ===============================
   async function calcularFrete() {
-    try {
-      if (!cliente.cep) return alert("Digite o CEP");
 
+    if (!produto) return;
+    if (!cliente.cep) return alert("Digite o CEP");
+
+    try {
       setLoadingFrete(true);
 
       const res = await fetch("/api/frete", {
@@ -136,15 +112,12 @@ export default function ProdutoPage() {
 
       const data = await res.json();
 
-      // Normaliza retorno
       let lista = data.options || data || [];
 
-      // Remove fretes com valor inválido
       lista = lista.filter(
         (f) => Number(f.price || f.cost || f.valor || 0) > 0
       );
 
-      // Ordena do mais barato para o mais caro
       lista.sort(
         (a, b) =>
           Number(a.price || a.cost || a.valor || 0) -
@@ -152,22 +125,16 @@ export default function ProdutoPage() {
       );
 
       setFretes(lista);
+
     } catch (err) {
       console.error("Erro frete:", err);
     } finally {
       setLoadingFrete(false);
     }
   }
-  // ===============================
-  // FIM CALCULAR FRETE
-  // ===============================
 
-
-  // ===============================
-  // CÁLCULO DE VALORES
   // ===============================
   const valorProduto = Number(produto?.preco || 0);
-
   const valorFrete = Number(
     freteSelecionado?.price ||
     freteSelecionado?.cost ||
@@ -176,13 +143,7 @@ export default function ProdutoPage() {
   );
 
   const total = valorProduto + valorFrete;
-  // ===============================
-  // FIM CÁLCULO
-  // ===============================
 
-
-  // ===============================
-  // ABRIR WHATSAPP
   // ===============================
   function falarWhatsapp() {
     const mensagem = encodeURIComponent(
@@ -193,17 +154,10 @@ export default function ProdutoPage() {
       `https://api.whatsapp.com/send?phone=5511984309480&text=${mensagem}`
     );
   }
-  // ===============================
-  // FIM WHATSAPP
-  // ===============================
 
-
-  // ===============================
-  // FINALIZAR COMPRA (MERCADO PAGO)
   // ===============================
   async function comprar() {
 
-    // Validação básica
     if (!cliente.nome || !cliente.telefone || !cliente.cep) {
       return alert("Preencha os dados obrigatórios");
     }
@@ -229,46 +183,31 @@ export default function ProdutoPage() {
 
       const data = await res.json();
 
-      // Redireciona para pagamento
       if (data.init_point) {
         window.location.href = data.init_point;
       }
+
     } catch (err) {
       console.error("Erro compra:", err);
     }
   }
-  // ===============================
-  // FIM COMPRA
-  // ===============================
-
 
   // ===============================
-  // CONDIÇÕES DE RENDERIZAÇÃO
-  // ===============================
-  if (loading) return <p style={{ textAlign: "center" }}>Carregando...</p>;
+  if (loading) return <p>Carregando...</p>;
   if (!produto) return <p>Produto não encontrado</p>;
-  // ===============================
-  // FIM CONDIÇÕES
-  // ===============================
 
-
-  // ===============================
-  // RENDER PRINCIPAL (HTML)
   // ===============================
   return (
     <div style={container}>
       <div style={card}>
-        
-        {/* IMAGEM DO PRODUTO */}
+
         <div style={imgContainer}>
           <img src={produto.imagem} style={img} />
         </div>
 
-        {/* DADOS DO PRODUTO */}
         <div style={{ flex: 1 }}>
           <h1>{produto.nome}</h1>
 
-          {/* PREÇO */}
           <h2 style={{ color: "green" }}>
             {Number(produto.preco).toLocaleString("pt-BR", {
               style: "currency",
@@ -278,34 +217,56 @@ export default function ProdutoPage() {
 
           <p>{produto.descricao}</p>
 
-          {/* DESCRIÇÃO COMPLETA */}
           {produto.descricao_completa && (
             <div style={descricaoBox}>
               {produto.descricao_completa}
             </div>
           )}
 
-          {/* ESTOQUE */}
           <p style={{ color: "red" }}>
             Restam apenas {produto.estoque} unidades
           </p>
 
           <hr />
 
-          {/* FORMULÁRIO CLIENTE */}
-          <input
-            placeholder="Digite seu CEP"
-            style={{ ...input, borderColor: cepErro ? "red" : "#ccc" }}
-            onChange={(e) => handleChange("cep", e.target.value)}
-          />
+          {/* FORMULÁRIO COMPLETO */}
+          <input placeholder="Digite seu CEP" style={input}
+            onChange={(e) => handleChange("cep", e.target.value)} />
 
-          {cepErro && (
-            <p style={{ color: "red" }}>CEP inválido</p>
+          <input placeholder="Seu nome" style={input}
+            onChange={(e) => handleChange("nome", e.target.value)} />
+
+          <input placeholder="Telefone" style={input}
+            onChange={(e) => handleChange("telefone", e.target.value)} />
+
+          <input placeholder="CPF" style={input}
+            onChange={(e) => handleChange("cpf", e.target.value)} />
+
+          <input placeholder="Endereço" style={input}
+            value={cliente.endereco || ""}
+            onChange={(e) => handleChange("endereco", e.target.value)} />
+
+          <input placeholder="Número" style={input}
+            onChange={(e) => handleChange("numero", e.target.value)} />
+
+          <input placeholder="Bairro" style={input}
+            value={cliente.bairro || ""}
+            onChange={(e) => handleChange("bairro", e.target.value)} />
+
+          <input placeholder="Cidade" style={input}
+            value={cliente.cidade || ""}
+            onChange={(e) => handleChange("cidade", e.target.value)} />
+
+          <input placeholder="Estado" style={input}
+            value={cliente.estado || ""}
+            onChange={(e) => handleChange("estado", e.target.value)} />
+
+          {/* CAMPO CANTO (APENAS PEN DRIVE) */}
+          {produto.nome?.toLowerCase().includes("pen drive") && (
+            <input placeholder="Digite o canto" style={input}
+              onChange={(e) => handleChange("canto", e.target.value)} />
           )}
 
-          <input placeholder="Seu nome" style={input} onChange={(e) => handleChange("nome", e.target.value)} />
-
-          {/* BOTÕES */}
           <button style={btn} onClick={calcularFrete}>
             Calcular Frete
           </button>
@@ -314,7 +275,6 @@ export default function ProdutoPage() {
             Compra segura
           </button>
 
-          {/* FRETES */}
           {fretes.map((f, i) => {
             const valor = Number(f.price || f.cost || f.valor || 0);
 
@@ -333,7 +293,6 @@ export default function ProdutoPage() {
             );
           })}
 
-          {/* TOTAL */}
           <h3>
             Total: {total.toLocaleString("pt-BR", {
               style: "currency",
@@ -341,22 +300,16 @@ export default function ProdutoPage() {
             })}
           </h3>
 
-          {/* WHATSAPP */}
           <button style={whats} onClick={falarWhatsapp}>
             Falar no WhatsApp
           </button>
+
         </div>
       </div>
     </div>
   );
 }
-// ===============================
-// FIM DO COMPONENTE
-// ===============================
 
-
-// ===============================
-// ESTILOS
 // ===============================
 const container = { padding: 20 };
 
