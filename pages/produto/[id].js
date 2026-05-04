@@ -123,7 +123,7 @@ export default function Produto() {
 
           frete: {
             nome: freteSelecionado.nome,
-            price: Number(freteSelecionado.price),
+            price: Number(freteSelecionado.price || freteSelecionado.valor || 0),
             prazo: freteSelecionado.prazo
           }
         })
