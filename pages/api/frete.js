@@ -16,12 +16,16 @@ export default async function handler(req, res) {
     // FRETES (5 OPÇÕES ORDENADAS)
     // ===============================
     let fretes = [
-      { name: "Econômico", price: 19.90, prazo: "7 dias" },
-      { name: "PAC", price: 24.90, prazo: "5 dias" },
-      { name: "Transportadora", price: 29.90, prazo: "4 dias" },
-      { name: "SEDEX", price: 39.90, prazo: "2 dias" },
-      { name: "Expresso", price: 49.90, prazo: "1 dia" }
-    ];
+  { name: "Loggi Ponto", price: 14.90, prazo: "5 dias" },
+  { name: "PAC", price: 18.90, prazo: "5 dias" },
+  { name: "E-commerce", price: 21.40, prazo: "4 dias" },
+  { name: "Package", price: 26.00, prazo: "5 dias" },
+  { name: "SEDEX", price: 32.90, prazo: "2 dias" },
+  { name: "Loggi", price: 37.90, prazo: "3 dias" }
+];
+
+// 🔥 sempre ordenado automático
+fretes.sort((a, b) => a.price - b.price);
 
     // 🔥 GARANTIA: ordena do mais barato pro mais caro
     fretes.sort((a, b) => a.price - b.price);
