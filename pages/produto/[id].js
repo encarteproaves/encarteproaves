@@ -1,367 +1,188 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-export default function ProdutoPage() {
-
+export default function Produto() {
   const router = useRouter();
   const { id } = router.query;
 
   const [produto, setProduto] = useState(null);
-  const [loading, setLoading] = useState(true);
 
-  const [cliente, setCliente] = useState({});
+  const [cliente, setCliente] = useState({
+    nome: "",
+    telefone: "",
+    cep: "",
+    endereco: "",
+    numero: "",
+    bairro: "",
+    cidade: "",
+    estado: "",
+    canto: ""
+  });
+
   const [fretes, setFretes] = useState([]);
   const [freteSelecionado, setFreteSelecionado] = useState(null);
+  const [total, setTotal] = useState(0);
 
-  const [loadingFrete, setLoadingFrete] = useState(false);
-  const [cepErro, setCepErro] = useState(false);
-
-  // ===============================
+  // =============================
   // BUSCAR PRODUTO
-  // ===============================
+  // =============================
   useEffect(() => {
     if (!id) return;
 
-    async function fetchProduto() {
-      try {
-        const res = await fetch(`/api/produto?id=${id}`);
-        const data = await res.json();
-
-        if (data && data.id) {
-          setProduto(data);
-        } else {
-          console.error("Produto inválido:", data);
-        }
-
-      } catch (error) {
-        console.error("Erro ao buscar produto:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchProduto();
+    fetch(`/api/produto/${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setProduto(data);
+        setTotal(Number(data.preco));
+      });
   }, [id]);
 
-  // ===============================
-  // CEP AUTOMÁTICO
-  // ===============================
-  useEffect(() => {
-    if (!cliente.cep || cliente.cep.length < 8) return;
-
-    async function buscarCep() {
-      try {
-        const cepLimpo = cliente.cep.replace(/\D/g, "");
-
-        const res = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
-        const data = await res.json();
-
-        if (data.erro) {
-          setCepErro(true);
-          return;
-        }
-
-        setCepErro(false);
-
-        setCliente((prev) => ({
-          ...prev,
-          endereco: data.logradouro || "",
-          bairro: data.bairro || "",
-          cidade: data.localidade || "",
-          estado: data.uf || "",
-        }));
-
-      } catch {
-        setCepErro(true);
-      }
+  // =============================
+  // CALCULAR FRETE
+  // =============================
+  const calcularFrete = async () => {
+    if (!cliente.cep) {
+      alert("Digite o CEP");
+      return;
     }
 
-    buscarCep();
-  }, [cliente.cep]);
-
-  // ===============================
-  function handleChange(campo, valor) {
-    setCliente((prev) => ({
-      ...prev,
-      [campo]: valor,
-    }));
-  }
-
-  // ===============================
-  // FRETE (CORRIGIDO)
-  // ===============================
-  async function calcularFrete() {
-
-    if (!produto) return;
-    if (!cliente.cep) return alert("Digite o CEP");
-
     try {
-      setLoadingFrete(true);
-
       const res = await fetch("/api/frete", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
           cep: cliente.cep,
-          produtoId: produto.id, // 🔥 ESSENCIAL
-        }),
+          produtoId: produto.id
+        })
       });
 
       const data = await res.json();
 
-      if (!data) {
-        console.error("Resposta vazia da API");
+      if (!data || !Array.isArray(data)) {
+        alert("Erro ao calcular frete");
         return;
       }
 
-      let lista = data.options || data || [];
+      setFretes(data);
 
-      if (!Array.isArray(lista)) {
-        console.error("Formato inválido de frete:", lista);
-        return;
+      if (data.length > 0) {
+        setFreteSelecionado(data[0]);
+        setTotal(Number(produto.preco) + Number(data[0].price));
       }
-
-      lista = lista.filter(
-        (f) => Number(f.price || f.cost || f.valor || 0) > 0
-      );
-
-      lista.sort(
-        (a, b) =>
-          Number(a.price || a.cost || a.valor || 0) -
-          Number(b.price || b.cost || b.valor || 0)
-      );
-
-      setFretes(lista);
-
     } catch (err) {
-      console.error("Erro frete:", err);
-    } finally {
-      setLoadingFrete(false);
+      console.error(err);
+      alert("Erro ao calcular frete");
     }
-  }
+  };
 
-  // ===============================
-  const valorProduto = Number(produto?.preco || 0);
-  const valorFrete = Number(
-    freteSelecionado?.price ||
-    freteSelecionado?.cost ||
-    freteSelecionado?.valor ||
-    0
-  );
-
-  const total = valorProduto + valorFrete;
-
-  // ===============================
-  function falarWhatsapp() {
-    const mensagem = encodeURIComponent(
-      `Olá, tenho interesse no produto ${produto?.nome}`
-    );
-
-    window.open(
-      `https://api.whatsapp.com/send?phone=5511984309480&text=${mensagem}`
-    );
-  }
-
-  // ===============================
-  async function comprar() {
-
-    if (!cliente.nome || !cliente.telefone || !cliente.cep) {
-      return alert("Preencha os dados obrigatórios");
+  // =============================
+  // ATUALIZAR TOTAL
+  // =============================
+  useEffect(() => {
+    if (produto && freteSelecionado) {
+      setTotal(Number(produto.preco) + Number(freteSelecionado.price));
     }
+  }, [freteSelecionado]);
 
-    if (!freteSelecionado) {
-      return alert("Selecione um frete");
-    }
-
+  // =============================
+  // COMPRA SEGURA (FIX DEFINITIVO)
+  // =============================
+  const comprar = async () => {
     try {
+      // validação obrigatória
+      if (!cliente.nome || !cliente.telefone || !cliente.cep) {
+        alert("Preencha nome, telefone e CEP");
+        return;
+      }
+
+      if (!freteSelecionado) {
+        alert("Selecione um frete");
+        return;
+      }
+
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          ...cliente,
-          produtoId: produto.id,
-          frete: freteSelecionado,
+          nome: cliente.nome,
+          telefone: cliente.telefone,
+          cep: cliente.cep,
+          endereco: cliente.endereco,
+          numero: cliente.numero,
+          bairro: cliente.bairro,
+          cidade: cliente.cidade,
+          estado: cliente.estado,
           canto: cliente.canto || "",
-        }),
+
+          produtoId: produto.id,
+          valorProduto: Number(produto.preco), // 🔥 ESSENCIAL
+
+          frete: {
+            nome: freteSelecionado.nome,
+            price: Number(freteSelecionado.price),
+            prazo: freteSelecionado.prazo
+          }
+        })
       });
 
       const data = await res.json();
 
       if (data.init_point) {
         window.location.href = data.init_point;
+      } else {
+        console.error(data);
+        alert("Erro ao gerar pagamento");
       }
-
-    } catch (err) {
-      console.error("Erro compra:", err);
+    } catch (error) {
+      console.error("Erro no checkout:", error);
+      alert("Erro ao processar pagamento");
     }
-  }
+  };
 
-  // ===============================
-  if (loading) return <p>Carregando...</p>;
-  if (!produto) return <p>Produto não encontrado</p>;
+  if (!produto) return <p>Carregando...</p>;
 
-  // ===============================
   return (
-    <div style={container}>
-      <div style={card}>
+    <div style={{ padding: "20px" }}>
+      <h1>{produto.nome}</h1>
+      <h2>R$ {Number(produto.preco).toFixed(2)}</h2>
 
-        <div style={imgContainer}>
-          <img src={produto.imagem} style={img} />
+      <p>{produto.descricao}</p>
+
+      <br />
+
+      <input placeholder="CEP" onChange={(e) => setCliente({ ...cliente, cep: e.target.value })} />
+      <input placeholder="Nome" onChange={(e) => setCliente({ ...cliente, nome: e.target.value })} />
+      <input placeholder="Telefone" onChange={(e) => setCliente({ ...cliente, telefone: e.target.value })} />
+      <input placeholder="Endereço" onChange={(e) => setCliente({ ...cliente, endereco: e.target.value })} />
+      <input placeholder="Número" onChange={(e) => setCliente({ ...cliente, numero: e.target.value })} />
+      <input placeholder="Bairro" onChange={(e) => setCliente({ ...cliente, bairro: e.target.value })} />
+      <input placeholder="Cidade" onChange={(e) => setCliente({ ...cliente, cidade: e.target.value })} />
+      <input placeholder="Estado" onChange={(e) => setCliente({ ...cliente, estado: e.target.value })} />
+      <input placeholder="Digite o canto" onChange={(e) => setCliente({ ...cliente, canto: e.target.value })} />
+
+      <br /><br />
+
+      <button onClick={calcularFrete}>Calcular Frete</button>
+      <button onClick={comprar}>Compra segura</button>
+
+      <br /><br />
+
+      {fretes.map((f, i) => (
+        <div key={i}>
+          <input
+            type="radio"
+            name="frete"
+            onChange={() => setFreteSelecionado(f)}
+          />
+          {f.nome} - R$ {f.price}
         </div>
+      ))}
 
-        <div style={{ flex: 1 }}>
-          <h1>{produto.nome}</h1>
-
-          <h2 style={{ color: "green" }}>
-            {Number(produto.preco).toLocaleString("pt-BR", {
-              style: "currency",
-              currency: "BRL",
-            })}
-          </h2>
-
-          <p>{produto.descricao}</p>
-
-          {produto.descricao_completa && (
-            <div style={descricaoBox}>
-              {produto.descricao_completa}
-            </div>
-          )}
-
-          <p style={{ color: "red" }}>
-            Restam apenas {produto.estoque} unidades
-          </p>
-
-          <hr />
-
-          <input placeholder="Digite seu CEP" style={input}
-            onChange={(e) => handleChange("cep", e.target.value)} />
-
-          <input placeholder="Seu nome" style={input}
-            onChange={(e) => handleChange("nome", e.target.value)} />
-
-          <input placeholder="Telefone" style={input}
-            onChange={(e) => handleChange("telefone", e.target.value)} />
-
-          <input placeholder="CPF" style={input}
-            onChange={(e) => handleChange("cpf", e.target.value)} />
-
-          <input placeholder="Endereço" style={input}
-            value={cliente.endereco || ""}
-            onChange={(e) => handleChange("endereco", e.target.value)} />
-
-          <input placeholder="Número" style={input}
-            onChange={(e) => handleChange("numero", e.target.value)} />
-
-          <input placeholder="Bairro" style={input}
-            value={cliente.bairro || ""}
-            onChange={(e) => handleChange("bairro", e.target.value)} />
-
-          <input placeholder="Cidade" style={input}
-            value={cliente.cidade || ""}
-            onChange={(e) => handleChange("cidade", e.target.value)} />
-
-          <input placeholder="Estado" style={input}
-            value={cliente.estado || ""}
-            onChange={(e) => handleChange("estado", e.target.value)} />
-
-          {produto.nome?.toLowerCase().includes("pen drive") && (
-            <input placeholder="Digite o canto" style={input}
-              onChange={(e) => handleChange("canto", e.target.value)} />
-          )}
-
-          <button style={btn} onClick={calcularFrete}>
-            {loadingFrete ? "Calculando..." : "Calcular Frete"}
-          </button>
-
-          <button style={btn} onClick={comprar}>
-            Compra segura
-          </button>
-
-          {fretes.map((f, i) => {
-            const valor = Number(f.price || f.cost || f.valor || 0);
-
-            return (
-              <div key={i}>
-                <input
-                  type="radio"
-                  name="frete"
-                  onChange={() => setFreteSelecionado(f)}
-                />
-                {f.name} - {valor.toLocaleString("pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
-                })}
-              </div>
-            );
-          })}
-
-          <h3>
-            Total: {total.toLocaleString("pt-BR", {
-              style: "currency",
-              currency: "BRL",
-            })}
-          </h3>
-
-          <button style={whats} onClick={falarWhatsapp}>
-            Falar no WhatsApp
-          </button>
-
-        </div>
-      </div>
+      <h3>Total: R$ {total.toFixed(2)}</h3>
     </div>
   );
 }
-
-// ===============================
-const container = { padding: 20 };
-
-const card = {
-  display: "flex",
-  gap: 30,
-  maxWidth: 1000,
-  margin: "0 auto",
-  flexWrap: "wrap",
-};
-
-const imgContainer = {
-  width: 350,
-  height: 350,
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-};
-
-const img = {
-  width: "100%",
-  maxWidth: 320,
-  objectFit: "contain",
-};
-
-const input = {
-  display: "block",
-  width: "100%",
-  marginBottom: 8,
-  padding: 8,
-};
-
-const btn = {
-  marginRight: 10,
-  padding: 10,
-};
-
-const whats = {
-  marginTop: 10,
-  padding: 12,
-  width: "100%",
-  backgroundColor: "green",
-  color: "white",
-};
-
-const descricaoBox = {
-  marginTop: 15,
-  padding: 15,
-};
