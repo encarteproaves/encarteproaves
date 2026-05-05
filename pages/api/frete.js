@@ -6,24 +6,21 @@ export default async function handler(req, res) {
   const { cep, produtoId } = req.body;
 
   try {
-    // 1. Busca os dados reais (22kg, 65cm, etc.) no Supabase
+    // Busca o produto para pegar o peso e medidas reais do banco
     const { data: produto, error } = await supabase
       .from("produtos")
       .select("*")
       .eq("id", produtoId)
       .single();
 
-    if (error || !produto) {
-      return res.status(404).json({ error: "Produto não encontrado" });
-    }
+    if (error || !produto) throw new Error("Produto não encontrado");
 
-    // 2. Garante valores mínimos para evitar rejeição da transportadora
-    const peso = parseFloat(produto.weight) > 0 ? parseFloat(produto.weight) : 0.5;
-    const largura = parseInt(produto.width) >= 11 ? parseInt(produto.width) : 11;
-    const altura = parseInt(produto.height) >= 2 ? parseInt(produto.height) : 2;
-    const comprimento = parseInt(produto.length) >= 11 ? parseInt(produto.length) : 11;
+    // TRATAMENTO DOS DADOS: Garante que sejam números puros (Inteiros ou decimais com ponto)
+    const pesoReal = parseFloat(produto.weight);
+    const larguraReal = parseInt(produto.width);
+    const alturaReal = parseInt(produto.height);
+    const comprimentoReal = parseInt(produto.length);
 
-    // 3. Consulta ao Melhor Envio
     const response = await fetch("https://www.melhorenvio.com.br/api/v2/me/shipment/calculate", {
       method: "POST",
       headers: {
@@ -33,16 +30,16 @@ export default async function handler(req, res) {
         "User-Agent": "EncarteProAves (suporte@encarteproaves.com.br)"
       },
       body: JSON.stringify({
-        from: { postal_code: "08062670" }, // <-- COLOQUE SEU CEP DE ORIGEM AQUI (SÓ NÚMEROS)
+        from: { postal_code: "08062670" }, // Seu CEP de origem corrigido
         to: { postal_code: cep.replace(/\D/g, "") },
         products: [
           {
-            id: produtoId,
-            width: largura,
-            height: altura,
-            length: comprimento,
-            weight: peso,
-            insurance_value: produto.preco,
+            id: produto.id,
+            width: larguraReal,
+            height: alturaReal,
+            length: comprimentoReal,
+            weight: pesoReal,
+            insurance_value: 50, // Valor de seguro baixo apenas para teste de cálculo
             quantity: 1
           }
         ]
@@ -51,9 +48,12 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    if (!Array.isArray(data)) return res.status(200).json([]);
+    if (!Array.isArray(data)) {
+      console.error("Erro na resposta do Melhor Envio:", data);
+      return res.status(200).json([]);
+    }
 
-    // 4. Formata a resposta para o site entender
+    // Filtra as opções e entrega para o site
     const fretesValidos = data
       .filter(f => !f.error)
       .map(f => ({
@@ -65,6 +65,7 @@ export default async function handler(req, res) {
 
     res.status(200).json(fretesValidos);
   } catch (error) {
-    res.status(500).json({ error: "Erro interno no cálculo" });
+    console.error("Erro interno:", error);
+    res.status(500).json({ error: "Erro ao processar frete" });
   }
 }
