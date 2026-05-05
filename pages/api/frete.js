@@ -5,6 +5,7 @@ export default async function handler(req, res) {
   const { cep, produtoId } = req.body;
 
   try {
+    // Busca os dados exatos do produto que já funcionavam antes
     const { data: produto, error } = await supabase
       .from("produtos")
       .select("*")
@@ -12,12 +13,6 @@ export default async function handler(req, res) {
       .single();
 
     if (error || !produto) throw new Error("Produto não encontrado");
-
-    // SOLUÇÃO: Converte os valores para números puros para a API aceitar
-    const peso = parseFloat(produto.weight) || 0.5;
-    const largura = parseInt(produto.width) || 11;
-    const altura = parseInt(produto.height) || 4;
-    const comprimento = parseInt(produto.length) || 16;
 
     const response = await fetch("https://www.melhorenvio.com.br/api/v2/me/shipment/calculate", {
       method: "POST",
@@ -31,18 +26,19 @@ export default async function handler(req, res) {
         from: { postal_code: "08062670" },
         to: { postal_code: cep.replace(/\D/g, "") },
         products: [{
-          id: produto.id,
-          width: largura,
-          height: altura,
-          length: comprimento,
-          weight: peso,
-          insurance_value: 50,
+          id: String(produto.id),
+          width: produto.width,
+          height: produto.height,
+          length: produto.length,
+          weight: produto.weight, // Aqui entra o peso dinâmico (22, 1, 0.3, etc)
+          insurance_value: produto.preco,
           quantity: 1
         }]
       })
     });
 
     const data = await response.json();
+    
     if (!Array.isArray(data)) return res.status(200).json([]);
 
     const fretesValidos = data
