@@ -1,39 +1,61 @@
+import { supabase } from "../../lib/supabase";
+
 export default async function handler(req, res) {
+  if (req.method !== "POST") return res.status(405).send("Method not allowed");
+
+  const { cep, produtoId } = req.body;
 
   try {
+    // 1. Busca os dados técnicos reais do produto no Supabase
+    const { data: produto, error } = await supabase
+      .from("produtos")
+      .select("weight, width, height, length")
+      .eq("id", produtoId)
+      .single();
 
-    if (req.method !== "POST") {
-      return res.status(405).json({ error: "Método não permitido" });
-    }
+    if (error || !produto) throw new Error("Produto não encontrado");
 
-    const { cep, produtoId } = req.body;
+    // 2. Consulta o Melhor Envio com os dados REAIS do produto
+    const response = await fetch("https://www.melhorenvio.com.br/api/v2/me/shipment/calculate", {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.MELHOR_ENVIO_TOKEN}`,
+        "User-Agent": "EncarteProAves (contato@seusite.com)"
+      },
+      body: JSON.stringify({
+        from: { postal_code: "08062670" }, // <--- COLOQUE SEU CEP AQUI
+        to: { postal_code: cep },
+        products: [
+          {
+            id: produtoId,
+            width: produto.width,
+            height: produto.height,
+            length: produto.length,
+            weight: produto.weight,
+            insurance_value: 100,
+            quantity: 1
+          }
+        ]
+      })
+    });
 
-    if (!cep || !produtoId) {
-      return res.status(400).json({ error: "Dados inválidos" });
-    }
+    const data = await response.json();
 
-    // ===============================
-    // FRETES (5 OPÇÕES ORDENADAS)
-    // ===============================
-    let fretes = [
-  { name: "Loggi Ponto", price: 14.90, prazo: "5 dias" },
-  { name: "PAC", price: 18.90, prazo: "5 dias" },
-  { name: "E-commerce", price: 21.40, prazo: "4 dias" },
-  { name: "Package", price: 26.00, prazo: "5 dias" },
-  { name: "SEDEX", price: 32.90, prazo: "2 dias" },
-  { name: "Loggi", price: 37.90, prazo: "3 dias" }
-];
+    // 3. Filtra apenas transportadoras que não deram erro
+    const fretesValidos = data
+      .filter(f => !f.error)
+      .map(f => ({
+        id: f.id,
+        name: f.name,
+        price: f.custom_price || f.price,
+        deadline: f.delivery_range ? f.delivery_range.max : f.delivery_time
+      }));
 
-// 🔥 sempre ordenado automático
-fretes.sort((a, b) => a.price - b.price);
-
-    // 🔥 GARANTIA: ordena do mais barato pro mais caro
-    fretes.sort((a, b) => a.price - b.price);
-
-    return res.status(200).json(fretes);
-
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: "Erro interno" });
+    res.status(200).json(fretesValidos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Erro ao calcular frete" });
   }
 }
