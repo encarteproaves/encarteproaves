@@ -8,7 +8,6 @@ export default function Produto() {
 
   const [produto, setProduto] = useState(null);
   const [erro, setErro] = useState(null);
-
   const [cliente, setCliente] = useState({
     nome: "", telefone: "", cpf: "", cep: "",
     endereco: "", numero: "", bairro: "",
@@ -18,30 +17,18 @@ export default function Produto() {
   const [fretes, setFretes] = useState([]);
   const [freteSelecionado, setFreteSelecionado] = useState(null);
   const [total, setTotal] = useState(0);
-// ==========================================
-  // BUSCA E VALIDAÇÃO DE CEP
-  // ==========================================
+
   const buscarEndereco = async (cepDigitado) => {
     const cepLimpo = cepDigitado.replace(/\D/g, "");
-    
     if (cepLimpo.length === 8) {
       try {
         const res = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
         const data = await res.json();
-        
         if (data.erro) {
-          alert("CEP inválido! Por favor, confira os números digitados.");
-          setCliente((prev) => ({
-            ...prev,
-            cep: "",
-            endereco: "",
-            bairro: "",
-            cidade: "",
-            estado: ""
-          }));
+          alert("CEP inválido!");
+          setCliente((prev) => ({ ...prev, cep: "", endereco: "", bairro: "", cidade: "", estado: "" }));
           return;
         }
-
         setCliente((prev) => ({
           ...prev,
           cep: cepLimpo,
@@ -50,36 +37,27 @@ export default function Produto() {
           cidade: data.localidade,
           estado: data.uf
         }));
-        
       } catch (err) {
-        console.error("Erro ao buscar CEP", err);
-        alert("Erro ao consultar o CEP. Tente novamente mais tarde.");
+        console.error("Erro CEP", err);
       }
     }
   };
-  // BUSCA DE DADOS
+
   useEffect(() => {
     async function carregarProduto() {
       if (!id) return;
       try {
-        const { data, error } = await supabase
-          .from("produtos")
-          .select("*")
-          .eq("id", id)
-          .single();
-
+        const { data, error } = await supabase.from("produtos").select("*").eq("id", id).single();
         if (error) throw error;
         setProduto(data);
         setTotal(Number(data.preco));
       } catch (err) {
-        console.error("Erro Supabase:", err);
         setErro("Produto não encontrado.");
       }
     }
     carregarProduto();
   }, [id]);
 
-  // ATUALIZAÇÃO DE TOTAL
   useEffect(() => {
     if (produto) {
       const valorFrete = Number(freteSelecionado?.price || 0);
@@ -100,16 +78,14 @@ export default function Produto() {
         setFretes(data);
         if (data.length > 0) setFreteSelecionado(data[0]);
       }
-    } catch (err) {
-      alert("Erro ao calcular frete");
-    }
+    } catch (err) { alert("Erro frete"); }
   };
 
   const comprar = async () => {
     if (!cliente.nome || !cliente.telefone || !cliente.cep || !cliente.cpf) {
-      return alert("Preencha todos os campos obrigatórios (Nome, Telefone, CPF, CEP)");
+      return alert("Preencha os campos obrigatórios");
     }
-    if (!freteSelecionado) return alert("Por favor, calcule e selecione o frete");
+    if (!freteSelecionado) return alert("Selecione o frete");
 
     try {
       const res = await fetch("/api/checkout", {
@@ -121,91 +97,56 @@ export default function Produto() {
           phoneNumber: cliente.telefone,
           shippingCep: cliente.cep,
           shippingCost: Number(freteSelecionado.price || 0),
-          items: [{
-            id: produto.id,
-            name: produto.nome,
-            price: Number(produto.preco),
-            quantity: 1
-          }],
+          items: [{ id: produto.id, name: produto.nome, price: Number(produto.preco), quantity: 1 }],
           metadata: { ...cliente }
         })
       });
       const data = await res.json();
       if (data.init_point) window.location.href = data.init_point;
-    } catch (error) {
-      alert("Erro ao processar checkout");
-    }
+    } catch (error) { alert("Erro checkout"); }
   };
 
-  if (erro) return <div style={{padding: "50px", textAlign: "center"}}>{erro}</div>;
-  if (!produto) return <div style={{padding: "50px", textAlign: "center"}}>Carregando...</div>;
+  if (erro) return <div style={{ padding: "50px", textAlign: "center" }}>{erro}</div>;
+  if (!produto) return <div style={{ padding: "50px", textAlign: "center" }}>Carregando...</div>;
 
   const ehPenDrive = produto.nome.toLowerCase().includes("pen drive");
 
   return (
     <div style={{ padding: "20px", fontFamily: "sans-serif", maxWidth: "1100px", margin: "0 auto", paddingBottom: "120px" }}>
-      
       <div style={{ display: "flex", gap: "40px", flexWrap: "wrap", alignItems: "flex-start" }}>
-        
-        {/* IMAGEM (ESQUERDA) */}
         <div style={{ flex: "1", minWidth: "300px" }}>
           <img src={produto.imagem} alt={produto.nome} style={{ width: "100%", borderRadius: "8px" }} />
         </div>
 
-        {/* CONTEÚDO (DIREITA) */}
         <div style={{ flex: "1.2", minWidth: "320px" }}>
           <h1 style={{ fontSize: "28px", margin: "0 0 10px 0" }}>{produto.nome}</h1>
           <div style={{ color: "#28a745", fontSize: "32px", fontWeight: "bold", marginBottom: "5px" }}>
             {Number(produto.preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
           </div>
           
-          {produto.estoque > 0 && (
-            <p style={{ color: "red", fontWeight: "bold", fontSize: "14px", marginBottom: "15px" }}>
-              Restam apenas {produto.estoque} unidades
-            </p>
-          )}
-          
-          {/* DESCRIÇÃO COMPLETA - Agora puxando da coluna correta do seu print 1413 */}
-<div style={{ whiteSpace: "pre-wrap", color: "#333", lineHeight: "1.6", fontSize: "15px", marginBottom: "25px" }}>
-  {produto.descricao_completa || produto.descricao}
-</div>
+          <div style={{ whiteSpace: "pre-wrap", color: "#444", lineHeight: "1.6", marginBottom: "25px", fontSize: "16px" }}>
+            {produto.descricao_completa || produto.descricao}
+          </div>
 
-          {/* FORMULÁRIO COMPLETO */}
-<div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-  <input 
-    placeholder="Digite seu CEP" 
-    style={inputStyle} 
-    value={cliente.cep}
-    onChange={(e) => {
-      const val = e.target.value;
-      setCliente({...cliente, cep: val});
-      buscarEndereco(val); // <--- Isso ativa a busca automática
-    }} 
-  />
-  <input placeholder="Seu nome" style={inputStyle} value={cliente.nome} onChange={(e) => setCliente({ ...cliente, nome: e.target.value })} />
-  <input placeholder="Telefone" style={inputStyle} value={cliente.telefone} onChange={(e) => setCliente({ ...cliente, telefone: e.target.value })} />
-  <input placeholder="CPF" style={inputStyle} value={cliente.cpf} onChange={(e) => setCliente({ ...cliente, cpf: e.target.value })} />
-  
-  {/* O value={cliente.endereco} abaixo permite que o texto apareça sozinho */}
-  <input placeholder="Endereço" style={inputStyle} value={cliente.endereco} onChange={(e) => setCliente({ ...cliente, endereco: e.target.value })} />
-  
-  <div style={{ display: "flex", gap: "10px" }}>
-     <input placeholder="Número" style={{...inputStyle, flex: 1}} value={cliente.numero} onChange={(e) => setCliente({ ...cliente, numero: e.target.value })} />
-     <input placeholder="Bairro" style={{...inputStyle, flex: 2}} value={cliente.bairro} onChange={(e) => setCliente({ ...cliente, bairro: e.target.value })} />
-  </div>
-  
-  <div style={{ display: "flex", gap: "10px" }}>
-     <input placeholder="Cidade" style={{...inputStyle, flex: 2}} value={cliente.cidade} onChange={(e) => setCliente({ ...cliente, cidade: e.target.value })} />
-     <input placeholder="Estado" style={{...inputStyle, flex: 1}} value={cliente.estado} onChange={(e) => setCliente({ ...cliente, estado: e.target.value })} />
-  </div>
-</div>
-            {/* CAMPO CONDICIONAL */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            <input placeholder="Digite seu CEP" value={cliente.cep} style={inputStyle} onChange={(e) => { setCliente({...cliente, cep: e.target.value}); buscarEndereco(e.target.value); }} />
+            <input placeholder="Seu nome" value={cliente.nome} style={inputStyle} onChange={(e) => setCliente({ ...cliente, nome: e.target.value })} />
+            <input placeholder="Telefone" value={cliente.telefone} style={inputStyle} onChange={(e) => setCliente({ ...cliente, telefone: e.target.value })} />
+            <input placeholder="CPF" value={cliente.cpf} style={inputStyle} onChange={(e) => setCliente({ ...cliente, cpf: e.target.value })} />
+            <input placeholder="Endereço" value={cliente.endereco} style={inputStyle} onChange={(e) => setCliente({ ...cliente, endereco: e.target.value })} />
+            
+            <div style={{ display: "flex", gap: "10px" }}>
+               <input placeholder="Número" value={cliente.numero} style={{...inputStyle, flex: 1}} onChange={(e) => setCliente({ ...cliente, numero: e.target.value })} />
+               <input placeholder="Bairro" value={cliente.bairro} style={{...inputStyle, flex: 2}} onChange={(e) => setCliente({ ...cliente, bairro: e.target.value })} />
+            </div>
+            
+            <div style={{ display: "flex", gap: "10px" }}>
+               <input placeholder="Cidade" value={cliente.cidade} style={{...inputStyle, flex: 2}} onChange={(e) => setCliente({ ...cliente, cidade: e.target.value })} />
+               <input placeholder="Estado" value={cliente.estado} style={{...inputStyle, flex: 1}} onChange={(e) => setCliente({ ...cliente, estado: e.target.value })} />
+            </div>
+
             {ehPenDrive && (
-              <input 
-                placeholder="Digite o nome do canto" 
-                style={{...inputStyle, border: "2px solid #333"}} 
-                onChange={(e) => setCliente({ ...cliente, canto: e.target.value })} 
-              />
+              <input placeholder="Digite o nome do canto" value={cliente.canto} style={{...inputStyle, border: "2px solid #333"}} onChange={(e) => setCliente({ ...cliente, canto: e.target.value })} />
             )}
             
             <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
@@ -220,7 +161,6 @@ export default function Produto() {
         </div>
       </div>
 
-      {/* WHATSAPP FIXO */}
       <a 
         href={`https://wa.me/5581993414930?text=Olá, tenho interesse no produto: ${produto.nome}`}
         target="_blank" rel="noopener noreferrer" style={whatsappBtn}
