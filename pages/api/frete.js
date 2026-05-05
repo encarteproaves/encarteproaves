@@ -33,7 +33,7 @@ export default async function handler(req, res) {
         "User-Agent": "EncarteProAves (suporte@encarteproaves.com.br)"
       },
       body: JSON.stringify({
-        from: { postal_code: "04190001" }, // <-- COLOQUE SEU CEP DE ORIGEM AQUI (SÓ NÚMEROS)
+        from: { postal_code: "08062670" }, // <-- COLOQUE SEU CEP DE ORIGEM AQUI (SÓ NÚMEROS)
         to: { postal_code: cep.replace(/\D/g, "") },
         products: [
           {
