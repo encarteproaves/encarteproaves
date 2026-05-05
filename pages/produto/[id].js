@@ -26,20 +26,13 @@ export default function Produto() {
         const data = await res.json();
         if (data.erro) {
           alert("CEP inválido!");
-          setCliente((prev) => ({ ...prev, cep: "", endereco: "", bairro: "", cidade: "", estado: "" }));
           return;
         }
         setCliente((prev) => ({
-          ...prev,
-          cep: cepLimpo,
-          endereco: data.logradouro,
-          bairro: data.bairro,
-          cidade: data.localidade,
-          estado: data.uf
+          ...prev, cep: cepLimpo, endereco: data.logradouro,
+          bairro: data.bairro, cidade: data.localidade, estado: data.uf
         }));
-      } catch (err) {
-        console.error("Erro CEP", err);
-      }
+      } catch (err) { console.error("Erro CEP", err); }
     }
   };
 
@@ -51,9 +44,7 @@ export default function Produto() {
         if (error) throw error;
         setProduto(data);
         setTotal(Number(data.preco));
-      } catch (err) {
-        setErro("Produto não encontrado.");
-      }
+      } catch (err) { setErro("Produto não encontrado."); }
     }
     carregarProduto();
   }, [id]);
@@ -74,33 +65,27 @@ export default function Produto() {
         body: JSON.stringify({ cep: cliente.cep, produtoId: produto.id })
       });
       const data = await res.json();
-      if (Array.isArray(data)) {
+      if (Array.isArray(data) && data.length > 0) {
         setFretes(data);
-        if (data.length > 0) setFreteSelecionado(data[0]);
+        setFreteSelecionado(data[0]);
       } else {
-        alert("Nenhuma transportadora disponível para este CEP ou dimensões.");
+        alert("Nenhuma transportadora disponível para este CEP.");
       }
     } catch (err) { alert("Erro ao calcular frete"); }
   };
 
   const comprar = async () => {
-    if (!cliente.nome || !cliente.telefone || !cliente.cep || !cliente.cpf) {
-      return alert("Preencha os campos obrigatórios");
-    }
-    if (!freteSelecionado) return alert("Selecione o frete");
-
+    if (!cliente.nome || !cliente.telefone || !cliente.cep || !cliente.cpf) return alert("Preencha os campos!");
+    if (!freteSelecionado) return alert("Selecione o frete!");
     try {
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          customerName: cliente.nome,
-          customerEmail: `${cliente.telefone}@paves.com`,
-          phoneNumber: cliente.telefone,
-          shippingCep: cliente.cep,
-          shippingCost: Number(freteSelecionado.price || 0),
+          customerName: cliente.nome, phoneNumber: cliente.telefone,
+          shippingCep: cliente.cep, shippingCost: Number(freteSelecionado.price),
           items: [{ id: produto.id, name: produto.nome, price: Number(produto.preco), quantity: 1 }],
-          metadata: { ...cliente, frete_tipo: freteSelecionado.name }
+          metadata: { ...cliente, frete_escolhido: freteSelecionado.name }
         })
       });
       const data = await res.json();
@@ -111,87 +96,60 @@ export default function Produto() {
   if (erro) return <div style={{ padding: "50px", textAlign: "center" }}>{erro}</div>;
   if (!produto) return <div style={{ padding: "50px", textAlign: "center" }}>Carregando...</div>;
 
-  const ehPenDrive = produto.nome.toLowerCase().includes("pen drive");
-
   return (
     <div style={{ padding: "20px", fontFamily: "sans-serif", maxWidth: "1100px", margin: "0 auto", paddingBottom: "120px" }}>
-      <div style={{ display: "flex", gap: "40px", flexWrap: "wrap", alignItems: "flex-start" }}>
+      <div style={{ display: "flex", gap: "40px", flexWrap: "wrap" }}>
         <div style={{ flex: "1", minWidth: "300px" }}>
           <img src={produto.imagem} alt={produto.nome} style={{ width: "100%", borderRadius: "8px" }} />
         </div>
 
         <div style={{ flex: "1.2", minWidth: "320px" }}>
-          <h1 style={{ fontSize: "28px", margin: "0 0 10px 0" }}>{produto.nome}</h1>
-          <div style={{ color: "#28a745", fontSize: "32px", fontWeight: "bold", marginBottom: "5px" }}>
+          <h1 style={{ fontSize: "28px", margin: "0" }}>{produto.nome}</h1>
+          <div style={{ color: "#28a745", fontSize: "32px", fontWeight: "bold", margin: "10px 0" }}>
             {Number(produto.preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
           </div>
-          
-          <div style={{ whiteSpace: "pre-wrap", color: "#444", lineHeight: "1.6", marginBottom: "25px", fontSize: "16px" }}>
+          <div style={{ whiteSpace: "pre-wrap", color: "#444", marginBottom: "20px" }}>
             {produto.descricao_completa || produto.descricao}
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            <input placeholder="Digite seu CEP" value={cliente.cep} style={inputStyle} onChange={(e) => { setCliente({...cliente, cep: e.target.value}); buscarEndereco(e.target.value); }} />
-            <input placeholder="Seu nome" value={cliente.nome} style={inputStyle} onChange={(e) => setCliente({ ...cliente, nome: e.target.value })} />
-            <input placeholder="Telefone" value={cliente.telefone} style={inputStyle} onChange={(e) => setCliente({ ...cliente, telefone: e.target.value })} />
-            <input placeholder="CPF" value={cliente.cpf} style={inputStyle} onChange={(e) => setCliente({ ...cliente, cpf: e.target.value })} />
-            <input placeholder="Endereço" value={cliente.endereco} style={inputStyle} onChange={(e) => setCliente({ ...cliente, endereco: e.target.value })} />
-            
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            <input placeholder="CEP" value={cliente.cep} style={inputStyle} onChange={(e) => { setCliente({...cliente, cep: e.target.value}); buscarEndereco(e.target.value); }} />
+            <input placeholder="Nome" value={cliente.nome} style={inputStyle} onChange={(e) => setCliente({...cliente, nome: e.target.value})} />
+            <input placeholder="Telefone" value={cliente.telefone} style={inputStyle} onChange={(e) => setCliente({...cliente, telefone: e.target.value})} />
+            <input placeholder="CPF" value={cliente.cpf} style={inputStyle} onChange={(e) => setCliente({...cliente, cpf: e.target.value})} />
+            <input placeholder="Endereço" value={cliente.endereco} style={inputStyle} onChange={(e) => setCliente({...cliente, endereco: e.target.value})} />
             <div style={{ display: "flex", gap: "10px" }}>
-               <input placeholder="Número" value={cliente.numero} style={{...inputStyle, flex: 1}} onChange={(e) => setCliente({ ...cliente, numero: e.target.value })} />
-               <input placeholder="Bairro" value={cliente.bairro} style={{...inputStyle, flex: 2}} onChange={(e) => setCliente({ ...cliente, bairro: e.target.value })} />
+               <input placeholder="Nº" value={cliente.numero} style={{...inputStyle, flex: 1}} onChange={(e) => setCliente({...cliente, numero: e.target.value})} />
+               <input placeholder="Bairro" value={cliente.bairro} style={{...inputStyle, flex: 2}} onChange={(e) => setCliente({...cliente, bairro: e.target.value})} />
             </div>
-            
-            <div style={{ display: "flex", gap: "10px" }}>
-               <input placeholder="Cidade" value={cliente.cidade} style={{...inputStyle, flex: 2}} onChange={(e) => setCliente({ ...cliente, cidade: e.target.value })} />
-               <input placeholder="Estado" value={cliente.estado} style={{...inputStyle, flex: 1}} onChange={(e) => setCliente({ ...cliente, estado: e.target.value })} />
-            </div>
-
-            {ehPenDrive && (
-              <input placeholder="Digite o nome do canto" value={cliente.canto} style={{...inputStyle, border: "2px solid #333"}} onChange={(e) => setCliente({ ...cliente, canto: e.target.value })} />
+            {produto.nome.toLowerCase().includes("pen drive") && (
+              <input placeholder="Nome do canto" value={cliente.canto} style={{...inputStyle, border: "2px solid #333"}} onChange={(e) => setCliente({...cliente, canto: e.target.value})} />
             )}
-            
-            <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+            <div style={{ display: "flex", gap: "10px", marginTop: "5px" }}>
               <button onClick={calcularFrete} style={btnSecondary}>Calcular Frete</button>
               <button onClick={comprar} style={btnPrimary}>Compra segura</button>
             </div>
           </div>
 
-          {/* LISTAGEM DE OPÇÕES DE FRETE */}
-          {fretes.length > 0 ? (
-            <div style={{ marginTop: "15px", padding: "15px", border: "1px solid #ddd", borderRadius: "8px", backgroundColor: "#f9f9f9" }}>
-              <p style={{ fontWeight: "bold", marginBottom: "10px", fontSize: "14px" }}>Selecione a entrega:</p>
+          {/* LISTAGEM DINÂMICA DE FRETE */}
+          {fretes.length > 0 && (
+            <div style={{ marginTop: "20px", display: "flex", flexDirection: "column", gap: "8px", padding: "15px", border: "1px solid #eee", borderRadius: "8px", background: "#fdfdfd" }}>
+              <span style={{ fontWeight: "bold", fontSize: "14px" }}>Escolha a entrega:</span>
               {fretes.map((f, i) => (
-                <label key={i} style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px", cursor: "pointer", padding: "8px", border: "1px solid #eee", borderRadius: "5px", background: "#fff" }}>
-                  <input 
-                    type="radio" 
-                    name="frete" 
-                    onChange={() => setFreteSelecionado(f)} 
-                    checked={freteSelecionado?.name === f.name} 
-                  />
-                  <div style={{ fontSize: "14px" }}>
-                    <strong>{f.name}</strong>: R$ {Number(f.price).toFixed(2)} <br/>
-                    <span style={{ fontSize: "12px", color: "#666" }}>Prazo: {f.deadline} dias</span>
-                  </div>
+                <label key={i} style={{ display: "flex", alignItems: "center", gap: "10px", fontSize: "14px", cursor: "pointer" }}>
+                  <input type="radio" name="frete" checked={freteSelecionado?.name === f.name} onChange={() => setFreteSelecionado(f)} />
+                  {f.name} - R$ {f.price.toFixed(2)} ({f.deadline} dias)
                 </label>
               ))}
             </div>
-          ) : (
-            cliente.cep.length === 8 && <p style={{ fontSize: "12px", color: "#666", marginTop: "10px" }}>Clique em Calcular Frete para ver as opções.</p>
           )}
 
-          <div style={{ marginTop: "25px", fontSize: "22px", fontWeight: "bold", borderTop: "1px solid #eee", paddingTop: "15px" }}>
+          <div style={{ marginTop: "25px", fontSize: "22px", fontWeight: "bold", borderTop: "2px solid #000", paddingTop: "15px" }}>
             Total: {total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
           </div>
         </div>
       </div>
-
-      <a 
-        href={`https://wa.me/5581993414930?text=Olá, tenho interesse no produto: ${produto.nome}`}
-        target="_blank" rel="noopener noreferrer" style={whatsappBtn}
-      >
-        Falar no WhatsApp
-      </a>
+      <a href={`https://wa.me/5581993414930?text=Olá, interesse no produto: ${produto.nome}`} target="_blank" rel="noopener noreferrer" style={whatsappBtn}>Falar no WhatsApp</a>
     </div>
   );
 }
@@ -199,8 +157,4 @@ export default function Produto() {
 const inputStyle = { padding: "12px", border: "1px solid #ccc", borderRadius: "5px", width: "100%", boxSizing: "border-box" };
 const btnPrimary = { padding: "15px", backgroundColor: "#000", color: "#fff", border: "none", cursor: "pointer", fontWeight: "bold", flex: 1, borderRadius: "5px" };
 const btnSecondary = { padding: "15px", backgroundColor: "#fff", border: "1px solid #000", cursor: "pointer", fontWeight: "bold", flex: 1, borderRadius: "5px" };
-const whatsappBtn = {
-  position: "fixed", bottom: "0", left: "0", width: "100%",
-  backgroundColor: "#25d366", color: "white", padding: "20px",
-  textDecoration: "none", fontWeight: "bold", textAlign: "center", fontSize: "18px", zIndex: 1000
-};
+const whatsappBtn = { position: "fixed", bottom: "0", left: "0", width: "100%", backgroundColor: "#25d366", color: "white", padding: "20px", textDecoration: "none", fontWeight: "bold", textAlign: "center", fontSize: "18px", zIndex: 1000 };
