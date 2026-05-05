@@ -77,8 +77,10 @@ export default function Produto() {
       if (Array.isArray(data)) {
         setFretes(data);
         if (data.length > 0) setFreteSelecionado(data[0]);
+      } else {
+        alert("Nenhuma transportadora disponível para este CEP ou dimensões.");
       }
-    } catch (err) { alert("Erro frete"); }
+    } catch (err) { alert("Erro ao calcular frete"); }
   };
 
   const comprar = async () => {
@@ -98,7 +100,7 @@ export default function Produto() {
           shippingCep: cliente.cep,
           shippingCost: Number(freteSelecionado.price || 0),
           items: [{ id: produto.id, name: produto.nome, price: Number(produto.preco), quantity: 1 }],
-          metadata: { ...cliente }
+          metadata: { ...cliente, frete_tipo: freteSelecionado.name }
         })
       });
       const data = await res.json();
@@ -154,6 +156,29 @@ export default function Produto() {
               <button onClick={comprar} style={btnPrimary}>Compra segura</button>
             </div>
           </div>
+
+          {/* LISTAGEM DE OPÇÕES DE FRETE */}
+          {fretes.length > 0 ? (
+            <div style={{ marginTop: "15px", padding: "15px", border: "1px solid #ddd", borderRadius: "8px", backgroundColor: "#f9f9f9" }}>
+              <p style={{ fontWeight: "bold", marginBottom: "10px", fontSize: "14px" }}>Selecione a entrega:</p>
+              {fretes.map((f, i) => (
+                <label key={i} style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px", cursor: "pointer", padding: "8px", border: "1px solid #eee", borderRadius: "5px", background: "#fff" }}>
+                  <input 
+                    type="radio" 
+                    name="frete" 
+                    onChange={() => setFreteSelecionado(f)} 
+                    checked={freteSelecionado?.name === f.name} 
+                  />
+                  <div style={{ fontSize: "14px" }}>
+                    <strong>{f.name}</strong>: R$ {Number(f.price).toFixed(2)} <br/>
+                    <span style={{ fontSize: "12px", color: "#666" }}>Prazo: {f.deadline} dias</span>
+                  </div>
+                </label>
+              ))}
+            </div>
+          ) : (
+            cliente.cep.length === 8 && <p style={{ fontSize: "12px", color: "#666", marginTop: "10px" }}>Clique em Calcular Frete para ver as opções.</p>
+          )}
 
           <div style={{ marginTop: "25px", fontSize: "22px", fontWeight: "bold", borderTop: "1px solid #eee", paddingTop: "15px" }}>
             Total: {total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
