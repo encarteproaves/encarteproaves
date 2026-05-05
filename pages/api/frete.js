@@ -2,29 +2,23 @@ import { supabase } from "../../lib/supabase";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).send("Método não permitido");
-
   const { cep, produtoId } = req.body;
 
   try {
-    // 1. Busca os dados técnicos (weight, width, height, length) no Supabase
     const { data: produto, error } = await supabase
       .from("produtos")
       .select("*")
       .eq("id", produtoId)
       .single();
 
-    if (error || !produto) {
-      return res.status(404).json({ error: "Produto não encontrado no banco." });
-    }
+    if (error || !produto) throw new Error("Produto não encontrado");
 
-    // 2. SOLUÇÃO DEFINITIVA: Converte strings do banco para Números Decimais
-    // O Melhor Envio rejeita textos ou formatos com vírgula.
-    const peso = Number(String(produto.weight).replace(',', '.'));
-    const largura = Math.ceil(Number(produto.width)) || 11;
-    const altura = Math.ceil(Number(produto.height)) || 4;
-    const comprimento = Math.ceil(Number(produto.length)) || 16;
+    // SOLUÇÃO: Converte os valores para números puros para a API aceitar
+    const peso = parseFloat(produto.weight) || 0.5;
+    const largura = parseInt(produto.width) || 11;
+    const altura = parseInt(produto.height) || 4;
+    const comprimento = parseInt(produto.length) || 16;
 
-    // 3. Chamada à API do Melhor Envio com os dados dinâmicos do produto
     const response = await fetch("https://www.melhorenvio.com.br/api/v2/me/shipment/calculate", {
       method: "POST",
       headers: {
@@ -34,29 +28,23 @@ export default async function handler(req, res) {
         "User-Agent": "EncarteProAves (suporte@encarteproaves.com.br)"
       },
       body: JSON.stringify({
-        from: { postal_code: "08062670" }, // Seu CEP de origem atualizado
+        from: { postal_code: "08062670" },
         to: { postal_code: cep.replace(/\D/g, "") },
-        products: [
-          {
-            id: produto.id,
-            width: largura,
-            height: altura,
-            length: comprimento,
-            weight: peso,
-            insurance_value: 50, // Seguro fixo para garantir que todas transportadoras apareçam
-            quantity: 1
-          }
-        ]
+        products: [{
+          id: produto.id,
+          width: largura,
+          height: altura,
+          length: comprimento,
+          weight: peso,
+          insurance_value: 50,
+          quantity: 1
+        }]
       })
     });
 
     const data = await response.json();
+    if (!Array.isArray(data)) return res.status(200).json([]);
 
-    if (!Array.isArray(data)) {
-      return res.status(200).json([]);
-    }
-
-    // 4. Filtra apenas serviços ativos e sem erros
     const fretesValidos = data
       .filter(f => !f.error)
       .map(f => ({
@@ -68,6 +56,6 @@ export default async function handler(req, res) {
 
     res.status(200).json(fretesValidos);
   } catch (error) {
-    res.status(500).json({ error: "Erro interno no servidor." });
+    res.status(500).json({ error: "Erro interno" });
   }
 }

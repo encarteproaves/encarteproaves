@@ -25,15 +25,11 @@ export default function Produto() {
         const data = await res.json();
         if (!data.erro) {
           setCliente((prev) => ({
-            ...prev,
-            cep: cepLimpo,
-            endereco: data.logradouro,
-            bairro: data.bairro,
-            cidade: data.localidade,
-            estado: data.uf
+            ...prev, cep: cepLimpo, endereco: data.logradouro,
+            bairro: data.bairro, cidade: data.localidade, estado: data.uf
           }));
         }
-      } catch (err) { console.error("Erro ao buscar CEP"); }
+      } catch (err) { console.error(err); }
     }
   };
 
@@ -71,7 +67,7 @@ export default function Produto() {
       } else {
         alert("Nenhuma transportadora disponível para este peso/CEP.");
       }
-    } catch (err) { alert("Erro ao calcular frete."); }
+    } catch (err) { alert("Erro ao calcular."); }
   };
 
   if (!produto) return <div style={{padding: "50px", textAlign: "center"}}>Carregando...</div>;
@@ -80,7 +76,7 @@ export default function Produto() {
     <div style={{ padding: "20px", maxWidth: "1100px", margin: "0 auto", fontFamily: "sans-serif", paddingBottom: "100px" }}>
       <div style={{ display: "flex", gap: "40px", flexWrap: "wrap" }}>
         <div style={{ flex: "1", minWidth: "300px" }}>
-          <img src={produto.imagem} alt={produto.nome} style={{ width: "100%", borderRadius: "8px" }} />
+          <img src={produto.imagem} style={{ width: "100%", borderRadius: "8px" }} />
         </div>
 
         <div style={{ flex: "1.2", minWidth: "320px" }}>
@@ -89,7 +85,12 @@ export default function Produto() {
             {Number(produto.preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
           </div>
           
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "20px" }}>
+          {/* VOLTA DA DESCRIÇÃO COMPLETA */}
+          <div style={{ whiteSpace: "pre-wrap", color: "#444", marginBottom: "20px", fontSize: "15px", lineHeight: "1.6" }}>
+            {produto.descricao_completa || produto.descricao}
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             <input placeholder="CEP" value={cliente.cep} style={inputStyle} onChange={(e) => { setCliente({...cliente, cep: e.target.value}); buscarEndereco(e.target.value); }} />
             <input placeholder="Nome Completo" style={inputStyle} onChange={(e) => setCliente({...cliente, nome: e.target.value})} />
             <input placeholder="Telefone" style={inputStyle} onChange={(e) => setCliente({...cliente, telefone: e.target.value})} />
@@ -114,7 +115,6 @@ export default function Produto() {
 
           {fretes.length > 0 && (
             <div style={{ marginTop: "20px", border: "1px solid #ddd", padding: "15px", borderRadius: "8px", background: "#f9f9f9" }}>
-              <p style={{fontWeight: "bold", marginBottom: "10px"}}>Selecione a entrega:</p>
               {fretes.map((f, i) => (
                 <label key={i} style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px", cursor: "pointer" }}>
                   <input type="radio" name="frete" checked={freteSelecionado?.name === f.name} onChange={() => setFreteSelecionado(f)} />
