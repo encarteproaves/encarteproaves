@@ -6,7 +6,11 @@ export default async function handler(req, res) {
 
   try {
     const { data: produto } = await supabase.from("produtos").select("*").eq("id", produtoId).single();
-    if (!produto) return res.status(404).json([]);
+    if (!produto) return res.status(200).json([]);
+
+    // CONVERSÃO FORÇADA: Garantimos que o sistema entenda os valores como números decimais
+    const pesoValue = parseFloat(String(produto.weight).replace(',', '.'));
+    const precoValue = parseFloat(String(produto.preco).replace(',', '.'));
 
     const response = await fetch("https://www.melhorenvio.com.br/api/v2/me/shipment/calculate", {
       method: "POST",
@@ -20,13 +24,12 @@ export default async function handler(req, res) {
         from: { postal_code: "08062670" },
         to: { postal_code: cep.replace(/\D/g, "") },
         products: [{
-          id: String(produto.id).substring(0, 8), 
-          // USANDO EXATAMENTE O QUE ESTÁ NO BANCO, APENAS GARANTINDO QUE SEJA NÚMERO
-          width: Number(produto.width),   
-          height: Number(produto.height), 
-          length: Number(produto.length), 
-          weight: Number(String(produto.weight).replace(',', '.')), 
-          insurance_value: Number(produto.preco),
+          id: "1", 
+          width: Number(produto.width),
+          height: Number(produto.height),
+          length: Number(produto.length),
+          weight: pesoValue, // Valor limpo e convertido
+          insurance_value: precoValue, // Valor limpo e convertido
           quantity: 1
         }]
       })
@@ -34,7 +37,11 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    if (!Array.isArray(data)) return res.status(200).json([]);
+    // Se a resposta não for uma lista, algo está errado com o Token ou CEP de origem
+    if (!Array.isArray(data)) {
+      console.error("Resposta Inválida da API:", data);
+      return res.status(200).json([]);
+    }
 
     const fretesValidos = data
       .filter(f => !f.error)
