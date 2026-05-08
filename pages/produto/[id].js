@@ -115,24 +115,72 @@ export default function ProdutoPage() {
           
           <div style={styles.descricao}>{produto.descricao_completa || produto.descricao}</div>
 
-          {/* FORMULÁRIO COMPLETO RESTAURADO */}
+          {/* FORMULÁRIO COMPLETO COM CONEXÃO CORRIGIDA */}
           <div style={styles.form}>
-            <input placeholder="CEP" style={styles.input} onChange={(e) => handleChange("cep", e.target.value)} />
+            <input 
+              placeholder="CEP" 
+              style={styles.input} 
+              value={cliente.cep || ""} 
+              onChange={(e) => handleChange("cep", e.target.value)} 
+            />
             {cepErro && <p style={{ color: "red", fontSize: "12px" }}>CEP não encontrado</p>}
             
-            <input placeholder="Seu Nome Completo" style={styles.input} onChange={(e) => handleChange("nome", e.target.value)} />
-            <input placeholder="Telefone" style={styles.input} onChange={(e) => handleChange("telefone", e.target.value)} />
-            <input placeholder="CPF" style={styles.input} onChange={(e) => handleChange("cpf", e.target.value)} />
-            <input placeholder="Endereço" style={styles.input} value={cliente.endereco || ""} onChange={(e) => handleChange("endereco", e.target.value)} />
+            <input 
+              placeholder="Seu Nome Completo" 
+              style={styles.input} 
+              value={cliente.nome || ""} 
+              onChange={(e) => handleChange("nome", e.target.value)} 
+            />
+            
+            <input 
+              placeholder="Telefone" 
+              style={styles.input} 
+              value={cliente.telefone || ""} 
+              onChange={(e) => handleChange("telefone", e.target.value)} 
+            />
+            
+            <input 
+              placeholder="CPF" 
+              style={styles.input} 
+              value={cliente.cpf || ""} 
+              onChange={(e) => handleChange("cpf", e.target.value)} 
+            />
+
+            <input 
+              placeholder="Endereço" 
+              style={styles.input} 
+              value={cliente.endereco || ""} 
+              onChange={(e) => handleChange("endereco", e.target.value)} 
+            />
             
             <div style={{ display: "flex", gap: "10px" }}>
-              <input placeholder="Nº" style={{...styles.input, flex: 1}} onChange={(e) => handleChange("numero", e.target.value)} />
-              <input placeholder="Bairro" style={{...styles.input, flex: 2}} value={cliente.bairro || ""} onChange={(e) => handleChange("bairro", e.target.value)} />
+              <input 
+                placeholder="Nº" 
+                style={{...styles.input, flex: 1}} 
+                value={cliente.numero || ""} 
+                onChange={(e) => handleChange("numero", e.target.value)} 
+              />
+              <input 
+                placeholder="Bairro" 
+                style={{...styles.input, flex: 2}} 
+                value={cliente.bairro || ""} 
+                onChange={(e) => handleChange("bairro", e.target.value)} 
+              />
             </div>
 
             <div style={{ display: "flex", gap: "10px" }}>
-              <input placeholder="Cidade" style={{...styles.input, flex: 2}} value={cliente.cidade || ""} readOnly />
-              <input placeholder="Estado" style={{...styles.input, flex: 1}} value={cliente.estado || ""} readOnly />
+              <input 
+                placeholder="Cidade" 
+                style={{...styles.input, flex: 2}} 
+                value={cliente.cidade || ""} 
+                readOnly 
+              />
+              <input 
+                placeholder="Estado" 
+                style={{...styles.input, flex: 1}} 
+                value={cliente.estado || ""} 
+                readOnly 
+              />
             </div>
 
             <button style={styles.btnCalcular} onClick={calcularFrete}>
