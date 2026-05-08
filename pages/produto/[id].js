@@ -100,11 +100,33 @@ export default function ProdutoPage() {
   const valorFrete = Number(freteSelecionado?.price || freteSelecionado?.cost || 0);
   const total = valorProduto + valorFrete;
 
+  // FUNÇÃO DE COMPRA REAL (REDIRECIONA PARA MERCADO PAGO)
   async function comprar() {
     if (!cliente.nome || !cliente.telefone || !cliente.cep || !freteSelecionado) {
       return alert("Preencha todos os dados e selecione o frete!");
     }
-    alert("Redirecionando para o checkout seguro...");
+
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          produto: { id: produto.id, nome: produto.nome, preco: valorProduto },
+          cliente: { ...cliente, canto: nomeDoCanto },
+          frete: freteSelecionado
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.init_point) {
+        window.location.href = data.init_point;
+      } else {
+        alert("Erro ao gerar link de pagamento. Tente novamente.");
+      }
+    } catch (err) {
+      alert("Erro na conexão com o checkout.");
+    }
   }
 
   function falarWhatsapp() {
@@ -117,7 +139,6 @@ export default function ProdutoPage() {
 
   if (loading) return <p style={{textAlign: "center", padding: "50px"}}>Carregando produto...</p>;
   if (!produto) return <p style={{textAlign: "center", padding: "50px"}}>Produto não encontrado.</p>;
-
   return (
     <div style={styles.container}>
       <div style={styles.card}>
