@@ -78,7 +78,9 @@ export default function ProdutoPage() {
         body: JSON.stringify({ cep: cliente.cep, produtoId: produto.id }),
       });
       const data = await res.json();
-      setFretes(Array.isArray(data) ? data : []);
+// Esta linha verifica se a API enviou a lista direta ou dentro de 'options'
+const listaFinal = Array.isArray(data) ? data : (data.options || []);
+setFretes(listaFinal);
     } catch (err) {
       alert("Erro ao calcular frete");
     } finally {
