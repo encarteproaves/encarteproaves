@@ -1,115 +1,46 @@
-// ===============================
-// IMPORTAÇÕES
-// ===============================
-
-// Hook de estado do React
 import { useState } from "react";
-
-// Roteador do Next.js (para navegação)
 import { useRouter } from "next/router";
 
-
-// ===============================
-// COMPONENTE DE LOGIN ADMIN
-// ===============================
-export default function Login() {
-
-  // ===============================
-  // CONTROLE DE ROTA
-  // ===============================
+export default function LoginAdmin() {
+  const [senhaInserida, setSenhaInserida] = useState("");
+  const [erro, setErro] = useState(false);
   const router = useRouter();
 
+  const SENHA_CORRETA = "Ks161269";
 
-  // ===============================
-  // ESTADO DA SENHA
-  // ===============================
-  const [senha, setSenha] = useState("");
-  // ===============================
-  // FIM ESTADO
-  // ===============================
-
-
-  // ===============================
-  // FUNÇÃO DE LOGIN
-  // ===============================
-  function entrar(e) {
-
-    // Evita recarregar a página ao enviar formulário
+  function handleLogin(e) {
     e.preventDefault();
-
-
-    // ===============================
-    // VALIDAÇÃO DA SENHA
-    // ===============================
-    if (senha === "123456") {
-
-      // Salva no navegador que o admin está logado
-      localStorage.setItem("admin_logado", "true");
-
-      // Redireciona para painel de produtos
-      router.push("/admin/produtos");
-
+    if (senhaInserida === SENHA_CORRETA) {
+      // Salva uma pequena marca no navegador dizendo que você logou
+      localStorage.setItem("admin_auth", "true");
+      router.push("/admin/pedidos");
     } else {
-
-      // Senha incorreta
-      alert("Senha incorreta");
+      setErro(true);
+      setSenhaInserida("");
     }
-    // ===============================
-    // FIM VALIDAÇÃO
-    // ===============================
   }
-  // ===============================
-  // FIM FUNÇÃO LOGIN
-  // ===============================
 
-
-  // ===============================
-  // RENDER DA PÁGINA
-  // ===============================
   return (
-
-    <div style={{ padding: 20 }}>
-
-      {/* TÍTULO */}
-      <h1>Login Admin</h1>
-
-
-      {/* FORMULÁRIO DE LOGIN */}
-      <form onSubmit={entrar} autoComplete="off">
-
-        {/* INPUT SENHA */}
+    <div style={styles.container}>
+      <form onSubmit={handleLogin} style={styles.card}>
+        <h2>Acesso Administrativo</h2>
         <input
           type="password"
           placeholder="Digite a senha"
-
-          // Valor controlado pelo estado
-          value={senha}
-
-          // Atualiza estado ao digitar
-          onChange={(e) => setSenha(e.target.value)}
-
-          // Evita autocomplete do navegador
-          autoComplete="new-password"
+          value={senhaInserida}
+          onChange={(e) => setSenhaInserida(e.target.value)}
+          style={styles.input}
         />
-
-        <br /><br />
-
-        {/* BOTÃO DE ENVIO */}
-        <button type="submit">
-          Entrar
-        </button>
-
+        {erro && <p style={{ color: "red" }}>Senha incorreta!</p>}
+        <button type="submit" style={styles.button}>Entrar</button>
       </form>
-      {/* ===============================
-          FIM FORMULÁRIO
-         =============================== */}
-
     </div>
   );
-  // ===============================
-  // FIM RENDER
-  // ===============================
 }
-// ===============================
-// FIM COMPONENTE LOGIN
-// ===============================
+
+const styles = {
+  container: { display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", backgroundColor: "#f0f2f5" },
+  card: { padding: "40px", backgroundColor: "#fff", borderRadius: "10px", boxShadow: "0 4px 10px rgba(0,0,0,0.1)", textAlign: "center" },
+  input: { padding: "12px", width: "100%", marginBottom: "15px", border: "1px solid #ccc", borderRadius: "5px", boxSizing: "border-box" },
+  button: { width: "100%", padding: "12px", backgroundColor: "#000", color: "#fff", border: "none", borderRadius: "5px", cursor: "pointer", fontWeight: "bold" }
+};
