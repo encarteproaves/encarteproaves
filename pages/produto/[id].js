@@ -65,7 +65,7 @@ export default function ProdutoPage() {
     setCliente((prev) => ({ ...prev, [campo]: valor }));
   }
 
-  // CALCULAR FRETE E MOSTRAR TRANSPORTADORAS
+  // CALCULAR FRETE, ORDENAR POR PREÇO E LIMITAR A 6 OPÇÕES
   async function calcularFrete() {
     if (!cliente.cep) return alert("Digite o CEP");
     setLoadingFrete(true);
@@ -77,9 +77,24 @@ export default function ProdutoPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ cep: cliente.cep, produtoId: produto.id }),
       });
+      
       const data = await res.json();
-      const listaFinal = Array.isArray(data) ? data : (data.options || []);
-      setFretes(listaFinal);
+      let listaFinal = Array.isArray(data) ? data : (data.options || []);
+
+      // 1. Filtrar apenas opções que não tenham erro
+      listaFinal = listaFinal.filter(f => !f.error);
+
+      // 2. Ordenar do mais barato para o mais caro
+      listaFinal.sort((a, b) => {
+        const precoA = Number(a.price || a.cost || 0);
+        const precoB = Number(b.price || b.cost || 0);
+        return precoA - precoB;
+      });
+
+      // 3. Pegar apenas as 6 primeiras opções
+      const top6Fretes = listaFinal.slice(0, 6);
+
+      setFretes(top6Fretes);
     } catch (err) {
       alert("Erro ao calcular frete");
     } finally {
