@@ -8,7 +8,7 @@ export default function ProdutoPage() {
   const [produto, setProduto] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // ESTADOS PARA CLIENTE E FRETE
+  // 1. ESTADOS (States) - Sempre no topo
   const [cliente, setCliente] = useState({
     nome: "", telefone: "", cpf: "", cep: "",
     endereco: "", numero: "", bairro: "", cidade: "", estado: ""
@@ -17,8 +17,9 @@ export default function ProdutoPage() {
   const [freteSelecionado, setFreteSelecionado] = useState(null);
   const [loadingFrete, setLoadingFrete] = useState(false);
   const [cepErro, setCepErro] = useState(false);
-const [nomeDoCanto, setNomeDoCanto] = useState("");
-  // BUSCA DADOS DO PRODUTO
+  const [nomeDoCanto, setNomeDoCanto] = useState("");
+
+  // 2. EFEITOS (Effects)
   useEffect(() => {
     if (!id) return;
     async function fetchProduto() {
@@ -35,7 +36,6 @@ const [nomeDoCanto, setNomeDoCanto] = useState("");
     fetchProduto();
   }, [id]);
 
-  // BUSCA ENDEREÇO PELO CEP (VIACEP)
   useEffect(() => {
     const cepLimpo = cliente.cep?.replace(/\D/g, "");
     if (!cepLimpo || cepLimpo.length !== 8) return;
@@ -61,11 +61,11 @@ const [nomeDoCanto, setNomeDoCanto] = useState("");
     buscarCep();
   }, [cliente.cep]);
 
+  // 3. FUNÇÕES DE LÓGICA
   function handleChange(campo, valor) {
     setCliente((prev) => ({ ...prev, [campo]: valor }));
   }
 
-  // CALCULAR FRETE, ORDENAR POR PREÇO E LIMITAR A 6 OPÇÕES
   async function calcularFrete() {
     if (!cliente.cep) return alert("Digite o CEP");
     setLoadingFrete(true);
@@ -81,20 +81,15 @@ const [nomeDoCanto, setNomeDoCanto] = useState("");
       const data = await res.json();
       let listaFinal = Array.isArray(data) ? data : (data.options || []);
 
-      // 1. Filtrar apenas opções que não tenham erro
       listaFinal = listaFinal.filter(f => !f.error);
 
-      // 2. Ordenar do mais barato para o mais caro
       listaFinal.sort((a, b) => {
         const precoA = Number(a.price || a.cost || 0);
         const precoB = Number(b.price || b.cost || 0);
         return precoA - precoB;
       });
 
-      // 3. Pegar apenas as 6 primeiras opções
-      const top6Fretes = listaFinal.slice(0, 6);
-
-      setFretes(top6Fretes);
+      setFretes(listaFinal.slice(0, 6));
     } catch (err) {
       alert("Erro ao calcular frete");
     } finally {
@@ -102,7 +97,6 @@ const [nomeDoCanto, setNomeDoCanto] = useState("");
     }
   }
 
-  // SOMA TOTAL PRODUTO + FRETE
   const valorProduto = Number(produto?.preco || 0);
   const valorFrete = Number(freteSelecionado?.price || freteSelecionado?.cost || 0);
   const total = valorProduto + valorFrete;
@@ -115,7 +109,7 @@ const [nomeDoCanto, setNomeDoCanto] = useState("");
   }
 
   function falarWhatsapp() {
-    const infoCanto = nomeDoCanto ? `\n*Canto para gravar:* ${nomeDoCanto}` : "";
+    const infoCanto = nomeDoCanto ? `\n*Canto solicitado:* ${nomeDoCanto}` : "";
     const mensagem = encodeURIComponent(
       `Olá, tenho interesse no produto ${produto?.nome}.${infoCanto}\nO valor total com frete ficou em ${total.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}`
     );
@@ -125,6 +119,7 @@ const [nomeDoCanto, setNomeDoCanto] = useState("");
   if (loading) return <p style={{textAlign: "center", padding: "50px"}}>Carregando...</p>;
   if (!produto) return <p>Produto não encontrado</p>;
 
+  // 4. VISUAL (JSX)
   return (
     <div style={styles.container}>
       <div style={styles.card}>
@@ -157,7 +152,6 @@ const [nomeDoCanto, setNomeDoCanto] = useState("");
               <input placeholder="Estado" style={{...styles.input, flex: 1}} value={cliente.estado || ""} readOnly />
             </div>
 
-            {/* CAMPO CONDICIONAL PARA PEN DRIVE */}
             {produto?.nome?.toLowerCase().includes("pen drive") && (
               <input 
                 placeholder="Digite o nome do canto que deseja gravar" 
@@ -166,6 +160,7 @@ const [nomeDoCanto, setNomeDoCanto] = useState("");
                 onChange={(e) => setNomeDoCanto(e.target.value)} 
               />
             )}
+
             <button style={styles.btnCalcular} onClick={calcularFrete}>
               {loadingFrete ? "Calculando..." : "Calcular Frete"}
             </button>
