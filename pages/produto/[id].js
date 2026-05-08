@@ -209,6 +209,15 @@ setFretes(listaFinal);
           </h3>
 
           <button style={styles.btnComprar} onClick={comprar}>Finalizar Compra</button>
+          function falarWhatsapp() {
+    const mensagem = encodeURIComponent(
+      `Olá, tenho interesse no produto ${produto?.nome}. O valor total com frete ficou em ${total.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}`
+    );
+
+    window.open(
+      `https://api.whatsapp.com/send?phone=5511984309480&text=${mensagem}`
+    );
+  }
         </div>
       </div>
     </div>
@@ -225,6 +234,19 @@ const styles = {
   input: { padding: "12px", border: "1px solid #ccc", borderRadius: "5px", width: "100%", boxSizing: "border-box" },
   btnCalcular: { padding: "12px", cursor: "pointer", background: "#f0f0f0", border: "1px solid #ccc", fontWeight: "bold" },
   freteBox: { marginTop: "20px", padding: "15px", border: "1px solid #ddd", borderRadius: "8px", background: "#fafafa" },
-  freteItem: { display: "flex", gap: "10px", marginBottom: "10px", cursor: "pointer", alignItems: "center" },
-  btnComprar: { width: "100%", padding: "18px", background: "#000", color: "#fff", border: "none", borderRadius: "5px", marginTop: "20px", cursor: "pointer", fontWeight: "bold", fontSize: "16px" }
+   btnComprar: { width: "100%", padding: "18px", background: "#000", color: "#fff", border: "none", borderRadius: "5px", 
+    marginTop: "20px", cursor: "pointer", fontWeight: "bold", fontSize: "16px" },
+
+btnWhats: {
+    width: "100%",
+    padding: "15px",
+    backgroundColor: "#25D366", // Verde oficial do WhatsApp
+    color: "#fff",
+    border: "none",
+    borderRadius: "5px",
+    marginTop: "10px",
+    cursor: "pointer",
+    fontWeight: "bold",
+    fontSize: "16px"
+  }
 };
