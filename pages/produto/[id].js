@@ -17,7 +17,7 @@ export default function ProdutoPage() {
   const [freteSelecionado, setFreteSelecionado] = useState(null);
   const [loadingFrete, setLoadingFrete] = useState(false);
   const [cepErro, setCepErro] = useState(false);
-
+const [nomeDoCanto, setNomeDoCanto] = useState("");
   // BUSCA DADOS DO PRODUTO
   useEffect(() => {
     if (!id) return;
@@ -114,10 +114,10 @@ export default function ProdutoPage() {
     alert("Redirecionando para pagamento...");
   }
 
-  // FUNÇÃO WHATSAPP (LOGICA)
   function falarWhatsapp() {
+    const infoCanto = nomeDoCanto ? `\n*Canto para gravar:* ${nomeDoCanto}` : "";
     const mensagem = encodeURIComponent(
-      `Olá, tenho interesse no produto ${produto?.nome}. O valor total com frete ficou em ${total.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}`
+      `Olá, tenho interesse no produto ${produto?.nome}.${infoCanto}\nO valor total com frete ficou em ${total.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}`
     );
     window.open(`https://api.whatsapp.com/send?phone=5511984309480&text=${mensagem}`);
   }
@@ -157,6 +157,15 @@ export default function ProdutoPage() {
               <input placeholder="Estado" style={{...styles.input, flex: 1}} value={cliente.estado || ""} readOnly />
             </div>
 
+            {/* CAMPO CONDICIONAL PARA PEN DRIVE */}
+            {produto?.nome?.toLowerCase().includes("pen drive") && (
+              <input 
+                placeholder="Digite o nome do canto que deseja gravar" 
+                style={{...styles.input, borderColor: "#25D366", borderWidth: "2px", marginBottom: "10px"}} 
+                value={nomeDoCanto} 
+                onChange={(e) => setNomeDoCanto(e.target.value)} 
+              />
+            )}
             <button style={styles.btnCalcular} onClick={calcularFrete}>
               {loadingFrete ? "Calculando..." : "Calcular Frete"}
             </button>
