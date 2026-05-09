@@ -56,12 +56,14 @@ export default function AdminProdutos() {
           </thead>
           <tbody>
             {produtos.map((p) => (
-              <tr key={p.id} style={{ borderBottom: "1px solid #eee" }}>
-                <td style={{ padding: "10px" }}>{p.nome}</td>
-                <td style={{ padding: "10px" }}>R$ {p.preco}</td>
-                <td style={{ padding: "10px" }}>{p.estoque || 0} unid.</td>
-              </tr>
-            ))}
+  <tr key={p.id} style={{ borderBottom: "1px solid #eee" }}>
+    <td style={{ padding: "10px" }}>{p.nome}</td>
+    <td style={{ padding: "10px" }}>
+      {Number(p.preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+    </td>
+    <td style={{ padding: "10px" }}>{p.estoque || 0} unid.</td>
+  </tr>
+))}
           </tbody>
         </table>
       )}
