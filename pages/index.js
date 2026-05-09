@@ -17,18 +17,37 @@ export default function Home() {
   return (
     <div style={container}>
       
-      {/* HEADER */}
-      <header style={header}>
-        <div style={headerContent}>
-          <img src="/logo.png" alt="Logo" style={logo} />
-          <div>
-            <h1 style={titulo}>ENCARTEPROAVES</h1>
-            <p style={subtitulo}>
-              Tecnologia e Qualidade Para o Melhor Encarte de Canto
-            </p>
-          </div>
-        </div>
-      </header>
+      <header style={{ 
+  backgroundColor: '#000', 
+  padding: '40px 20px', // Aumentamos o respiro vertical
+  display: 'flex', 
+  flexDirection: 'column', 
+  alignItems: 'center', 
+  textAlign: 'center',
+  borderBottom: '4px solid #f1c40f' // Linha dourada para dar acabamento
+}}>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap', justifyContent: 'center' }}>
+    <img 
+      src="/logo.png" // Certifique-se que o caminho está correto
+      alt="Logo Encarteproaves" 
+      style={{ height: '100px', width: 'auto' }} // Aumentamos de ~50px para 100px
+    />
+    <div>
+      <h1 style={{ 
+        color: '#f1c40f', 
+        fontSize: '42px', // Título bem imponente
+        margin: '0', 
+        fontWeight: 'bold',
+        letterSpacing: '2px'
+      }}>
+        ENCARTEPROAVES
+      </h1>
+      <p style={{ color: '#fff', fontSize: '18px', margin: '5px 0 0' }}>
+        Tecnologia e Qualidade Para o Melhor Encarte de Canto
+      </p>
+    </div>
+  </div>
+</header>
 
       {/* PRODUTOS */}
       <main style={grid}>
