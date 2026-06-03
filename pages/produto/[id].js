@@ -13,11 +13,16 @@ export default function ProdutoPage() {
     nome: "", telefone: "", cpf: "", cep: "",
     endereco: "", numero: "", bairro: "", cidade: "", estado: ""
   });
+  const [quantidade, setQuantidade] = useState(1); // <-- NOVO: Estado para a quantidade
   const [fretes, setFretes] = useState([]);
   const [freteSelecionado, setFreteSelecionado] = useState(null);
   const [loadingFrete, setLoadingFrete] = useState(false);
   const [cepErro, setCepErro] = useState(false);
   const [nomeDoCanto, setNomeDoCanto] = useState("");
+
+  // Funções para manipular a quantidade
+  const aumentarQtde = () => setQuantidade(q => q + 1);
+  const diminuirQtde = () => setQuantidade(q => Math.max(1, q - 1));
 
   // 2. BUSCA DADOS DO PRODUTO
   useEffect(() => {
@@ -30,7 +35,7 @@ export default function ProdutoPage() {
       } catch (error) {
         console.error("Erro ao buscar produto:", error);
       } finally {
-        setLoading(false);
+        loading && setLoading(false);
       }
     }
     fetchProduto();
@@ -66,7 +71,7 @@ export default function ProdutoPage() {
     setCliente((prev) => ({ ...prev, [campo]: valor }));
   }
 
-  // 4. CÁLCULO DE FRETE (Ordenado e Limitado)
+  // 4. CÁLCULO DE FRETE (Envia quantidade para calcular peso total no back-end)
   async function calcularFrete() {
     if (!cliente.cep) return alert("Digite o CEP");
     setLoadingFrete(true);
@@ -76,7 +81,11 @@ export default function ProdutoPage() {
       const res = await fetch("/api/frete", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cep: cliente.cep, produtoId: produto.id }),
+        body: JSON.stringify({ 
+          cep: cliente.cep, 
+          produtoId: produto.id,
+          quantidade: quantidade // <-- NOVO: Enviando a quantidade para calcular o peso dinâmico
+        }),
       });
       
       const data = await res.json();
@@ -95,12 +104,13 @@ export default function ProdutoPage() {
     }
   }
 
-  // CÁLCULO DO TOTAL
-  const valorProduto = Number(produto?.preco || 0);
+  // CÁLCULO DO TOTAL (Multiplicando o produto pela quantidade)
+  const valorUnitario = Number(produto?.preco || 0);
+  const valorProdutoTotal = valorUnitario * quantidade; // <-- VALOR MULTIPLICADO
   const valorFrete = Number(freteSelecionado?.price || freteSelecionado?.cost || 0);
-  const total = valorProduto + valorFrete;
+  const total = valorProdutoTotal + valorFrete;
 
-  // FUNÇÃO DE COMPRA REAL (REDIRECIONA PARA MERCADO PAGO)
+  // FUNÇÃO DE COMPRA REAL (REDIRECIONA PARA MERCADO PAGO COM MULTI-UNIDADES)
   async function comprar() {
     if (!cliente.nome || !cliente.telefone || !cliente.cep || !freteSelecionado) {
       return alert("Preencha todos os dados e selecione o frete!");
@@ -111,7 +121,8 @@ export default function ProdutoPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          produto: { id: produto.id, nome: produto.nome, preco: valorProduto },
+          produto: { id: produto.id, nome: produto.nome, preco: valorUnitario },
+          quantidade: quantidade, // <-- NOVO: Enviando a quantidade escolhida para a API
           cliente: { ...cliente, canto: nomeDoCanto },
           frete: freteSelecionado
         }),
@@ -132,13 +143,14 @@ export default function ProdutoPage() {
   function falarWhatsapp() {
     const infoCanto = nomeDoCanto ? `\n*Canto solicitado:* ${nomeDoCanto}` : "";
     const mensagem = encodeURIComponent(
-      `Olá! Tenho interesse no produto: ${produto?.nome}.${infoCanto}\n\n*Resumo do Pedido:*\nProduto: ${valorProduto.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}\nFrete: ${valorFrete.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}\n*Total: ${total.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}*`
+      `Olá! Tenho interesse no produto: ${produto?.nome} (${quantidade}x un).${infoCanto}\n\n*Resumo do Pedido:*\nProduto (${quantidade}x): ${valorProdutoTotal.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}\nFrete: ${valorFrete.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}\n*Total: ${total.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}*`
     );
     window.open(`https://api.whatsapp.com/send?phone=5511984309480&text=${mensagem}`);
   }
 
   if (loading) return <p style={{textAlign: "center", padding: "50px"}}>Carregando produto...</p>;
   if (!produto) return <p style={{textAlign: "center", padding: "50px"}}>Produto não encontrado.</p>;
+  
   return (
     <div style={styles.container}>
       <div style={styles.card}>
@@ -149,12 +161,23 @@ export default function ProdutoPage() {
         <div style={{ flex: 1.2, minWidth: "320px" }}>
           <h1 style={{ marginBottom: "10px" }}>{produto.nome}</h1>
           <h2 style={{ color: "#2d8a39", marginBottom: "20px" }}>
-            {valorProduto.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}
+            {valorUnitario.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})} <span style={{fontSize: "14px", color: "#666", fontWeight: "normal"}}>cada</span>
           </h2>
           
           <div style={styles.descricao}>{produto.descricao_completa || produto.descricao}</div>
 
           <div style={styles.form}>
+            
+            {/* NOVO: SELETOR VISUAL DE QUANTIDADE */}
+            <div style={styles.seletorContainer}>
+              <span style={{ fontWeight: "bold", fontSize: "15px" }}>Selecione a quantidade:</span>
+              <div style={styles.seletorBotoesBox}>
+                <button type="button" onClick={diminuirQtde} style={styles.btnMenos}>-</button>
+                <span style={styles.txtQuantidade}>{quantidade}</span>
+                <button type="button" onClick={aumentarQtde} style={styles.btnMais}>+</button>
+              </div>
+            </div>
+
             <input placeholder="CEP" style={styles.input} value={cliente.cep || ""} onChange={(e) => handleChange("cep", e.target.value)} />
             {cepErro && <p style={{ color: "red", fontSize: "12px", marginTop: "-5px" }}>CEP não encontrado</p>}
             
@@ -208,8 +231,9 @@ export default function ProdutoPage() {
           )}
 
           <div style={{ marginTop: "20px", borderTop: "2px solid #eee", paddingTop: "15px" }}>
-            <p style={{ fontSize: "14px", color: "#666", marginBottom: "5px" }}>Valor Final:</p>
-            <h3 style={{ fontSize: "24px" }}>
+            <p style={{ fontSize: "14px", color: "#666", marginBottom: "5px" }}>Subtotal dos Produtos: {valorProdutoTotal.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}</p>
+            <p style={{ fontSize: "14px", color: "#666", marginBottom: "5px" }}>Valor Total Final (com frete):</p>
+            <h3 style={{ fontSize: "24px", color: "#000" }}>
               {total.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}
             </h3>
           </div>
@@ -234,6 +258,14 @@ const styles = {
   img: { width: "100%", borderRadius: "10px", boxShadow: "0 4px 10px rgba(0,0,0,0.1)" },
   descricao: { margin: "20px 0", color: "#555", lineHeight: "1.6", whiteSpace: "pre-line", fontSize: "15px" },
   form: { display: "flex", flexDirection: "column", gap: "12px" },
+  
+  // ESTILOS DO SELETOR DE QUANTIDADE
+  seletorContainer: { display: "flex", alignItems: "center", justifyContent: "between", gap: "15px", padding: "10px", background: "#f8f9fa", borderRadius: "5px", border: "1px solid #e9ecef" },
+  seletorBotoesBox: { display: "flex", alignItems: "center", gap: "12px", marginLeft: "auto" },
+  btnMenos: { width: "35px", height: "35px", cursor: "pointer", background: "#e0e0e0", border: "none", borderRadius: "5px", fontSize: "18px", fontWeight: "bold" },
+  btnMais: { width: "35px", height: "35px", cursor: "pointer", background: "#000", color: "#fff", border: "none", borderRadius: "5px", fontSize: "18px", fontWeight: "bold" },
+  txtQuantidade: { fontSize: "16px", fontWeight: "bold", minWidth: "20px", textAlign: "center" },
+
   input: { padding: "12px", border: "1px solid #ccc", borderRadius: "5px", width: "100%", boxSizing: "border-box", fontSize: "14px" },
   btnCalcular: { padding: "14px", cursor: "pointer", background: "#f0f0f0", border: "1px solid #ccc", fontWeight: "bold", borderRadius: "5px", transition: "0.2s" },
   freteBox: { marginTop: "20px", padding: "15px", border: "1px solid #e0e0e0", borderRadius: "8px", background: "#fcfcfc" },

@@ -52,6 +52,7 @@ export default async function handler(req, res) {
     // ===============================
     const produto = req.body.produto || {};
     const cliente = req.body.cliente || {};
+    const quantidade = Number(req.body.quantidade || 1); // <-- NOVO: Captura a quantidade enviada
     // ===============================
     // FIM SUPORTE FORMATO
     // ===============================
@@ -131,15 +132,17 @@ export default async function handler(req, res) {
     // ===============================
     // VALORES FINAIS
     // ===============================
-    const valorProduto = Number(preco);
+    const valorUnitario = Number(preco);
 
-    if (isNaN(valorProduto)) {
+    if (isNaN(valorUnitario)) {
       return res.status(400).json({
         error: "Preço inválido",
       });
     }
 
-    const valorTotal = valorProduto + valorFrete;
+    // Conta matemática: (Preço Unitário * Quantidade) + Custo do Frete Fixo
+    const valorProdutosTotal = valorUnitario * quantidade;
+    const valorTotalGeral = valorProdutosTotal + valorFrete;
     // ===============================
     // FIM CÁLCULO
     // ===============================
@@ -149,9 +152,11 @@ export default async function handler(req, res) {
     // LOG DE VALORES
     // ===============================
     console.log("VALORES:", {
-      valorProduto,
+      valorUnitario,
+      quantidade,
+      valorProdutosTotal,
       valorFrete,
-      valorTotal,
+      valorTotalGeral,
     });
 
 
@@ -160,20 +165,33 @@ export default async function handler(req, res) {
     // ===============================
     const preference = new Preference(client);
 
+    // Monta a lista de itens dinamicamente
+    const itensCheckout = [
+      {
+        id: produto.id ? String(produto.id) : externalReference,
+        title: String(nome),
+        description: canto ? `Canto: ${canto}` : String(nome),
+        quantity: quantidade,          // <-- NOVO: Quantidade dinâmica dos produtos
+        unit_price: valorUnitario,     // <-- Preço real por unidade
+        currency_id: "BRL",
+      }
+    ];
+
+    // Se houver frete contratado, adicionamos como uma linha separada
+    // Isso evita que o Mercado Pago multiplique o frete pela quantidade de produtos!
+    if (valorFrete > 0) {
+      itensCheckout.push({
+        id: "frete-logistica",
+        title: "Custo de Envio (Logística)",
+        quantity: 1,
+        unit_price: valorFrete,
+        currency_id: "BRL",
+      });
+    }
+
     const response = await preference.create({
       body: {
-        items: [
-          {
-            id: externalReference, // ID interno do pedido
-            title: String(nome),
-            description: canto
-              ? `Canto: ${canto}`
-              : String(nome),
-            quantity: 1,
-            unit_price: valorTotal,
-            currency_id: "BRL",
-          },
-        ],
+        items: itensCheckout,
 
         external_reference: externalReference, // ligação com seu sistema
 
@@ -208,7 +226,8 @@ export default async function handler(req, res) {
       .insert([
         {
           produto: String(nome),
-          valor: Number(valorTotal),
+          valor: Number(valorTotalGeral), // Valor total cobrado (Produtos + Frete)
+          quantidade: quantidade,         // <-- NOVO: Grava quantas unidades comprou no Supabase
 
           nome_cliente: nome_cliente || "",
           telefone: telefone || "",
@@ -218,7 +237,7 @@ export default async function handler(req, res) {
           rua: endereco || "",
           numero: numero ? String(numero) : "",
           bairro: bairro || "",
-          cidade: cidade || "",
+          cidade: city || cidade || "",
           estado: estado || "",
 
           frete: Number(valorFrete) || 0,
