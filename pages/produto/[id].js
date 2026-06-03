@@ -251,31 +251,156 @@ export default function ProdutoPage() {
   );
 }
 
+// Substitua o objeto const styles que está no fim do seu arquivo por este:
 const styles = {
-  container: { padding: "20px", maxWidth: "1100px", margin: "0 auto", fontFamily: "sans-serif", color: "#333" },
-  card: { display: "flex", gap: "40px", flexWrap: "wrap", backgroundColor: "#fff" },
-  imgContainer: { flex: "1", minWidth: "300px" },
-  img: { width: "100%", borderRadius: "10px", boxShadow: "0 4px 10px rgba(0,0,0,0.1)" },
-  descricao: { margin: "20px 0", color: "#555", lineHeight: "1.6", whiteSpace: "pre-line", fontSize: "15px" },
-  form: { display: "flex", flexDirection: "column", gap: "12px" },
+  container: { 
+    padding: "30px 20px", 
+    maxWidth: "1100px", 
+    margin: "0 auto", 
+    fontFamily: "system-ui, -apple-system, sans-serif", // Fonte mais moderna e nítida
+    color: "#1a1a1a" // Preto nítido no container geral
+  },
+  card: { 
+    display: "flex", 
+    gap: "40px", 
+    flexWrap: "wrap", 
+    backgroundColor: "#fff" 
+  },
+  imgContainer: { 
+    flex: "1", 
+    minWidth: "300px" 
+  },
+  img: { 
+    width: "100%", 
+    borderRadius: "10px", 
+    boxShadow: "0 6px 15px rgba(0,0,0,0.12)" // Sombra levemente mais marcada para destacar a foto
+  },
+  descricao: { 
+    margin: "25px 0", 
+    color: "#222222", // Saída do cinza fosco para um preto suave e muito nítido
+    lineHeight: "1.7", // Mais espaçamento entre linhas para ajudar a leitura
+    whiteSpace: "pre-line", 
+    fontSize: "16px", // Aumentado levemente de 15px para 16px
+    fontWeight: "400"
+  },
+  form: { 
+    display: "flex", 
+    flexDirection: "column", 
+    gap: "14px",
+    padding: "20px",
+    border: "2px solid #b5b5b5", // Linha de contorno do formulário bem visível
+    borderRadius: "8px",
+    backgroundColor: "#fafafa"
+  },
   
-  // ESTILOS DO SELETOR DE QUANTIDADE
-  seletorContainer: { display: "flex", alignItems: "center", justifyContent: "between", gap: "15px", padding: "10px", background: "#f8f9fa", borderRadius: "5px", border: "1px solid #e9ecef" },
-  seletorBotoesBox: { display: "flex", alignItems: "center", gap: "12px", marginLeft: "auto" },
-  btnMenos: { width: "35px", height: "35px", cursor: "pointer", background: "#e0e0e0", border: "none", borderRadius: "5px", fontSize: "18px", fontWeight: "bold" },
-  btnMais: { width: "35px", height: "35px", cursor: "pointer", background: "#000", color: "#fff", border: "none", borderRadius: "5px", fontSize: "18px", fontWeight: "bold" },
-  txtQuantidade: { fontSize: "16px", fontWeight: "bold", minWidth: "20px", textAlign: "center" },
+  // SELETOR DE QUANTIDADE
+  seletorContainer: { 
+    display: "flex", 
+    alignItems: "center", 
+    justifyContent: "between", 
+    gap: "15px", 
+    padding: "12px 15px", 
+    background: "#f1f3f5", 
+    borderRadius: "6px", 
+    border: "2px solid #868e96" // Borda do seletor mais nítida
+  },
+  seletorBotoesBox: { 
+    display: "flex", 
+    alignItems: "center", 
+    gap: "12px", 
+    marginLeft: "auto" 
+  },
+  btnMenos: { 
+    width: "38px", 
+    height: "38px", 
+    cursor: "pointer", 
+    background: "#e2e8f0", 
+    border: "1px solid #cbd5e1", 
+    borderRadius: "5px", 
+    fontSize: "20px", 
+    fontWeight: "bold",
+    color: "#000"
+  },
+  btnMais: { 
+    width: "38px", 
+    height: "38px", 
+    cursor: "pointer", 
+    background: "#000", 
+    color: "#fff", 
+    border: "none", 
+    borderRadius: "5px", 
+    fontSize: "20px", 
+    fontWeight: "bold" 
+  },
+  txtQuantidade: { 
+    fontSize: "18px", 
+    fontWeight: "bold", 
+    minWidth: "25px", 
+    textAlign: "center",
+    color: "#000"
+  },
 
-  input: { padding: "12px", border: "1px solid #ccc", borderRadius: "5px", width: "100%", boxSizing: "border-box", fontSize: "14px" },
-  btnCalcular: { padding: "14px", cursor: "pointer", background: "#f0f0f0", border: "1px solid #ccc", fontWeight: "bold", borderRadius: "5px", transition: "0.2s" },
-  freteBox: { marginTop: "20px", padding: "15px", border: "1px solid #e0e0e0", borderRadius: "8px", background: "#fcfcfc" },
-  freteLabel: { display: "flex", gap: "10px", marginBottom: "12px", cursor: "pointer", alignItems: "center" },
+  input: { 
+    padding: "14px", 
+    border: "2px solid #94a3b8", // Borda dos inputs reforçada (não fica sumindo no fundo)
+    borderRadius: "6px", 
+    width: "100%", 
+    boxSizing: "border-box", 
+    fontSize: "15px",
+    color: "#000",
+    backgroundColor: "#fff"
+  },
+  btnCalcular: { 
+    padding: "14px", 
+    cursor: "pointer", 
+    background: "#e2e8f0", 
+    border: "2px solid #cbd5e1", 
+    fontWeight: "bold", 
+    borderRadius: "6px", 
+    fontSize: "15px",
+    color: "#000",
+    transition: "0.2s" 
+  },
+  freteBox: { 
+    marginTop: "20px", 
+    padding: "15px", 
+    border: "2px solid #000", // Caixa de frete com contorno preto nítido para chamar atenção
+    borderRadius: "8px", 
+    background: "#f8fafc" 
+  },
+  freteLabel: { 
+    display: "flex", 
+    gap: "10px", 
+    marginBottom: "12px", 
+    cursor: "pointer", 
+    alignItems: "center",
+    color: "#1a1a1a"
+  },
   btnComprar: { 
-    width: "100%", padding: "18px", background: "#000", color: "#fff", border: "none", 
-    borderRadius: "5px", marginTop: "20px", cursor: "pointer", fontWeight: "bold", fontSize: "16px", transition: "0.3s"
+    width: "100%", 
+    padding: "18px", 
+    background: "#000", 
+    color: "#fff", 
+    border: "none", 
+    borderRadius: "6px", 
+    marginTop: "25px", 
+    cursor: "pointer", 
+    fontWeight: "bold", 
+    fontSize: "18px", // Botão de compra ligeiramente maior e mais imponente
+    transition: "0.3s" 
   },
   btnWhats: {
-    width: "100%", padding: "15px", backgroundColor: "#25D366", color: "#fff", border: "none", 
-    borderRadius: "5px", marginTop: "10px", cursor: "pointer", fontWeight: "bold", fontSize: "16px", textAlign: "center", transition: "0.3s"
+    width: "100%", 
+    padding: "15px", 
+    backgroundColor: "#25D366", 
+    color: "#fff", 
+    border: "none", 
+    borderRadius: "6px", 
+    marginTop: "12px", 
+    cursor: "pointer", 
+    fontWeight: "bold", 
+    fontSize: "16px", 
+    textAlign: "center", 
+    transition: "0.3s"
   }
 };
