@@ -237,7 +237,7 @@ export default async function handler(req, res) {
           rua: endereco || "",
           numero: numero ? String(numero) : "",
           bairro: bairro || "",
-          cidade: city || cidade || "",
+          cidade: cidade || "",
           estado: estado || "",
 
           frete: Number(valorFrete) || 0,
