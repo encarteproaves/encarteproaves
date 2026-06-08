@@ -122,7 +122,7 @@ const [variacao, setVariacao] = useState("Malha Fina"); // <-- NOVO: Estado para
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           produto: { id: produto.id, nome: produto.nome, preco: valorUnitario },
-          quantidade: quantity,
+          quantidade: quantidade,
           cliente: { ...cliente, canto: nomeDoCanto },
           variacao: produto?.nome?.toLowerCase().includes("bebedouro") || produto?.nome?.includes("Bebedouro") ? variacao : null, // <-- NOVO
           frete: freteSelecionado
