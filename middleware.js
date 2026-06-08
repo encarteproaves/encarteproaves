@@ -1,35 +1,36 @@
 import { NextResponse } from 'next/server';
 
 export function middleware(request) {
-  // Captura o cookie de login
+  // Captura o cookie de login do painel
   const token = request.cookies.get('auth_token')?.value; 
   const url = request.nextUrl.clone();
 
-  // Se o usuário JÁ ESTIVER na página de login (/admin), não faça nada! Deixe ele entrar.
-  if (url.pathname === '/admin') {
+  // Se o usuário estiver na tela de login, não faz nada, deixa ele entrar para digitar a senha
+  // IMPORTANTE: Se a sua página de login for '/login' em vez de '/admin-login', altere abaixo.
+  if (url.pathname === '/login') {
     return NextResponse.next();
   }
 
-  // Lista de OUTRAS rotas administrativas que precisam de proteção
-  const rotasProtegidas = ['/produtos', '/cadastro', '/estoque'];
+  // Lista de caminhos administrativos que queremos trancar com senha
+  const rotasProtegidas = ['/admin/produtos', '/admin/estoque', '/cadastro'];
 
-  // Verifica se ele tenta acessar o estoque ou cadastro sem estar logado
+  // Verifica se a página atual precisa de proteção
   const precisaDeProtecao = rotasProtegidas.some(rota => url.pathname.startsWith(rota));
 
   if (precisaDeProtecao && !token) {
-    // Se não tiver o token, joga ele para a tela de login (/admin) de forma segura
-    url.pathname = '/admin'; 
+    // Se o invasor tentar entrar direto sem senha, joga ele para a tela de login
+    url.pathname = '/login'; // <-- Altere para a sua rota real onde você digita a senha
     return NextResponse.redirect(url);
   }
 
   return NextResponse.next();
 }
 
-// O Next.js vai monitorar apenas as rotas que precisam de validação
+// CONFIGURAÇÃO DO MATCHER (Quais rotas o Next.js vai vigiar)
 export const config = {
   matcher: [
-    '/produtos/:path*', 
-    '/cadastro/:path*', 
-    '/estoque/:path*'
+    '/admin/produtos/:path*',
+    '/admin/estoque/:path*',
+    '/cadastro/:path*'
   ], 
 };
